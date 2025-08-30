@@ -8,7 +8,7 @@
             "id": "x-mitre-collection--dac0d2d7-8653-445c-9bff-82f934c1e858",
             "spec_version": "2.1",
             "x_mitre_attack_spec_version": "2.1.0",
-            "name": "Mobile ATT&CK",
+            "name": "SPARTA ATT&CK",
             "x_mitre_version": "11.1-beta",
             "description": "ATT&CK for Mobile is a matrix of adversary behavior against mobile devices (smartphones and tablets running the Android or iOS/iPadOS operating systems). ATT&CK for Mobile builds upon NIST's Mobile Threat Catalogue and also contains a separate matrix of network-based effects, which are techniques that an adversary can employ without access to the mobile device itself.",
             "created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
@@ -5465,8 +5465,8 @@
             "external_references": [
                 {
                     "source_name": "mitre-mobile-attack",
-                    "external_id": "T1603",
-                    "url": "https://attack.mitre.org/techniques/T1603"
+                    "external_id": "REC-0001.01",
+                    "url": "https://sparta.aerospace.org/technique/REC-0001/01/"
                 },
                 {
                     "source_name": "Android WorkManager",
@@ -5480,7 +5480,7 @@
                 }
             ],
             "modified": "2020-11-04T19:45:38.144Z",
-            "name": "Scheduled Task/Job",
+            "name": "Software Design",
             "description": "Adversaries may abuse task scheduling functionality to facilitate initial or recurring execution of malicious code. On Android and iOS, APIs and libraries exist to facilitate scheduling tasks to execute at a specified date, time, or interval.\n\nOn Android, the `WorkManager` API allows asynchronous tasks to be scheduled with the system. `WorkManager` was introduced to unify task scheduling on Android, using `JobScheduler`, `GcmNetworkManager`, and `AlarmManager` internally. `WorkManager` offers a lot of flexibility for scheduling, including periodically, one time, or constraint-based (e.g. only when the device is charging).(Citation: Android WorkManager)\n\nOn iOS, the `NSBackgroundActivityScheduler` API allows asynchronous tasks to be scheduled with the system. The tasks can be scheduled to be repeating or non-repeating, however, the system chooses when the tasks will be executed. The app can choose the interval for repeating tasks, or the delay between scheduling and execution for one-time tasks.(Citation: Apple NSBackgroundActivityScheduler)",
             "kill_chain_phases": [
                 {
@@ -5520,7 +5520,7 @@
             "external_references": [
                 {
                     "source_name": "mitre-attack",
-                    "external_id": "T1540",
+                    "external_id": "REC-0001.02",
                     "url": "https://attack.mitre.org/techniques/T1540"
                 },
                 {
@@ -5544,7 +5544,7 @@
             "description": "Adversaries may use code injection attacks to implant arbitrary code into the address space of a running application. Code is then executed or interpreted by that application. Adversaries utilizing this technique may exploit capabilities to load code in at runtime through dynamic libraries.\n\nWith root access, `ptrace` can be used to target specific applications and load shared libraries into its process memory.(Citation: Shunix Code Injection Mar 2016)(Citation: Fadeev Code Injection Aug 2018) By injecting code, an adversary may be able to gain access to higher permissions held by the targeted application by executing as the targeted application. In addition, the adversary may be able to evade detection or enable persistent access to a system under the guise of the application\u2019s process.(Citation: Google Triada June 2019)\n",
             "modified": "2022-03-30T19:14:20.369Z",
             "created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
-            "name": "Code Injection",
+            "name": "Firmware",
             "x_mitre_detection": "Code injection can be difficult to detect, and therefore enterprises may be better served focusing on detection at other stages of adversarial behavior.",
             "kill_chain_phases": [
                 {
