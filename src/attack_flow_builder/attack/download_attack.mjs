@@ -39,7 +39,8 @@ const STIX_TO_ATTACK = {
 const MITRE_SOURCES = new Set([
     "mitre-attack",
     "mitre-ics-attack",
-    "mitre-mobile-attack"
+    "mitre-mobile-attack",
+    "mitre-sparta-attack"
 ])
 
 /**

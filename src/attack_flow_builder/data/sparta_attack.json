@@ -1,0 +1,368 @@
+{
+  "type": "bundle",
+  "id": "bundle--b00baa7d-71a5-49b0-ba2d-8c9be766edfe",
+  "spec_version": "2.1",
+  "objects": [
+    {
+      "type": "x-mitre-collection",
+      "id": "x-mitre-collection--eebff39d-3b50-40da-934b-566321ead2e7",
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0",
+      "name": "SPARTA TTPs",
+      "x_mitre_version": "11.1",
+      "description": "The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (TTP). SPARTA is intended to provide unclassified information to space professionals about how spacecraft may be compromised via cyber and traditional counterspace means.",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "created": "2018-01-17T12:56:55.080Z",
+      "modified": "2022-05-11T14:00:00.188Z",
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "x_mitre_contents": [
+        {
+          "object_ref": "attack-pattern--679133db-c687-4ca6-ae9a-814f87fd7869",
+          "object_modified": "2025-08-30T17:55:06.537021+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--9edbe7ac-4dcd-4a58-8028-bb0dfbf20ff4",
+          "object_modified": "2025-08-30T17:55:06.537289+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--44a73adf-d9c2-4ce9-9c97-fec7e3d20aad",
+          "object_modified": "2025-08-30T17:55:06.537309+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--eb99f213-27b0-48e3-b4dc-e5f39ebf58b7",
+          "object_modified": "2025-08-30T17:55:06.537325+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--3ef8300c-dc9d-4109-8a42-de6d8d97dc4c",
+          "object_modified": "2025-08-30T17:55:06.537341+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--c0dc2560-92a7-447b-aff6-d6ca26808f14",
+          "object_modified": "2025-08-30T17:55:06.537356+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--9ed306ec-0470-4fd7-b45d-3151bccc39b5",
+          "object_modified": "2025-08-30T17:55:06.537369+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--925e0e60-ae1b-414f-8cec-ab8c18001303",
+          "object_modified": "2025-08-30T17:55:06.537384+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--706da402-64e1-4f5f-9be6-d6ab44f00a28",
+          "object_modified": "2025-08-30T17:55:06.537396+00:00Z"
+        }
+      ]
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--344555a2-f81e-40f3-8700-d90ef4622dee",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537021+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0001",
+          "url": "https://sparta.aerospace.org/technique/REC-0001/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537021+00:00Z",
+      "name": "Gather Spacecraft Design Information",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--21fff9b3-4a91-4dc3-9071-b6b255373004",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537289+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0002",
+          "url": "https://sparta.aerospace.org/technique/REC-0002/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537289+00:00Z",
+      "name": "Gather Spacecraft Descriptors",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--2a258ac6-c85b-4315-8822-23f1e42abd51",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537309+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0003",
+          "url": "https://sparta.aerospace.org/technique/REC-0003/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537309+00:00Z",
+      "name": "Gather Spacecraft Communications Informaationn",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--6deab54a-fff9-4ee1-ba28-868e3d772b81",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537325+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0004",
+          "url": "https://sparta.aerospace.org/technique/REC-0004/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537325+00:00Z",
+      "name": "Gather Launch Information",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--0ea76efe-d572-4114-8e6a-a7fd9ce39473",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537341+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0005",
+          "url": "https://sparta.aerospace.org/technique/REC-0005/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537341+00:00Z",
+      "name": "Eavesdropping",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--9d7ca319-20b6-43fe-99db-5f40bb6d04d3",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537356+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0006",
+          "url": "https://sparta.aerospace.org/technique/REC-0006/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537356+00:00Z",
+      "name": "Gather FSW Development Innformation",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--c6e6e24a-2fe5-42e9-8f5e-2f3dbd959d82",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537369+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0007",
+          "url": "https://sparta.aerospace.org/technique/REC-0007/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537369+00:00Z",
+      "name": "Monitor for Safe-Mode Indicators",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--6c174e4d-330a-444c-9a78-ac097342acc2",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537384+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0008",
+          "url": "https://sparta.aerospace.org/technique/REC-0008/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537384+00:00Z",
+      "name": "Gather Supply Chain Information",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    },
+    {
+      "x_mitre_platforms": [],
+      "x_mitre_domains": [],
+      "object_marking_refs": [
+        "marking-definition--d606967d-3544-429d-bd94-1af3b415a916"
+      ],
+      "id": "attack-pattern--92a21bd6-6057-461a-b954-12b39d1c4bc1",
+      "type": "attack-pattern",
+      "created": "2025-08-30T17:55:06.537396+00:00Z",
+      "created_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0009",
+          "url": "https://sparta.aerospace.org/technique/REC-0009/"
+        }
+      ],
+      "modified": "2025-08-30T17:55:06.537396+00:00Z",
+      "name": "Gather Mission Information",
+      "description": "",
+      "kill_chain_phases": [],
+      "x_mitre_detection": [],
+      "x_mitre_is_subtechnique": "true",
+      "x_mitre_version": "1.0",
+      "x_mitre_modified_by_ref": [
+        "identity--a42c8b7b-659c-499e-9dc7-d30b21572054"
+      ],
+      "x_mitre_data_sources": [],
+      "x_mitre_defense_bypassed": [],
+      "spec_version": "2.1",
+      "x_mitre_attack_spec_version": "2.1.0"
+    }
+  ]
+}
