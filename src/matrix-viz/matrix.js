@@ -59,6 +59,8 @@ const TACTIC_LOOKUP = {
     "TA0107": "inhibit-response-function",
     "TA0106": "impair-process-control",
     "TA0105": "impact",
+    // SPARTA:
+    "REC-0001": "reconnaissance",
 }
 
 /**
