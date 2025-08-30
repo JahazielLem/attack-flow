@@ -179,6 +179,10 @@ export class AttackFlowFilePreprocessor implements FilePreprocessor {
                             [
                                 "technique",
                                 ap.get("technique_id") ?? null
+                            ],
+                            [
+                                "subtechnique",
+                                ap.get("subtechnique_id") ?? null
                             ]
                         ]
                     ]);

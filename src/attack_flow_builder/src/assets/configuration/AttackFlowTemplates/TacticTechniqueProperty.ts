@@ -21,6 +21,15 @@ export const TacticTechniqueProperty: TuplePropertyDescriptor = {
                 default: Enums.techniques as [string, string][]
             },
             is_representative: true
+        },
+        subtechnique: {
+            type: PropertyType.String,
+            options: {
+                type: PropertyType.List,
+                form: { type: PropertyType.String },
+                default: Enums.subtechniques as [string, string][]
+            },
+            is_representative: true
         }
     },
     validValueCombinations: Enums.relationships as ValueCombinations

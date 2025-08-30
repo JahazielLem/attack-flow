@@ -207,6 +207,13 @@ class AttackFlowPublisher implements FilePublisher {
                             node["technique_ref"] = Enums.stixIds[technique as keyof typeof Enums.stixIds];
                         }
                     }
+                    const subtechnique = json?.subtechnique as null | string;
+                     if (subtechnique) {
+                        node["subtechnique_id"] = subtechnique;
+                        if (subtechnique in Enums.stixIds) {
+                            node["subtechnique_ref"] = Enums.stixIds[subtechnique as keyof typeof Enums.stixIds];
+                        }
+                    }
                     break;
                 case "confidence":
                     if (!(prop instanceof EnumProperty)) {
