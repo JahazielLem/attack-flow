@@ -44,7 +44,7 @@ class StixObject:
     }
     self.tactics_list.append(x_mitre_tactic)
     self.object_ref_list.append(self.create_object_ref(x_mitre_tactic))
-    return tactic_object
+    return tactic_object, x_mitre_tactic
   
   def create_technique(self, technnique):
     attack_pattern_id = f"attack-pattern--{uuid.uuid4()}"
@@ -82,10 +82,11 @@ class StixObject:
     return technnique_object
   
   def create_relationship_asset(self, source_ref, target_ref):
+    relation_id = f"relationship--{uuid.uuid4()}"
     relation = {
       "object_marking_refs": [self.marking_definition],
       "type": "relationship",
-      "id": f"relationship--{uuid.uuid4()}",
+      "id": relation_id,
       "created": self.now,
       "x_mitre_version": "0.1",
       "external_references": [],
@@ -102,6 +103,7 @@ class StixObject:
       "spec_version": "2.1",
       "x_mitre_domains": ["space-attack"]
     }
+    self.object_ref_list.append(self.create_object_ref(relation_id))
     return relation
 
   def create_tactic_refs(self):
@@ -159,10 +161,13 @@ class StixObject:
     for _, item in enumerate(sparta_json):
       print(item)
       if item["type"] == "tactic":
-        tactic_obj = self.create_tactic(item)
+        tactic_obj, tactic_id = self.create_tactic(item)
         flow["objects"].append(tactic_obj)
         for _, subitem in enumerate(item["techniques"]):
-          flow["objects"].append(self.create_technique(subitem))
+          technique_obj = self.create_technique(subitem)
+          flow["objects"].append(technique_obj)
+          relation_obj = self.create_relationship_asset(tactic_id, technique_obj["id"])
+          flow["objects"].append(relation_obj)
     flow["objects"].append(self.create_tactic_refs())
     with open("../src/attack_flow_builder/data/sparta-attack.json", "w") as f:
       json.dump(flow, f, indent=2)
