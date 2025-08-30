@@ -39,14 +39,17 @@ class StixObject:
       "x_mitre_version": "1.0",
       "x_mitre_attack_spec_version": "2.1.0",
       "x_mitre_modified_by_ref": self.created_by_ref,
-      "x_mitre_shortname": "remote-service-effects",
+      "x_mitre_shortname": tactic['name'].lower().replace(" ", "-"),
       "spec_version": "2.1"
     }
     self.tactics_list.append(x_mitre_tactic)
-    self.object_ref_list.append(self.create_object_ref(x_mitre_tactic))
+    # self.object_ref_list.append(self.create_object_ref(x_mitre_tactic))
     return tactic_object, x_mitre_tactic
   
   def create_technique(self, technnique):
+    tactic_type = technnique["x_mitre_tactic_type"]
+    if isinstance(tactic_type, list):
+      tactic_type = tactic_type[0]
     attack_pattern_id = f"attack-pattern--{uuid.uuid4()}"
     technnique_object = {
       "x_mitre_platforms": ["Spacecraft", "Ground Station"],
@@ -63,21 +66,29 @@ class StixObject:
               "url": f"https://sparta.aerospace.org/technique/{technnique['external_id']}"
           }
       ],
-      "x_mitre_deprecated": "false",
-      "revoked": "false",
+      "x_mitre_deprecated": False,
+      "revoked": False,
       "description": technnique['description'],
       "modified": self.now,
       "created_by_ref": self.created_by_ref,
       "name": technnique['name'],
       "x_mitre_detection": "",
-      "kill_chain_phases": [],
-      "x_mitre_is_subtechnique": "true",
+      "kill_chain_phases": [
+        {
+        "kill_chain_name": "mitre-attack",
+        "phase_name": tactic_type.lower().replace(" ", "-")
+
+        }
+      ],
+      "x_mitre_tactics": [technnique["x_mitre_tactic_type"]],
+      "x_mitre_is_subtechnique": False,
       "x_mitre_tactic_type": [technnique["x_mitre_tactic_type"]],
       "x_mitre_attack_spec_version": "2.1.0",
       "x_mitre_modified_by_ref": self.created_by_ref,
       "x_mitre_data_sources": [],
       "spec_version": "2.1"
     }
+    print(technnique["x_mitre_tactic_type"])
     self.object_ref_list.append(self.create_object_ref(attack_pattern_id))
     return technnique_object
   
@@ -90,11 +101,11 @@ class StixObject:
       "created": self.now,
       "x_mitre_version": "0.1",
       "external_references": [],
-      "x_mitre_deprecated": "false",
-      "revoked": "false",
+      "x_mitre_deprecated": False,
+      "revoked": False,
       "description": "",
       "modified": self.now,
-      "relationship_type": "subtechnique-of",
+      "relationship_type": "uses",
       "source_ref": source_ref,
       "target_ref": target_ref,
       "x_mitre_attack_spec_version": "2.1.0",
@@ -122,8 +133,8 @@ class StixObject:
           "url": "https://sparta.aerospace.org/"
         }
       ],
-      "x_mitre_deprecated": "false",
-      "revoked": "false",
+      "x_mitre_deprecated": False,
+      "revoked": False,
       "description": "The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (TTP).",
       "modified": self.now,
       "created_by_ref": self.created_by_ref,
@@ -159,15 +170,15 @@ class StixObject:
       ]
     }
     for _, item in enumerate(sparta_json):
-      print(item)
+      # print(item)
       if item["type"] == "tactic":
         tactic_obj, tactic_id = self.create_tactic(item)
         flow["objects"].append(tactic_obj)
         for _, subitem in enumerate(item["techniques"]):
           technique_obj = self.create_technique(subitem)
           flow["objects"].append(technique_obj)
-          relation_obj = self.create_relationship_asset(tactic_id, technique_obj["id"])
-          flow["objects"].append(relation_obj)
+          # relation_obj = self.create_relationship_asset(technique_obj["id"], tactic_id)
+          # flow["objects"].append(relation_obj)
     flow["objects"].append(self.create_tactic_refs())
     with open("../src/attack_flow_builder/data/sparta-attack.json", "w") as f:
       json.dump(flow, f, indent=2)
@@ -199,7 +210,7 @@ sparta_data = [
         "external_id": "RD-0001",
         "name": "Acquire Infrastructure",
         "description": "Threat actors may buy, lease, or rent infrastructure that can be used for future campaigns or to perpetuate other techniques. A wide variety of infrastructure exists for threat actors to connect to and communicate with target spacecraft.",
-        "x_mitre_tactic_type": "Acquire Infrastructure"
+        "x_mitre_tactic_type": "Resource Development"
       },
     ]
   },

@@ -65,7 +65,6 @@ async function updateApplicationAttackEnums(path, ...urls) {
         tactics.push([
             tact.id, `[${matrix}] ${tact.id} ${tact.name}`
         ]);
-        console.log(tact)
         for(const tech of tact.techniques) {
             relationships.push(["tactic", tact.id, "technique", tech.id]);
         }

@@ -60,7 +60,10 @@ const TACTIC_LOOKUP = {
     "TA0106": "impair-process-control",
     "TA0105": "impact",
     // SPARTA:
-    "REC-0001": "reconnaissance",
+    "ST0001": "reconnaissance",
+    "ST0002": "resource-development",
+    "ST0003": "initial-access",
+    "ST0004": "execution",
 }
 
 /**
