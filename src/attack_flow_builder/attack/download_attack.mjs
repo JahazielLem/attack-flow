@@ -30,7 +30,8 @@ const STIX_TO_ATTACK = {
     "tool": "software",
     "x-mitre-data-source": "data_source",
     "x-mitre-tactic": "tactic",
-    "attack-pattern": "technique"
+    "attack-pattern": "technique",
+    "attack-subpatter": "subtechnique"
 }
 
 /**

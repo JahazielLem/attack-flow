@@ -71,7 +71,7 @@ class StixObject:
       "name": technnique['name'],
       "x_mitre_detection": "",
       "kill_chain_phases": [],
-      "x_mitre_is_subtechnique": "false",
+      "x_mitre_is_subtechnique": "true",
       "x_mitre_tactic_type": [technnique["x_mitre_tactic_type"]],
       "x_mitre_attack_spec_version": "2.1.0",
       "x_mitre_modified_by_ref": self.created_by_ref,
@@ -105,11 +105,12 @@ class StixObject:
     return relation
 
   def create_tactic_refs(self):
+    attack_pattern_id = f"x-mitre-matrix--{uuid.uuid4()}"
     tactics_ref = {
       "tactic_refs": self.tactics_list,
       "object_marking_refs": [self.marking_definition],
       "type": "x-mitre-matrix",
-      "id": f"x-mitre-matrix--{uuid.uuid4()}",
+      "id": attack_pattern_id,
       "created": self.now,
       "x_mitre_version": "2.0",
       "external_references": [
@@ -130,6 +131,7 @@ class StixObject:
       "spec_version": "2.1",
       "x_mitre_domains": ["space-attack"]
     }
+    self.object_ref_list.append(self.create_object_ref(attack_pattern_id))
     return tactics_ref
 
   def sparta_to_attackflow(self, sparta_json):
@@ -182,7 +184,20 @@ sparta_data = [
       },
     ]
   },
-  
+  {
+    "type": "tactic",
+    "external_id": "ST0002",
+    "name": "Resource Development",
+    "description": "Threat actor is trying to establish resources they can use to support operations.",
+    "techniques": [
+      {
+        "external_id": "RD-0001",
+        "name": "Acquire Infrastructure",
+        "description": "Threat actors may buy, lease, or rent infrastructure that can be used for future campaigns or to perpetuate other techniques. A wide variety of infrastructure exists for threat actors to connect to and communicate with target spacecraft.",
+        "x_mitre_tactic_type": "Acquire Infrastructure"
+      },
+    ]
+  },
 ]
 
 
