@@ -1,34 +1,42 @@
 {
   "type": "bundle",
-  "id": "bundle--2b62ac04-e471-4f65-814e-14e873569ce1",
+  "id": "bundle--7785bfe1-7b4c-4de5-8235-801677ad1423",
   "spec_version": "2.1",
   "objects": [
     {
       "type": "x-mitre-collection",
-      "id": "x-mitre-collection--d8eb9b00-03c5-4444-abc5-86c9e597ab58",
+      "id": "x-mitre-collection--e6987f03-11c5-4a0b-baa5-9f3441d9d134",
       "spec_version": "2.1",
       "x_mitre_attack_spec_version": "2.1.0",
       "name": "SPARTA TTPs",
       "x_mitre_version": "11.1",
       "description": "The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (TTP). SPARTA is intended to provide unclassified information to space professionals about how spacecraft may be compromised via cyber and traditional counterspace means.",
-      "created_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "created": "2018-01-17T12:56:55.080Z",
       "modified": "2022-05-11T14:00:00.188Z",
       "object_marking_refs": [
-        "marking-definition--b7a9016f-874a-4f9f-9095-30ea45ac5d79"
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
       ],
       "x_mitre_contents": [
         {
-          "object_ref": "attack-pattern--b0505996-726f-4355-81f1-f42f587f5fd1",
-          "object_modified": "2025-08-30T21:49:55.536089+00:00Z"
+          "object_ref": "attack-pattern--6510974d-2a5c-44e5-b0bd-db56b75f04f6",
+          "object_modified": "2025-08-30T22:03:37.777018+00:00Z"
         },
         {
-          "object_ref": "attack-pattern--4f95da8f-8c94-4e31-91df-938e72aff6fc",
-          "object_modified": "2025-08-30T21:49:55.536089+00:00Z"
+          "object_ref": "attack-pattern--c6301fdb-e4e4-41bd-af41-d33d9b11fde4",
+          "object_modified": "2025-08-30T22:03:37.777018+00:00Z"
         },
         {
-          "object_ref": "x-mitre-matrix--5cb24487-f860-461e-9ada-cb17cdf3e421",
-          "object_modified": "2025-08-30T21:49:55.536089+00:00Z"
+          "object_ref": "attack-pattern--9fd5118a-1953-4038-879e-da64e6f3c23e",
+          "object_modified": "2025-08-30T22:03:37.777018+00:00Z"
+        },
+        {
+          "object_ref": "attack-pattern--64d74152-7917-4861-9f1a-a038f061af51",
+          "object_modified": "2025-08-30T22:03:37.777018+00:00Z"
+        },
+        {
+          "object_ref": "x-mitre-matrix--bfb8dce9-109b-4179-a23e-205a9348f9c7",
+          "object_modified": "2025-08-30T22:03:37.777018+00:00Z"
         }
       ]
     },
@@ -37,12 +45,12 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--b7a9016f-874a-4f9f-9095-30ea45ac5d79"
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
       ],
-      "id": "x-mitre-tactic--468532b2-0b63-47fe-84df-4b2b9fb0f015",
+      "id": "x-mitre-tactic--352b7298-778d-4654-8947-b2c7a4764cc0",
       "type": "x-mitre-tactic",
-      "created": "2025-08-30T21:49:55.536089+00:00Z",
-      "created_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "created": "2025-08-30T22:03:37.777018+00:00Z",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "external_references": [
         {
           "external_id": "ST0001",
@@ -50,12 +58,12 @@
           "source_name": "mitre-attack"
         }
       ],
-      "modified": "2025-08-30T21:49:55.536089+00:00Z",
+      "modified": "2025-08-30T22:03:37.777018+00:00Z",
       "name": "Reconnaissance",
       "description": "Threat actor is trying to gather information they can use to plan future operations.",
       "x_mitre_version": "1.0",
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "x_mitre_modified_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "x_mitre_shortname": "reconnaissance",
       "spec_version": "2.1"
     },
@@ -68,11 +76,11 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--b7a9016f-874a-4f9f-9095-30ea45ac5d79"
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
       ],
       "type": "attack-pattern",
-      "id": "attack-pattern--b0505996-726f-4355-81f1-f42f587f5fd1",
-      "created": "2025-08-30T21:49:55.536089+00:00Z",
+      "id": "attack-pattern--6510974d-2a5c-44e5-b0bd-db56b75f04f6",
+      "created": "2025-08-30T22:03:37.777018+00:00Z",
       "x_mitre_version": "1.0",
       "external_references": [
         {
@@ -84,8 +92,8 @@
       "x_mitre_deprecated": false,
       "revoked": false,
       "description": "Threat actors may gather information about the victim spacecraft's design that can be used for future campaigns or to help perpetuate other techniques. Information about the spacecraft can include software, firmware, encryption type, purpose, as well as various makes and models of subsystems.",
-      "modified": "2025-08-30T21:49:55.536089+00:00Z",
-      "created_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "modified": "2025-08-30T22:03:37.777018+00:00Z",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "name": "Gather Spacecraft Design Information",
       "x_mitre_detection": "",
       "kill_chain_phases": [
@@ -102,7 +110,101 @@
         "Reconnaissance"
       ],
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "x_mitre_modified_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
+      "x_mitre_data_sources": [],
+      "spec_version": "2.1"
+    },
+    {
+      "x_mitre_platforms": [
+        "Spacecraft",
+        "Ground Station"
+      ],
+      "x_mitre_domains": [
+        "space-attack"
+      ],
+      "object_marking_refs": [
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
+      ],
+      "type": "attack-subpattern",
+      "id": "attack-pattern--c6301fdb-e4e4-41bd-af41-d33d9b11fde4",
+      "created": "2025-08-30T22:03:37.777018+00:00Z",
+      "x_mitre_version": "1.0",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0001.01",
+          "url": "https://sparta.aerospace.org/technique/REC-0001.01"
+        }
+      ],
+      "x_mitre_deprecated": false,
+      "revoked": false,
+      "description": "Threat actors may gather information about the victim spacecraft's internal software that can be used for future campaigns or to help perpetuate other techniques. Information (e.g. source code, binaries, etc.) about commercial, open-source, or custom developed software may include a variety of details such as types, versions, and memory maps. Leveraging this information threat actors may target vendors of operating systems, flight software, or open-source communities to embed backdoors or for performing reverse engineering research to support offensive cyber operations.",
+      "modified": "2025-08-30T22:03:37.777018+00:00Z",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
+      "name": "Software Design",
+      "x_mitre_detection": "",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "reconnaissance"
+        }
+      ],
+      "x_mitre_tactics": [
+        "Reconnaissance"
+      ],
+      "x_mitre_is_subtechnique": true,
+      "x_mitre_tactic_type": [
+        "Reconnaissance"
+      ],
+      "x_mitre_attack_spec_version": "2.1.0",
+      "x_mitre_modified_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
+      "x_mitre_data_sources": [],
+      "spec_version": "2.1"
+    },
+    {
+      "x_mitre_platforms": [
+        "Spacecraft",
+        "Ground Station"
+      ],
+      "x_mitre_domains": [
+        "space-attack"
+      ],
+      "object_marking_refs": [
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
+      ],
+      "type": "attack-subpattern",
+      "id": "attack-pattern--9fd5118a-1953-4038-879e-da64e6f3c23e",
+      "created": "2025-08-30T22:03:37.777018+00:00Z",
+      "x_mitre_version": "1.0",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "REC-0001.02",
+          "url": "https://sparta.aerospace.org/technique/REC-0001.02"
+        }
+      ],
+      "x_mitre_deprecated": false,
+      "revoked": false,
+      "description": "Threat actors may gather information about the victim spacecraft's firmware that can be used for future campaigns or to help perpetuate other techniques. Information about the firmware may include a variety of details such as type and versions on specific devices, which may be used to infer more information (ex. configuration, purpose, age/patch level, etc.). Leveraging this information threat actors may target firmware vendors to embed backdoors or for performing reverse engineering research to support offensive cyber operations.",
+      "modified": "2025-08-30T22:03:37.777018+00:00Z",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
+      "name": "Firmware",
+      "x_mitre_detection": "",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "reconnaissance"
+        }
+      ],
+      "x_mitre_tactics": [
+        "Reconnaissance"
+      ],
+      "x_mitre_is_subtechnique": true,
+      "x_mitre_tactic_type": [
+        "Reconnaissance"
+      ],
+      "x_mitre_attack_spec_version": "2.1.0",
+      "x_mitre_modified_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "x_mitre_data_sources": [],
       "spec_version": "2.1"
     },
@@ -111,12 +213,12 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--b7a9016f-874a-4f9f-9095-30ea45ac5d79"
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
       ],
-      "id": "x-mitre-tactic--6e9289b5-54e6-414b-b8cd-b8fb59b4a116",
+      "id": "x-mitre-tactic--f64eb869-0cc7-4a4e-9fb3-a3185b8b5dc0",
       "type": "x-mitre-tactic",
-      "created": "2025-08-30T21:49:55.536089+00:00Z",
-      "created_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "created": "2025-08-30T22:03:37.777018+00:00Z",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "external_references": [
         {
           "external_id": "ST0002",
@@ -124,12 +226,12 @@
           "source_name": "mitre-attack"
         }
       ],
-      "modified": "2025-08-30T21:49:55.536089+00:00Z",
+      "modified": "2025-08-30T22:03:37.777018+00:00Z",
       "name": "Resource Development",
       "description": "Threat actor is trying to establish resources they can use to support operations.",
       "x_mitre_version": "1.0",
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "x_mitre_modified_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "x_mitre_shortname": "resource-development",
       "spec_version": "2.1"
     },
@@ -142,11 +244,11 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--b7a9016f-874a-4f9f-9095-30ea45ac5d79"
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
       ],
       "type": "attack-pattern",
-      "id": "attack-pattern--4f95da8f-8c94-4e31-91df-938e72aff6fc",
-      "created": "2025-08-30T21:49:55.536089+00:00Z",
+      "id": "attack-pattern--64d74152-7917-4861-9f1a-a038f061af51",
+      "created": "2025-08-30T22:03:37.777018+00:00Z",
       "x_mitre_version": "1.0",
       "external_references": [
         {
@@ -158,8 +260,8 @@
       "x_mitre_deprecated": false,
       "revoked": false,
       "description": "Threat actors may buy, lease, or rent infrastructure that can be used for future campaigns or to perpetuate other techniques. A wide variety of infrastructure exists for threat actors to connect to and communicate with target spacecraft.",
-      "modified": "2025-08-30T21:49:55.536089+00:00Z",
-      "created_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "modified": "2025-08-30T22:03:37.777018+00:00Z",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "name": "Acquire Infrastructure",
       "x_mitre_detection": "",
       "kill_chain_phases": [
@@ -176,21 +278,21 @@
         "Resource Development"
       ],
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "x_mitre_modified_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "x_mitre_data_sources": [],
       "spec_version": "2.1"
     },
     {
       "tactic_refs": [
-        "x-mitre-tactic--468532b2-0b63-47fe-84df-4b2b9fb0f015",
-        "x-mitre-tactic--6e9289b5-54e6-414b-b8cd-b8fb59b4a116"
+        "x-mitre-tactic--352b7298-778d-4654-8947-b2c7a4764cc0",
+        "x-mitre-tactic--f64eb869-0cc7-4a4e-9fb3-a3185b8b5dc0"
       ],
       "object_marking_refs": [
-        "marking-definition--b7a9016f-874a-4f9f-9095-30ea45ac5d79"
+        "marking-definition--4f0891dd-8fe1-457b-aef9-8fc499ec8b86"
       ],
       "type": "x-mitre-matrix",
-      "id": "x-mitre-matrix--5cb24487-f860-461e-9ada-cb17cdf3e421",
-      "created": "2025-08-30T21:49:55.536089+00:00Z",
+      "id": "x-mitre-matrix--bfb8dce9-109b-4179-a23e-205a9348f9c7",
+      "created": "2025-08-30T22:03:37.777018+00:00Z",
       "x_mitre_version": "2.0",
       "external_references": [
         {
@@ -202,11 +304,11 @@
       "x_mitre_deprecated": false,
       "revoked": false,
       "description": "The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (TTP).",
-      "modified": "2025-08-30T21:49:55.536089+00:00Z",
-      "created_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "modified": "2025-08-30T22:03:37.777018+00:00Z",
+      "created_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "name": "SPARTA TTPS",
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--b49aeee0-7a42-483f-8001-cf14a97805ac",
+      "x_mitre_modified_by_ref": "identity--f458da11-7945-4de5-af76-2a8d67729f93",
       "spec_version": "2.1",
       "x_mitre_domains": [
         "space-attack"
