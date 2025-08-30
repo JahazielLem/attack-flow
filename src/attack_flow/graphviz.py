@@ -186,6 +186,8 @@ def _get_action_label(action):
         heading = f"Action: {tid}"
     else:
         heading = "Action"
+    if stid := action.get("subtechnique_id", None):
+        heading = f"Action: {tid}.{stid}"
     description = "<br/>".join(
         textwrap.wrap(label_escape(action.get("description", "")), width=40)
     )
@@ -213,6 +215,8 @@ def _get_attack_tree_action_label(action):
         heading = f"Action: {tid}"
     else:
         heading = "Action"
+    if stid := action.get("subtechnique_id", None):
+        heading = f"Action: {tid}.{stid}"
     description = "<br/>".join(
         textwrap.wrap(label_escape(action.get("description", "")), width=40)
     )
@@ -307,6 +311,8 @@ def _get_operator_label(action, operator_type):
         heading = f"{operator_type} {tid}"
     else:
         heading = f"{operator_type}"
+    if stid := action.get("subtechnique_id", None):
+        heading = f"{operator_type} {tid}.{stid}"
     description = "<br/>".join(
         textwrap.wrap(label_escape(action.get("description", "")), width=40)
     )

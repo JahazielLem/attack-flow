@@ -218,6 +218,21 @@
                         }
                     ]
                 },
+                "subtechnique_id": {
+                    "description": "A subtechnique identifier or shortname that may reference an authoritative collection of techniques, e.g. ATT&CK.",
+                    "type": "string"
+                },
+                "subtechnique_ref": {
+                    "description": "A reference to the subtechnique's STIX representation.",
+                    "allOf": [
+                        {
+                            "$ref": "http://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas/stix2.1/schemas/common/identifier.json"
+                        },
+                        {
+                            "pattern": "^attack-pattern--"
+                        }
+                    ]
+                },
                 "description": {
                     "description": "A description of the adversary behavior, e.g. what they did, how they did it, and why. This field may contain prose as well as technical information, but consider using ``command_ref`` for providing technical details about technique execution.",
                     "type": "string"

@@ -91,6 +91,8 @@ def convert_attack_flow(bundle):
                 name = f"{tid} {o.name}"
             else:
                 name = o.name
+            if stid := o.get("subtechnique_id", None):
+                name = f"{tid}.{stid} {o.name}"
             confidence = confidence_num_to_label(o.get("confidence", 95))
             label_lines = [
                 "<b>Action</b>",
@@ -182,6 +184,8 @@ def convert_attack_tree(bundle):
                 name = f"{tid} {o.name}"
             else:
                 name = o.name
+            if stid := o.get("subtechnique_id", None):
+                name = f"{tid}.{stid} {o.name}"
             if o.id in new_operator_ids:
                 operator_type = [
                     item["type"] for item in id_to_remove if item["next_id"] == o.id

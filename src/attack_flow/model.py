@@ -65,6 +65,8 @@ class AttackAsset:
         ("technique_id", StringProperty()),
         ("name", StringProperty(required=True)),
         ("technique_ref", ReferenceProperty(valid_types="attack-pattern")),
+        ("subtechnique_id", StringProperty()),
+        ("subtechnique_ref", ReferenceProperty(valid_types="attack-pattern")),
         ("description", StringProperty()),
         (
             "asset_refs",
