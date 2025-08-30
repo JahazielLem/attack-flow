@@ -1,50 +1,50 @@
 {
   "type": "bundle",
-  "id": "bundle--afe54b9c-afd5-4fe8-aff0-009966b32dfd",
+  "id": "bundle--95fc21f1-755e-4f57-9a35-d94cdccf0329",
   "spec_version": "2.1",
   "objects": [
     {
       "type": "x-mitre-collection",
-      "id": "x-mitre-collection--5c5b9458-96f9-4650-b887-6ae7e585de34",
+      "id": "x-mitre-collection--f6953bdd-2aa4-44cd-b539-47ff04d65899",
       "spec_version": "2.1",
       "x_mitre_attack_spec_version": "2.1.0",
       "name": "SPARTA TTPs",
       "x_mitre_version": "11.1",
       "description": "The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (TTP). SPARTA is intended to provide unclassified information to space professionals about how spacecraft may be compromised via cyber and traditional counterspace means.",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "created": "2018-01-17T12:56:55.080Z",
       "modified": "2022-05-11T14:00:00.188Z",
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
       "x_mitre_contents": [
         {
-          "object_ref": "x-mitre-tactic--b636ae51-7d6f-4ae9-a2aa-4cdc0c4101a5",
-          "object_modified": "2025-08-30T20:35:40.178776+00:00Z"
+          "object_ref": "x-mitre-tactic--521c97c5-eb76-4d19-9653-b61be43eab45",
+          "object_modified": "2025-08-30T20:47:29.853296+00:00Z"
         },
         {
-          "object_ref": "attack-pattern--f19d6f2a-a117-4395-b3fa-e33b2e75de16",
-          "object_modified": "2025-08-30T20:35:40.178776+00:00Z"
+          "object_ref": "attack-pattern--f576047d-007c-4cf1-8b2d-6da363351004",
+          "object_modified": "2025-08-30T20:47:29.853296+00:00Z"
         },
         {
-          "object_ref": "relationship--75809245-66fe-4420-ad76-5ddb4b0f5b3e",
-          "object_modified": "2025-08-30T20:35:40.178776+00:00Z"
+          "object_ref": "relationship--fe0ed025-9bd9-4d42-806a-732238587132",
+          "object_modified": "2025-08-30T20:47:29.853296+00:00Z"
         },
         {
-          "object_ref": "x-mitre-tactic--2601ce54-e974-4525-81ba-8d5b4f2194ab",
-          "object_modified": "2025-08-30T20:35:40.178776+00:00Z"
+          "object_ref": "x-mitre-tactic--4f25caf4-dcef-4423-bed8-aff432767280",
+          "object_modified": "2025-08-30T20:47:29.853296+00:00Z"
         },
         {
-          "object_ref": "attack-pattern--b29e3611-1d1c-4356-a034-f02203fd6a31",
-          "object_modified": "2025-08-30T20:35:40.178776+00:00Z"
+          "object_ref": "attack-pattern--4b0f2ab0-a07c-41f7-9aa7-68efeadfc7de",
+          "object_modified": "2025-08-30T20:47:29.853296+00:00Z"
         },
         {
-          "object_ref": "relationship--d133e778-3e20-4907-b60c-aeac60ae0471",
-          "object_modified": "2025-08-30T20:35:40.178776+00:00Z"
+          "object_ref": "relationship--598221f1-c423-480d-bb11-369b7a728ccc",
+          "object_modified": "2025-08-30T20:47:29.853296+00:00Z"
         },
         {
-          "object_ref": "x-mitre-matrix--2d2cd733-868e-43f1-80bf-adf91faf2c97",
-          "object_modified": "2025-08-30T20:35:40.178776+00:00Z"
+          "object_ref": "x-mitre-matrix--3b53fd13-a820-4049-b2c0-5c90b8b779ab",
+          "object_modified": "2025-08-30T20:47:29.853296+00:00Z"
         }
       ]
     },
@@ -53,12 +53,12 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
-      "id": "x-mitre-tactic--b636ae51-7d6f-4ae9-a2aa-4cdc0c4101a5",
+      "id": "x-mitre-tactic--521c97c5-eb76-4d19-9653-b61be43eab45",
       "type": "x-mitre-tactic",
-      "created": "2025-08-30T20:35:40.178776+00:00Z",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "created": "2025-08-30T20:47:29.853296+00:00Z",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "external_references": [
         {
           "external_id": "ST0001",
@@ -66,13 +66,13 @@
           "source_name": "mitre-attack"
         }
       ],
-      "modified": "2025-08-30T20:35:40.178776+00:00Z",
+      "modified": "2025-08-30T20:47:29.853296+00:00Z",
       "name": "Reconnaissance",
       "description": "Threat actor is trying to gather information they can use to plan future operations.",
       "x_mitre_version": "1.0",
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
-      "x_mitre_shortname": "remote-service-effects",
+      "x_mitre_modified_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
+      "x_mitre_shortname": "reconnaissance",
       "spec_version": "2.1"
     },
     {
@@ -84,11 +84,11 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
       "type": "attack-pattern",
-      "id": "attack-pattern--f19d6f2a-a117-4395-b3fa-e33b2e75de16",
-      "created": "2025-08-30T20:35:40.178776+00:00Z",
+      "id": "attack-pattern--f576047d-007c-4cf1-8b2d-6da363351004",
+      "created": "2025-08-30T20:47:29.853296+00:00Z",
       "x_mitre_version": "1.0",
       "external_references": [
         {
@@ -100,39 +100,44 @@
       "x_mitre_deprecated": "false",
       "revoked": "false",
       "description": "Threat actors may gather information about the victim spacecraft's design that can be used for future campaigns or to help perpetuate other techniques. Information about the spacecraft can include software, firmware, encryption type, purpose, as well as various makes and models of subsystems.",
-      "modified": "2025-08-30T20:35:40.178776+00:00Z",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "modified": "2025-08-30T20:47:29.853296+00:00Z",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "name": "Gather Spacecraft Design Information",
       "x_mitre_detection": "",
-      "kill_chain_phases": [],
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "reconnaissance"
+        }
+      ],
       "x_mitre_is_subtechnique": "true",
       "x_mitre_tactic_type": [
         "Reconnaissance"
       ],
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "x_mitre_modified_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "x_mitre_data_sources": [],
       "spec_version": "2.1"
     },
     {
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
       "type": "relationship",
-      "id": "relationship--75809245-66fe-4420-ad76-5ddb4b0f5b3e",
-      "created": "2025-08-30T20:35:40.178776+00:00Z",
+      "id": "relationship--fe0ed025-9bd9-4d42-806a-732238587132",
+      "created": "2025-08-30T20:47:29.853296+00:00Z",
       "x_mitre_version": "0.1",
       "external_references": [],
       "x_mitre_deprecated": "false",
       "revoked": "false",
       "description": "",
-      "modified": "2025-08-30T20:35:40.178776+00:00Z",
-      "relationship_type": "use",
-      "source_ref": "x-mitre-tactic--b636ae51-7d6f-4ae9-a2aa-4cdc0c4101a5",
-      "target_ref": "attack-pattern--f19d6f2a-a117-4395-b3fa-e33b2e75de16",
+      "modified": "2025-08-30T20:47:29.853296+00:00Z",
+      "relationship_type": "uses",
+      "source_ref": "x-mitre-tactic--521c97c5-eb76-4d19-9653-b61be43eab45",
+      "target_ref": "attack-pattern--f576047d-007c-4cf1-8b2d-6da363351004",
       "x_mitre_attack_spec_version": "2.1.0",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
-      "x_mitre_modified_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
+      "x_mitre_modified_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "spec_version": "2.1",
       "x_mitre_domains": [
         "space-attack"
@@ -143,12 +148,12 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
-      "id": "x-mitre-tactic--2601ce54-e974-4525-81ba-8d5b4f2194ab",
+      "id": "x-mitre-tactic--4f25caf4-dcef-4423-bed8-aff432767280",
       "type": "x-mitre-tactic",
-      "created": "2025-08-30T20:35:40.178776+00:00Z",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "created": "2025-08-30T20:47:29.853296+00:00Z",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "external_references": [
         {
           "external_id": "ST0002",
@@ -156,13 +161,13 @@
           "source_name": "mitre-attack"
         }
       ],
-      "modified": "2025-08-30T20:35:40.178776+00:00Z",
+      "modified": "2025-08-30T20:47:29.853296+00:00Z",
       "name": "Resource Development",
       "description": "Threat actor is trying to establish resources they can use to support operations.",
       "x_mitre_version": "1.0",
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
-      "x_mitre_shortname": "remote-service-effects",
+      "x_mitre_modified_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
+      "x_mitre_shortname": "resource-development",
       "spec_version": "2.1"
     },
     {
@@ -174,11 +179,11 @@
         "space-attack"
       ],
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
       "type": "attack-pattern",
-      "id": "attack-pattern--b29e3611-1d1c-4356-a034-f02203fd6a31",
-      "created": "2025-08-30T20:35:40.178776+00:00Z",
+      "id": "attack-pattern--4b0f2ab0-a07c-41f7-9aa7-68efeadfc7de",
+      "created": "2025-08-30T20:47:29.853296+00:00Z",
       "x_mitre_version": "1.0",
       "external_references": [
         {
@@ -190,39 +195,44 @@
       "x_mitre_deprecated": "false",
       "revoked": "false",
       "description": "Threat actors may buy, lease, or rent infrastructure that can be used for future campaigns or to perpetuate other techniques. A wide variety of infrastructure exists for threat actors to connect to and communicate with target spacecraft.",
-      "modified": "2025-08-30T20:35:40.178776+00:00Z",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "modified": "2025-08-30T20:47:29.853296+00:00Z",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "name": "Acquire Infrastructure",
       "x_mitre_detection": "",
-      "kill_chain_phases": [],
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "acquire-infrastructure"
+        }
+      ],
       "x_mitre_is_subtechnique": "true",
       "x_mitre_tactic_type": [
         "Acquire Infrastructure"
       ],
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "x_mitre_modified_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "x_mitre_data_sources": [],
       "spec_version": "2.1"
     },
     {
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
       "type": "relationship",
-      "id": "relationship--d133e778-3e20-4907-b60c-aeac60ae0471",
-      "created": "2025-08-30T20:35:40.178776+00:00Z",
+      "id": "relationship--598221f1-c423-480d-bb11-369b7a728ccc",
+      "created": "2025-08-30T20:47:29.853296+00:00Z",
       "x_mitre_version": "0.1",
       "external_references": [],
       "x_mitre_deprecated": "false",
       "revoked": "false",
       "description": "",
-      "modified": "2025-08-30T20:35:40.178776+00:00Z",
-      "relationship_type": "use",
-      "source_ref": "x-mitre-tactic--2601ce54-e974-4525-81ba-8d5b4f2194ab",
-      "target_ref": "attack-pattern--b29e3611-1d1c-4356-a034-f02203fd6a31",
+      "modified": "2025-08-30T20:47:29.853296+00:00Z",
+      "relationship_type": "uses",
+      "source_ref": "x-mitre-tactic--4f25caf4-dcef-4423-bed8-aff432767280",
+      "target_ref": "attack-pattern--4b0f2ab0-a07c-41f7-9aa7-68efeadfc7de",
       "x_mitre_attack_spec_version": "2.1.0",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
-      "x_mitre_modified_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
+      "x_mitre_modified_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "spec_version": "2.1",
       "x_mitre_domains": [
         "space-attack"
@@ -230,15 +240,15 @@
     },
     {
       "tactic_refs": [
-        "x-mitre-tactic--b636ae51-7d6f-4ae9-a2aa-4cdc0c4101a5",
-        "x-mitre-tactic--2601ce54-e974-4525-81ba-8d5b4f2194ab"
+        "x-mitre-tactic--521c97c5-eb76-4d19-9653-b61be43eab45",
+        "x-mitre-tactic--4f25caf4-dcef-4423-bed8-aff432767280"
       ],
       "object_marking_refs": [
-        "marking-definition--59451970-9241-4ee1-8bfa-3cb6cda4b5b6"
+        "marking-definition--665e7a9a-e8f5-401c-b8bf-9165486107bc"
       ],
       "type": "x-mitre-matrix",
-      "id": "x-mitre-matrix--2d2cd733-868e-43f1-80bf-adf91faf2c97",
-      "created": "2025-08-30T20:35:40.178776+00:00Z",
+      "id": "x-mitre-matrix--3b53fd13-a820-4049-b2c0-5c90b8b779ab",
+      "created": "2025-08-30T20:47:29.853296+00:00Z",
       "x_mitre_version": "2.0",
       "external_references": [
         {
@@ -250,11 +260,11 @@
       "x_mitre_deprecated": "false",
       "revoked": "false",
       "description": "The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (TTP).",
-      "modified": "2025-08-30T20:35:40.178776+00:00Z",
-      "created_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "modified": "2025-08-30T20:47:29.853296+00:00Z",
+      "created_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "name": "SPARTA TTPS",
       "x_mitre_attack_spec_version": "2.1.0",
-      "x_mitre_modified_by_ref": "identity--c03fc592-3853-48f5-8275-8ce7728da4e8",
+      "x_mitre_modified_by_ref": "identity--b02fca24-5909-4edc-9e72-3f646ceb0b7e",
       "spec_version": "2.1",
       "x_mitre_domains": [
         "space-attack"
