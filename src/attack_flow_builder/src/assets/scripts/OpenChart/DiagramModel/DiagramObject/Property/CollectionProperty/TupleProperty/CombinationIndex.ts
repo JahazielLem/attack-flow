@@ -65,6 +65,7 @@ export class CombinationIndex {
      *  The valid set of options for each registered property.
      */
     public getValidOptions(values?: Map<string, string>): ReadonlyMap<string, ReadonlySet<string>> {
+        console.log(values)
         // If no values...
         if (!values || values.size === 0) {
             // ...return all registered values
@@ -72,25 +73,32 @@ export class CombinationIndex {
         }
         // Otherwise...
         const idxToId = [...this.values.keys()];
+        console.log(idxToId)
         // Construct results matrix
         const matrix = new Map<string, Set<string>[]>(
             [...this.props.keys()].map(
                 f => [f, new Array(values.size).fill(new Set())]
             )
         );
+        console.log(matrix)
         let i = 0;
         for (const [prop, value] of new Map(values)) {
             // Add complete set of values to results matrix
             matrix.get(prop)![i] = this.props.get(prop) ?? new Set();
+            console.log(this.props.get(prop))
             // Look up its relationships
             const valueId = `${prop}.${value}`;
+            console.log(valueId)
+            console.log(this.values.has(valueId))
             if (!this.values.has(valueId)) {
                 continue;
             }
+            console.log("Relationship")
             // Add relationships to results matrix
             const valueIdx = this.values.get(valueId)!;
             for (const rel of this.lookup[valueIdx]) {
                 const [prop, value] = idxToId[rel].split(/\./g);
+                console.log(prop, value)
                 matrix.get(prop)![i].add(value);
             }
             i++;
@@ -99,6 +107,8 @@ export class CombinationIndex {
         const results = new Map([...matrix].map(
             ([prop, sets]) => [prop, this.intersection(sets)]
         ));
+        console.log("Results")
+        console.log(results)
         // Return results
         return results;
     }

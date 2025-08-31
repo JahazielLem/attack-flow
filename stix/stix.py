@@ -2,7 +2,8 @@ import json
 import uuid
 import datetime
 from pprint import pprint
-
+import requests
+from bs4 import BeautifulSoup
 class StixObject:
   def __init__(self):
     self.now = datetime.datetime.now(datetime.UTC).isoformat() + "Z"
@@ -198,6 +199,54 @@ sparta_data = [
         "description": "Threat actors may gather information about the victim spacecraft's design that can be used for future campaigns or to help perpetuate other techniques. Information about the spacecraft can include software, firmware, encryption type, purpose, as well as various makes and models of subsystems.",
         "x_mitre_tactic_type": "Reconnaissance"
       },
+      {
+        "external_id": "REC-0002",
+        "name": "Gather Spacecraft Descriptors",
+        "description": "Threat actors may gather information about the victim spacecraft's descriptors that can be used for future campaigns or to help perpetuate other techniques. Information about the descriptors may include a variety of details such as identity attributes, organizational structures, and mission operational parameters.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      },
+      {
+        "external_id": "REC-0003",
+        "name": "Gather Spacecraft Communications Information",
+        "description": "Threat actors may obtain information on the victim spacecraft's communication channels in order to determine specific commands, protocols, and types. Information gathered can include commanding patterns, antenna shape and location, beacon frequency and polarization, and various transponder information.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      },
+      {
+        "external_id": "REC-0004",
+        "name": "Gather Launch Information",
+        "description": "Threat actors may gather the launch date and time, location of the launch (country & specific site), organizations involved, launch vehicle, etc. This information can provide insight into protocols, regulations, and provide further targets for the threat actor, including specific vulnerabilities with the launch vehicle itself.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      },
+      {
+        "external_id": "REC-0005",
+        "name": "Eavesdropping",
+        "description": "Threat actors may seek to capture network communications throughout the ground station and radio frequency (RF) communication used for uplink and downlink communications. RF communication frequencies vary between 30MHz and 60 GHz. Threat actors may capture RF communications using specialized hardware, such as software defined radio (SDR), handheld radio, or a computer with radio demodulator turned to the communication frequency. Network communications may be captured using packet capture software while the threat actor is on the target network.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      },
+      {
+        "external_id": "REC-0006",
+        "name": "Gather FSW Development Information",
+        "description": "Threat actors may obtain information regarding the flight software (FSW) development environment for the victim spacecraft. This information may include the development environment, source code, compiled binaries, testing tools, and fault management.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      },
+      {
+        "external_id": "REC-0007",
+        "name": "Monitor for Safe-Mode Indicators",
+        "description": "Threat actors may gather information regarding safe-mode indicators on the victim spacecraft. Safe-mode is when all non-essential systems are shut down and only essential functions within the spacecraft are active. During this mode, several commands are available to be processed that are not normally processed. Further, many protections may be disabled at this time.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      },
+      {
+        "external_id": "REC-0008",
+        "name": "Gather Supply Chain Information",
+        "description": "Threat actors may gather information about a mission's supply chain or product delivery mechanisms that can be used for future campaigns or to help perpetuate other techniques.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      },
+      {
+        "external_id": "REC-0009",
+        "name": "Gather Mission Information",
+        "description": "Threat actors may initially seek to gain an understanding of a target mission by gathering information commonly captured in a Concept of Operations (or similar) document and related artifacts. Information of interest includes, but is not limited to: - the needs, goals, and objectives of the system - system overview and key elements/instruments - modes of operations (including operational constraints) - proposed capabilities and the underlying science/technology used to provide capabilities (i.e., scientific papers, research studies, etc.) - physical and support environments.",
+        "x_mitre_tactic_type": "Reconnaissance"
+      }
     ]
   },
   {
@@ -212,10 +261,47 @@ sparta_data = [
         "description": "Threat actors may buy, lease, or rent infrastructure that can be used for future campaigns or to perpetuate other techniques. A wide variety of infrastructure exists for threat actors to connect to and communicate with target spacecraft.",
         "x_mitre_tactic_type": "Resource Development"
       },
+      {
+        "external_id": "RD-0002",
+        "name": "Compromise Infrastructure",
+        "description": "Threat actors may compromise third-party infrastructure that can be used for future campaigns or to perpetuate other techniques. Infrastructure solutions include physical devices such as antenna, amplifiers, and convertors, as well as software used by satellite communicators. Instead of buying or renting infrastructure, a threat actor may compromise infrastructure and use it during other phases of the campaign's lifecycle.",
+        "x_mitre_tactic_type": "Resource Development"
+      },
+      {
+        "external_id": "RD-0003",
+        "name": "Obtain Cyber Capabilities",
+        "description": "Threat actors may buy and/or steal cyber capabilities that can be used for future campaigns or to perpetuate other techniques. Rather than developing their own capabilities in-house, threat actors may purchase, download, or steal them. Activities may include the acquisition of malware, software, exploits, and information relating to vulnerabilities. Threat actors may obtain capabilities to support their operations throughout numerous phases of the campaign lifecycle.",
+        "x_mitre_tactic_type": "Resource Development"
+      },
+      {
+        "external_id": "RD-0004",
+        "name": "Stage Capabilities",
+        "description": "Threat actors may upload, install, or otherwise set up capabilities that can be used for future campaigns or to perpetuate other techniques. To support their operations, a threat actor may need to develop their own capabilities or obtain them in some way in order to stage them on infrastructure under their control. These capabilities may be staged on infrastructure that was previously purchased or rented by the threat actor or was otherwise compromised by them.",
+        "x_mitre_tactic_type": "Resource Development"
+      },
+      {
+        "external_id": "RD-0005",
+        "name": "Obtain Non-Cyber Capabilities",
+        "description": "Threat actors may obtain non-cyber capabilities, primarily physical counterspace weapons or systems. These counterspace capabilities vary significantly in the types of effects they create, the level of technological sophistication required, and the level of resources needed to develop and deploy them. These diverse capabilities also differ in how they are employed and how easy they are to detect and attribute and the permanence of the effects they have on their target.",
+        "x_mitre_tactic_type": "Resource Development"
+      },
     ]
   },
+  {
+    "type": "tactic",
+    "external_id": "ST0003",
+    "name": "Initial Access",
+    "description": "Threat actor is trying to get point of presence/command execution on the spacecraft",
+    "techniques": [
+      {
+        "external_id": "IA-0001",
+        "name": "Compromise Supply Chain",
+        "description": "Threat actors may manipulate or compromise products or product delivery mechanisms before the customer receives them in order to achieve data or system compromise.",
+        "x_mitre_tactic_type": "Initial Access"
+      }
+    ]
+  }
 ]
-
 
 if __name__ == "__main__":
   stix = StixObject()

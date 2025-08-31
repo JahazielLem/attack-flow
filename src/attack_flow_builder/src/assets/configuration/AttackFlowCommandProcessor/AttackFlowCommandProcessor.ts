@@ -24,6 +24,7 @@ export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
         }
         // Get name property
         const name = properties.get("name", StringProperty);
+        
         if (name === undefined) {
             return undefined;
         }
@@ -93,7 +94,8 @@ export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
         if (tactText === undefined) {
             return null;
         }
-        return tactText.split(/TA\d+/)[1].trim();
+        // This can be replaced later by a more generic way
+        return tactText.split(/(TA|ST)\d+/)[1].trim();
     }
 
     /**
@@ -120,7 +122,7 @@ export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
         if (techText === undefined) {
             return null;
         }
-        return techText.split(/T\d+(?:\.\d+)?/)[1].trim();
+        return techText.split(/(T|[A-Z]+-?)\d+(?:\.\d+)?/)[1].trim();
     }
 
     /**
