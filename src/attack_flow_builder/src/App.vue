@@ -315,7 +315,7 @@ ul {
   flex-shrink: 0;
   height: 31px;
   color: #9e9e9e;
-  background: #262626;
+  background: #2e008b;
 }
 
 #app-body {
@@ -346,7 +346,7 @@ ul {
   width: 100%;
   height: 100%;
   border-top: solid 1px #333333;
-  background: #262626;
+  background: #2e008b;
 }
 
 .readonly #block-diagram {

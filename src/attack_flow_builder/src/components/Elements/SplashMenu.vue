@@ -14,6 +14,11 @@
         v-if="organization"
         :src="organization"
       >
+       <img
+        class="organization"
+        v-if="organization"
+        :src="sparta"
+      >
     </div>
     <div class="menu-body">
       <div
@@ -156,6 +161,7 @@ export default defineComponent({
       applicationName: Configuration.application_name,
       applicationVersion: version,
       organization: Configuration.splash.organization,
+      sparta: Configuration.splash.sparta,
       newFile: Configuration.splash.new_file,
       openFile: Configuration.splash.open_file,
       importStix: Configuration.splash.import_stix,

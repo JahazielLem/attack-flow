@@ -41,7 +41,8 @@ const MITRE_SOURCES = new Set([
     "mitre-attack",
     "mitre-ics-attack",
     "mitre-mobile-attack",
-    "mitre-sparta-attack"
+    "mitre-sparta-attack",
+    "space-attack"
 ])
 
 /**

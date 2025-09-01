@@ -19,4 +19,5 @@ export type StixObservableObjectType
     | "url"
     | "user-account"
     | "windows-registry-key"
-    | "x509-certificate";
+    | "x509-certificate"
+    | "radio-frequency";

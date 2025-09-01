@@ -5,7 +5,7 @@ import AttackFlowCommandProcessor from "./AttackFlowCommandProcessor/AttackFlowC
 import { DarkTheme } from "./AttackFlowThemes/DarkTheme.ts";
 import { BlogTheme } from "./AttackFlowThemes/BlogTheme.ts";
 import { LightTheme } from "./AttackFlowThemes/LightTheme.ts";
-import { CtidIcon, CtidLogo } from "./Images";
+import { CtidIcon, CtidLogo, CtidSpartaLogo } from "./Images";
 import {
     AttackFlow,
     AttackFlowObjects,
@@ -42,6 +42,7 @@ const configuration: AppConfiguration = {
      */
     splash: {
         organization: CtidLogo,
+        sparta: CtidSpartaLogo,
         new_file: {
             title: "New Flow",
             description: "Create a blank flow."

@@ -1,7 +1,7 @@
 /**
  * The base URL for the ATT&CK repository.
  */
-const BASE_URL = "https://raw.githubusercontent.com/JahazielLem/attack-flow/refs/heads/main/src/attack_flow_builder/data";
+const BASE_URL = "https://raw.githubusercontent.com/JahazielLem/attack-flow/refs/heads/sparta_support/src/attack_flow_builder/data";
 
 /**
  * The STIX sources.

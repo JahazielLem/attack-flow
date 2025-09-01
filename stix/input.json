@@ -1,0 +1,572 @@
+[
+    {
+        "type": "tactic",
+        "external_id": "ST0001",
+        "name": "Reconnaissance",
+        "description": "Threat actor is trying to gather information they can use to plan future operations.",
+        "techniques": [
+            {
+                "external_id": "REC-0001",
+                "name": "Gather Spacecraft Design Information",
+                "description": "Threat actors may gather information about the victim spacecraft's design that can be used for future campaigns or to help perpetuate other techniques. Information about the spacecraft can include software, firmware, encryption type, purpose, as well as various makes and models of subsystems.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0002",
+                "name": "Gather Spacecraft Descriptors",
+                "description": "Threat actors may gather information about the victim spacecraft's descriptors that can be used for future campaigns or to help perpetuate other techniques. Information about the descriptors may include a variety of details such as identity attributes, organizational structures, and mission operational parameters.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0003",
+                "name": "Gather Spacecraft Communications Information",
+                "description": "Threat actors may obtain information on the victim spacecraft's communication channels in order to determine specific commands, protocols, and types. Information gathered can include commanding patterns, antenna shape and location, beacon frequency and polarization, and various transponder information.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0004",
+                "name": "Gather Launch Information",
+                "description": "Threat actors may gather the launch date and time, location of the launch (country & specific site), organizations involved, launch vehicle, etc. This information can provide insight into protocols, regulations, and provide further targets for the threat actor, including specific vulnerabilities with the launch vehicle itself.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0005",
+                "name": "Eavesdropping",
+                "description": "Threat actors may seek to capture network communications throughout the ground station and radio frequency (RF) communication used for uplink and downlink communications. RF communication frequencies vary between 30MHz and 60 GHz. Threat actors may capture RF communications using specialized hardware, such as software defined radio (SDR), handheld radio, or a computer with radio demodulator turned to the communication frequency. Network communications may be captured using packet capture software while the threat actor is on the target network.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0006",
+                "name": "Gather FSW Development Information",
+                "description": "Threat actors may obtain information regarding the flight software (FSW) development environment for the victim spacecraft. This information may include the development environment, source code, compiled binaries, testing tools, and fault management.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0007",
+                "name": "Monitor for Safe-Mode Indicators",
+                "description": "Threat actors may gather information regarding safe-mode indicators on the victim spacecraft. Safe-mode is when all non-essential systems are shut down and only essential functions within the spacecraft are active. During this mode, several commands are available to be processed that are not normally processed. Further, many protections may be disabled at this time.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0008",
+                "name": "Gather Supply Chain Information",
+                "description": "Threat actors may gather information about a mission's supply chain or product delivery mechanisms that can be used for future campaigns or to help perpetuate other techniques.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            },
+            {
+                "external_id": "REC-0009",
+                "name": "Gather Mission Information",
+                "description": "Threat actors may initially seek to gain an understanding of a target mission by gathering information commonly captured in a Concept of Operations (or similar) document and related artifacts. Information of interest includes, but is not limited to: - the needs, goals, and objectives of the system - system overview and key elements/instruments - modes of operations (including operational constraints) - proposed capabilities and the underlying science/technology used to provide capabilities (i.e., scientific papers, research studies, etc.) - physical and support environments.",
+                "x_mitre_tactic_type": "Reconnaissance"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0002",
+        "name": "Resource Development",
+        "description": "Threat actor is trying to establish resources they can use to support operations.",
+        "techniques": [
+            {
+                "external_id": "RD-0001",
+                "name": "Acquire Infrastructure",
+                "description": "Threat actors may buy, lease, or rent infrastructure that can be used for future campaigns or to perpetuate other techniques. A wide variety of infrastructure exists for threat actors to connect to and communicate with target spacecraft.",
+                "x_mitre_tactic_type": "Resource Development"
+            },
+            {
+                "external_id": "RD-0002",
+                "name": "Compromise Infrastructure",
+                "description": "Threat actors may compromise third-party infrastructure that can be used for future campaigns or to perpetuate other techniques. Infrastructure solutions include physical devices such as antenna, amplifiers, and convertors, as well as software used by satellite communicators. Instead of buying or renting infrastructure, a threat actor may compromise infrastructure and use it during other phases of the campaign's lifecycle.",
+                "x_mitre_tactic_type": "Resource Development"
+            },
+            {
+                "external_id": "RD-0003",
+                "name": "Obtain Cyber Capabilities",
+                "description": "Threat actors may buy and/or steal cyber capabilities that can be used for future campaigns or to perpetuate other techniques. Rather than developing their own capabilities in-house, threat actors may purchase, download, or steal them. Activities may include the acquisition of malware, software, exploits, and information relating to vulnerabilities. Threat actors may obtain capabilities to support their operations throughout numerous phases of the campaign lifecycle.",
+                "x_mitre_tactic_type": "Resource Development"
+            },
+            {
+                "external_id": "RD-0004",
+                "name": "Stage Capabilities",
+                "description": "Threat actors may upload, install, or otherwise set up capabilities that can be used for future campaigns or to perpetuate other techniques. To support their operations, a threat actor may need to develop their own capabilities or obtain them in some way in order to stage them on infrastructure under their control. These capabilities may be staged on infrastructure that was previously purchased or rented by the threat actor or was otherwise compromised by them.",
+                "x_mitre_tactic_type": "Resource Development"
+            },
+            {
+                "external_id": "RD-0005",
+                "name": "Obtain Non-Cyber Capabilities",
+                "description": "Threat actors may obtain non-cyber capabilities, primarily physical counterspace weapons or systems. These counterspace capabilities vary significantly in the types of effects they create, the level of technological sophistication required, and the level of resources needed to develop and deploy them. These diverse capabilities also differ in how they are employed and how easy they are to detect and attribute and the permanence of the effects they have on their target.",
+                "x_mitre_tactic_type": "Resource Development"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0003",
+        "name": "Initial Access",
+        "description": "Threat actor is trying to get point of presence/command execution on the spacecraft",
+        "techniques": [
+            {
+                "external_id": "IA-0001",
+                "name": "Compromise Supply Chain",
+                "description": "Threat actors may manipulate or compromise products or product delivery mechanisms before the customer receives them in order to achieve data or system compromise.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0002",
+                "name": "Compromise Software Defined Radio",
+                "description": "Threat actors may target software defined radios due to their software nature to establish C2 channels. Since SDRs are programmable, when combined with supply chain or development environment attacks, SDRs provide a pathway to setup covert C2 channels for a threat actor.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0003",
+                "name": "Crosslink via Compromised Neighbor",
+                "description": "Threat actors may compromise a victim spacecraft via the crosslink communications of a neighboring spacecraft that has been compromised. spacecraft in close proximity are able to send commands back and forth. Threat actors may be able to leverage this access to compromise other spacecraft once they have access to another that is nearby.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0004",
+                "name": "Secondary/Backup Communication Channel",
+                "description": "Threat actors may compromise alternative communication pathways which may not be as protected as the primary pathway. Depending on implementation the contingency communication pathways/solutions may lack the same level of security (i.e., physical security, encryption, authentication, etc.) which if forced to use could provide a threat actor an opportunity to launch attacks. Typically these would have to be coupled with other denial of service techniques on the primary pathway to force usage of secondary pathways.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0005",
+                "name": "Rendezvous & Proximity Operations",
+                "description": "Threat actors may perform a space rendezvous which is a set of orbital maneuvers during which a spacecraft arrives at the same orbit and approach to a very close distance (e.g. within visual contact or close proximity) to a target spacecraft.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0006",
+                "name": "Compromise Hosted Payload",
+                "description": "Threat actors may compromise the target spacecraft hosted payload to initially access and/or persist within the system. Hosted payloads can usually be accessed from the ground via a specific command set. The command pathways can leverage the same ground infrastructure or some host payloads have their own ground infrastructure which can provide an access vector as well. Threat actors may be able to leverage the ability to command hosted payloads to upload files or modify memory addresses in order to compromise the system. Depending on the implementation, hosted payloads may provide some sort of lateral movement potential.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0007",
+                "name": "Compromise Ground System",
+                "description": "Threat actors may initially compromise the ground system in order to access the target spacecraft. Once compromised, the threat actor can perform a multitude of initial access techniques, including replay, compromising FSW deployment, compromising encryption keys, and compromising authentication schemes. Threat actors may also perform further reconnaissance within the system to enumerate mission networks and gather information related to ground station logical topology, missions ran out of said ground station, birds that are in-band of targeted ground stations, and other mission system capabilities.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0008",
+                "name": "Rogue External Entity",
+                "description": "Threat actors may gain access to a victim spacecraft through the use of a rogue external entity. With this technique, the threat actor does not need access to a legitimate ground station or communication site.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0009",
+                "name": "Trusted Relationship",
+                "description": "Access through trusted third-party relationship exploits an existing connection that has been approved for interconnection. Leveraging third party / approved interconnections to pivot into the target systems is a common technique for threat actors as these interconnections typically lack stringent access control due to the trusted status.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0010",
+                "name": "Unauthorized Access During Safe-Mode",
+                "description": "Access through trusted third-party relationship exploits an existing connection that has been approved for interconnection. Leveraging third party / approved interconnections to pivot into the target systems is a common technique for threat actors as these interconnections typically lack stringent access control due to the trusted status.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0011",
+                "name": "Auxiliary Device Compromise",
+                "description": "Threat actors may exploit the auxiliary/peripheral devices that get plugged into spacecrafts. It is no longer atypical to see spacecrafts, especially CubeSats, with Universal Serial Bus (USB) ports or other ports where auxiliary/peripheral devices can be plugged in. Threat actors can execute malicious code on the spacecrafts by copying the malicious code to auxiliary/peripheral devices and taking advantage of logic on the spacecraft to execute code on these devices. This may occur through manual manipulation of the auxiliary/peripheral devices, modification of standard IT systems used to initially format/create the auxiliary/peripheral device, or modification to the auxiliary/peripheral devices' firmware itself.",
+                "x_mitre_tactic_type": "Initial Access"
+            },
+            {
+                "external_id": "IA-0012",
+                "name": "Assembly, Test, and Launch Operation Compromise",
+                "description": "Threat actors may target the spacecraft hardware and/or software while the spacecraft is at Assembly, Test, and Launch Operation (ATLO). ATLO is often the first time pieces of the spacecraft are fully integrated and exchanging data across interfaces. Malware could propagate from infected devices across the integrated spacecraft. For example, test equipment (i.e., transient cyber asset) is often brought in for testing elements of the spacecraft. Additionally, varying levels of physical security is in place which may be a reduction in physical security typically seen during development. The ATLO environment should be considered a viable attack vector and the appropriate/equivalent security controls from the primary development environment should be implemented during ATLO as well.",
+                "x_mitre_tactic_type": "Initial Access"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0004",
+        "name": "Execution",
+        "description": "Threat actor is trying to execute malicious code on the spacecraft.",
+        "techniques": [
+            {
+                "external_id": "EX-0001",
+                "name": "Replay",
+                "description": "Replay attacks involve threat actors recording previously recorded data streams and then resending them at a later time. This attack can be used to fingerprint systems, gain elevated privileges, or even cause a denial of service.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0002",
+                "name": "Position, Navigation, and Timing (PNT) Geofencing",
+                "description": "Threat actors may leverage the fact that spacecraft orbit through space unlike typical enterprise systems which are stationary. Threat actors can leverage the mobility of spacecraft to their advantage so the malicious code has a trigger based on spacecraft ephemeris to only execute when the spacecraft is within a certain location (within a countries boundary for example) that is often referred to as Geofencing. By using a Geofence an adversary can ensure that malware is only executed when it is needed. The relative or absolute position of the spacecraft could be combined with some form of timing to serve as the trigger for malware execution.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0003",
+                "name": "Modify Authentication Process",
+                "description": "Threat actors may modify the internal authentication process of the victim spacecraft to facilitate initial access, recurring execution, or prevent authorized entities from accessing the spacecraft. This can be done through the modification of the software binaries or memory manipulation techniques.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0004",
+                "name": "Compromise Boot Memory",
+                "description": "Threat actors may manipulate boot memory in order to execute malicious code, bypass internal processes, or DoS the system. This technique can be used to perform other tactics such as Defense Evasion.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0005",
+                "name": "Exploit Hardware/Firmware Corruption",
+                "description": "Threat actors can target the underlying hardware and/or firmware using various TTPs that will be dependent on the specific hardware/firmware. Typically, software tools (e.g., antivirus, antimalware, intrusion detection) can protect a system from threat actors attempting to take advantage of those vulnerabilities to inject  malicious code. However, there exist security gaps that cannot be closed by the above-mentioned software tools since they are not stationed on software applications, drivers or the operating system but rather on the hardware itself. Hardware components, like memory modules and caches, can be exploited under specific circumstances thus enabling backdoor access to potential threat actors. In addition to hardware, the firmware itself which often is thought to be software in its own right also provides an attack surface for threat actors. Firmware is programming that's written to a hardware device's non-volatile memory where the content is saved when a hardware device is turned off or loses its external power source. Firmware is written directly onto a piece of hardware during manufacturing and it is used to run on the device and can be thought of as the software that enables hardware to run. In the spacecraft context, firmware and field programmable gate array (FPGA)/application-specific integrated circuit (ASIC) logic/code is considered equivalent to firmware.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0006",
+                "name": "Disable/Bypass Encryption",
+                "description": "Threat actors may perform specific techniques in order to bypass or disable the encryption mechanism onboard the victim spacecraft. By bypassing or disabling this particular mechanism, further tactics can be performed, such as Exfiltration, that may have not been possible with the internal encryption process in place.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0007",
+                "name": "Trigger Single Event Upset",
+                "description": "Threat actors may utilize techniques to create a single-event upset (SEU) which is a change of state caused by one single ionizing particle (ions, electrons, photons...) striking a sensitive node in a spacecraft(i.e., microprocessor, semiconductor memory, or power transistors). The state change is a result of the free charge created by ionization in or close to an important node of a logic element (e.g. memory \"bit\"). This can cause unstable conditions on the spacecraft depending on which component experiences the SEU. SEU is a known phenomenon for spacecraft due to high radiation in space, but threat actors may attempt to utilize items like microwaves to create a SEU.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0008",
+                "name": "Time Synchronized Execution",
+                "description": "Threat actors may develop payloads or insert malicious logic to be executed at a specific time.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0009",
+                "name": "Exploit Code Flaws",
+                "description": "Threats actors may identify and exploit flaws or weaknesses within the software running on-board the target spacecraft. These attacks may be extremely targeted and tailored to specific coding errors introduced as a result of poor coding practices or they may target known issues in the commercial software components.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0010",
+                "name": "Malicious Code",
+                "description": "Threat actors may rely on other tactics and techniques in order to execute malicious code on the victim spacecraft. This can be done via compromising the supply chain or development environment in some capacity or taking advantage of known commands. However, once malicious code has been uploaded to the victim spacecraft, the threat actor can then trigger the code to run via a specific command or wait for a legitimate user to trigger it accidently. The code itself can do a number of different things to the hosted payload, subsystems, or underlying OS.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0011",
+                "name": "Exploit Reduced Protections During Safe-Mode",
+                "description": "Threat actors who have access to a spacecraft in safe mode may issue malicious commands that would not normally be accepted during nominal operations. Safe-mode is when all non-essential systems are shut down and only essential functions within the spacecraft are active. Because safe mode prioritizes essential functions and often disables non-critical protections or filters, adversaries can exploit this state to trigger unauthorized reconfiguration, software modification, or system manipulation during recovery or degraded operation.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0012",
+                "name": "Modify On-Board Values",
+                "description": "Threat actors may perform specific commands in order to modify onboard values that the victim spacecraft relies on. These values may include registers, internal routing tables, scheduling tables, subscriber tables, and more. Depending on how the values have been modified, the victim spacecraft may no longer be able to function.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0013",
+                "name": "Flooding",
+                "description": "Threat actors use flooding attacks to disrupt communications by injecting unexpected noise or messages into a transmission channel. There are several types of attacks that are consistent with this method of exploitation, and they can produce various outcomes. Although, the most prominent of the impacts are denial of service or data corruption. Several elements of the spacecraft may be targeted by jamming and flooding attacks, and depending on the time of the attack, it can have devastating results to the availability of the system.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0014",
+                "name": "Spoofing",
+                "description": "Threat actors may attempt to spoof the various sensor and controller data that is depended upon by various subsystems within the victim spacecraft. Subsystems rely on this data to perform automated tasks, process gather data, and return important information to the ground controllers. By spoofing this information, threat actors could trigger automated tasks to fire when they are not needed to, potentially causing the spacecraft to behave erratically. Further, the data could be processed erroneously, causing ground controllers to receive incorrect telemetry or scientific data, threatening the spacecraft's reliability and integrity.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0015",
+                "name": "Side-Channel Attack",
+                "description": "Threat actors may use a side-channel attack attempts to gather information or influence the program execution of a system by measuring or exploiting indirect effects of the spacecraft. Side-Channel attacks can be active or passive. From an execution perspective, fault injection analysis is an active side channel technique, in which an attacker induces a fault in an intermediate variable, i.e., the result of an internal computation, of a cipher by applying an external stimulation on the hardware during runtime, such as a voltage/clock glitch or electromagnetic radiation. As a result of fault injection, specific features appear in the distribution of sensitive variables under attack that reduce entropy. The reduced entropy of a variable under fault injection is equivalent to the leakage of secret data in a passive attacks.",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0016",
+                "name": "Jamming",
+                "description": "Jamming is an electronic attack that uses radio frequency signals to interfere with communications. A jammer must operate in the same frequency band and within the field of view of the antenna it is targeting. Unlike physical attacks, jamming is completely reversible—once the jammer is disengaged, communications can be restored. Attribution of jamming can be tough because the source can be small and highly mobile, and users operating on the wrong frequency or pointed at the wrong satellite can jam friendly communications.* Similiar to intentional jamming, accidential jamming can cause temporary signal degradation. Accidental jamming refers to unintentional interference with communication signals, and it can potentially impact spacecraft in various ways, depending on the severity, frequency, and duration of the interference.\n\n*https://aerospace.csis.org/aerospace101/counterspace-weapons-101",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0017",
+                "name": "Kinetic Physical Attack",
+                "description": "Kinetic physical attacks attempt to damage or destroy space- or land-based space assets. They typically are organized into three categories: direct-ascent, co-orbital, and ground station attacks [beyond the focus of SPARTA at this time]. The nature of these attacks makes them easier to attribute and allow for better confirmation of success on the part of the attacker.*\n\n*https://aerospace.csis.org/aerospace101/counterspace-weapons-101",
+                "x_mitre_tactic_type": "Execution"
+            },
+            {
+                "external_id": "EX-0018",
+                "name": "Non-Kinetic Physical Attack",
+                "description": "A non-kinetic physical attack is when a satellite is physically damaged without any direct contact. Non-kinetic physical attacks can be characterized into a few types: electromagnetic pulses, high-powered lasers, and high-powered microwaves. These attacks have medium possible attribution levels and often provide little evidence of success to the attacker.*\n\n*https://aerospace.csis.org/aerospace101/counterspace-weapons-101",
+                "x_mitre_tactic_type": "Execution"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0005",
+        "name": "Persistence",
+        "description": "Threat actor is trying to maintain their foothold/access to command/execute code on the spacecraft.",
+        "techniques": [
+            {
+                "name": "Memory Compromise",
+                "external_id": "PER-0001",
+                "description": "Threat actors may manipulate memory (boot, RAM, etc.) in order for their malicious code and/or commands to remain on the victim spacecraft. The spacecraft may have mechanisms that allow for the automatic running of programs on system reboot, entering or returning to/from safe mode, or during specific events. Threat actors may target these specific memory locations in order to store their malicious code or file, ensuring that the attack remains on the system even after a reset.",
+                "x_mitre_tactic_type": "Persistence"
+            },
+            {
+                "name": "Backdoor",
+                "external_id": "PER-0002",
+                "description": "Threat actors may find and target various backdoors, or inject their own, within the victim spacecraft in the hopes of maintaining their attack.",
+                "x_mitre_tactic_type": "Persistence"
+            },
+            {
+                "name": "Ground System Presence",
+                "external_id": "PER-0003",
+                "description": "Threat actors may compromise target owned ground systems that can be used for persistent access to the spacecraft or to perpetuate other techniques. These ground systems have already been configured for communications to the victim spacecraft. By compromising this infrastructure, threat actors can stage, launch, and execute persistently.",
+                "x_mitre_tactic_type": "Persistence"
+            },
+            {
+                "name": "Replace Cryptographic Keys",
+                "external_id": "PER-0004",
+                "description": "Threat actors may attempt to fully replace the cryptographic keys on the spacecraft which could lockout the mission operators and enable the threat actor's communication channel. Once the encryption key is changed on the spacecraft, the spacecraft is rendered inoperable from the operators perspective as they have lost commanding access. Threat actors may exploit weaknesses in the key management strategy. For example, the threat actor may exploit the over-the-air rekeying procedures to inject their own cryptographic keys.",
+                "x_mitre_tactic_type": "Persistence"
+            },
+            {
+                "name": "Credentialed Persistence",
+                "external_id": "PER-0005",
+                "description": "Threat actors may acquire or leverage valid credentials to maintain persistent access to a spacecraft or its supporting command and control (C2) systems. These credentials may include system service accounts, user accounts, maintenance access credentials, cryptographic keys, or other authentication mechanisms that enable continued entry without triggering access alarms. By operating with legitimate credentials, adversaries can sustain access over extended periods, evade detection, and facilitate follow-on tactics such as command execution, data exfiltration, or lateral movement. Credentialed persistence is particularly effective in environments lacking strong credential lifecycle management, segmentation, or monitoring allowing threat actors to exploit trusted pathways while remaining embedded in mission operations.",
+                "x_mitre_tactic_type": "Persistence"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0006",
+        "name": "Defense Evasion",
+        "description": "Threat actor is trying to avoid being detect",
+        "techniques": [
+            {
+                "name": "Disable Fault Management",
+                "external_id": "DE-0001",
+                "description": "Threat actors may disable fault management within the victim spacecraft during the attack campaign. During the development process, many fault management mechanisms are added to the various parts of the spacecraft in order to protect it from a variety of bad/corrupted commands, invalid sensor data, and more. By disabling these mechanisms, threat actors may be able to have commands processed that would not normally be allowed.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Disrupt or Deceive Downlink",
+                "external_id": "DE-0002",
+                "description": "Threat actors may target ground-side telemetry reception, processing, or display to disrupt the operator’s visibility into spacecraft health and activity. This may involve denial-based attacks that prevent the spacecraft from transmitting telemetry to the ground (e.g., disabling telemetry links or crashing telemetry software), or more subtle deception-based attacks that manipulate telemetry content to conceal unauthorized actions. Since telemetry is the primary method ground controllers rely on to monitor spacecraft status, any disruption or manipulation can delay or prevent detection of malicious activity, suppress automated or manual mitigations, or degrade trust in telemetry-based decision support systems.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "On-Board Values Obfuscation",
+                "external_id": "DE-0003",
+                "description": "Threat actors may target various onboard values put in place to prevent malicious or poorly crafted commands from being processed. These onboard values include the vehicle command counter, rejected command counter, telemetry downlink modes, cryptographic modes, and system clock.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Masquerading",
+                "external_id": "DE-0004",
+                "description": "Threat actors may gain access to a victim spacecraft by masquerading as an authorized entity. This can be done several ways, including through the manipulation of command headers, spoofing locations, or even leveraging Insider's access (i.e., Insider Threat)",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Subvert Protections via Safe-Mode",
+                "external_id": "DE-0005",
+                "description": "Threat actors may exploit safe mode to evade security controls and avoid detection by issuing commands or performing actions that would be blocked during nominal operations. In safe mode, spacecraft often disable telemetry filtering, authentication checks, or command restrictions to prioritize recovery, which can be subverted by an attacker to conceal malicious activity or establish a persistent foothold.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Modify Whitelist",
+                "external_id": "DE-0006",
+                "description": "Threat actors may target whitelists on the spacecrafts as a means to execute and/or hide malicious processes/programs. Whitelisting is a common technique used on traditional IT systems but has also been used on spacecrafts. Whitelisting is used to prevent execution of unknown or potentially malicious software. However, this technique can be bypassed if not implemented correctly but threat actors may also simply attempt to modify the whitelist outright to ensure their malicious software will operate on the spacecraft that utilizes whitelisting.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Evasion via Rootkit",
+                "external_id": "DE-0007",
+                "description": "Rootkits are programs that hide the existence of malware by intercepting/hooking and modifying operating system API calls that supply system information. Rootkits or rootkit enabling functionality may reside at the flight software  or kernel level in the operating system or lower, to include a hypervisor, Master Boot Record, or System Firmware.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Evasion via Bootkit",
+                "external_id": "DE-0008",
+                "description": "Adversaries may use bootkits to persist on systems and evade detection. Bootkits reside at a layer below the operating system and may make it difficult to perform full remediation unless an organization suspects one was used and can act accordingly.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Camouflage, Concealment, and Decoys (CCD)",
+                "external_id": "DE-0009",
+                "description": "This technique deals with the more physical aspects of CCD that may be utilized by threat actors. There are numerous ways a threat actor may utilize the physical operating environment to their advantage, including powering down and laying dormant within debris fields as well as launching EMI attacks during space-weather events.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Overflow Audit Log",
+                "external_id": "DE-0010",
+                "description": "Threat actors may seek to exploit the inherent nature of flight software and its limited capacity for event logging/storage between downlink windows as a means to conceal malicious activity.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            },
+            {
+                "name": "Credentialed Evasion",
+                "external_id": "DE-0011",
+                "description": "Threat actors may leverage valid credentials to conduct unauthorized actions against a spacecraft or related system in a way that conceals their presence and evades detection. By using trusted authentication mechanisms attackers can blend in with legitimate operations and avoid triggering access control alarms or anomaly detection systems. This technique enables evasion by appearing authorized, allowing adversaries to issue commands, access sensitive subsystems, or move laterally within spacecraft or constellation architectures without exploiting software vulnerabilities. When credential use is poorly segmented or monitored, this form of access can be used to maintain stealthy persistence or facilitate other tactics under the guise of legitimate activity.",
+                "x_mitre_tactic_type": "Defense Evasion"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0007",
+        "name": "Lateral Movement",
+        "description": "Threat actor is trying to move through across sub-systems of the spacecraft.",
+        "techniques": [
+            {
+                "name": "Hosted Payload",
+                "external_id": "LM-0001",
+                "description": "Threat actors may use the hosted payload within the victim spacecraft in order to gain access to other subsystems. The hosted payload often has a need to gather and send data to the internal subsystems, depending on its purpose. Threat actors may be able to take advantage of this communication in order to laterally move to the other subsystems and have commands be processed.",
+                "x_mitre_tactic_type": "Lateral Movement"
+            },
+            {
+                "name": "Exploit Lack of Bus Segregation",
+                "external_id": "LM-0002",
+                "description": "Threat actors may exploit victim spacecraft on-board flat architecture for lateral movement purposes. Depending on implementation decisions, spacecraft can have a completely flat architecture where remote terminals, sub-systems, payloads, etc. can all communicate on the same main bus without any segmentation, authentication, etc. Threat actors can leverage this poor design to send specially crafted data from one compromised devices or sub-system. This could enable the threat actor to laterally move to another area of the spacecraft or escalate privileges (i.e., bus master, bus controller)",
+                "x_mitre_tactic_type": "Lateral Movement"
+            },
+            {
+                "name": "Constellation Hopping via Crosslink",
+                "external_id": "LM-0003",
+                "description": "Threat actors may attempt to command another neighboring spacecraft via crosslink. spacecraft in close proximity are often able to send commands back and forth. Threat actors may be able to leverage this access to compromise another spacecraft.",
+                "x_mitre_tactic_type": "Lateral Movement"
+            },
+            {
+                "name": "Visiting Vehicle Interface(s)",
+                "external_id": "LM-0004",
+                "description": "Threat actors may move from one spacecraft to another through visiting vehicle interfaces. When a vehicle docks with a spacecraft, many programs are automatically triggered in order to ensure docking mechanisms are locked. This entails several data points and commands being sent to and from the spacecraft and the visiting vehicle. If a threat actor were to compromise a visiting vehicle, they could target these specific programs in order to send malicious commands to the victim spacecraft once docked.",
+                "x_mitre_tactic_type": "Lateral Movement"
+            },
+            {
+                "name": "Virtualization Escape",
+                "external_id": "LM-0005",
+                "description": "In virtualized environments, threat actors can use the open ports between the partitions to overcome the hypervisor's protection and damage another partition. Further, if the threat actor has compromised the payload, access to a critical partition can be gained through ports allowed by hypervisor.",
+                "x_mitre_tactic_type": "Lateral Movement"
+            },
+            {
+                "name": "Launch Vehicle Interface",
+                "external_id": "LM-0006",
+                "description": "Threat actors may attempt to exploit reduced protections placed on the interfaces between launch vehicles and payloads in order to move from one to the other.",
+                "x_mitre_tactic_type": "Lateral Movement"
+            },
+            {
+                "name": "Credentialed Traversal",
+                "external_id": "LM-0007",
+                "description": "Threat actors may leverage valid credentials to traverse across spacecraft subsystems, communication buses, or even to access other spacecraft within a constellation, all while avoiding detection. These credentials may include system service accounts, user accounts, maintenance credentials, cryptographic keys, or other authentication mechanisms that grant authorized access. Rather than exploiting vulnerabilities, this technique relies on the reuse or misuse of trusted credentials to move laterally within the space system architecture. When access control boundaries are weak, flat, or poorly enforced, valid credentials can enable attackers to reach restricted functions or domains without raising alarms. This traversal allows evasion of isolation mechanisms and facilitates further actions without triggering traditional anomaly detection tied to unauthorized access attempts.",
+                "x_mitre_tactic_type": "Lateral Movement"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0008",
+        "name": "Exfiltration",
+        "description": "Threat actor is trying to steal information.",
+        "techniques": [
+            {
+                "name": "Replay",
+                "external_id": "EXF-0001",
+                "description": "Threat actors may exfiltrate data by replaying commands and capturing the telemetry or payload data as it is sent down. One scenario would be the threat actor replays commands to downlink payload data once the spacecraft is within certain location so the data can be intercepted on the downlink by threat actor ground terminals.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Side-Channel Exfiltration",
+                "external_id": "EXF-0002",
+                "description": "Threat actors may use a side-channel attack attempts to gather information by measuring or exploiting indirect effects of the spacecraft. Information within the spacecraft can be extracted through these side-channels in which sensor data is analyzed in non-trivial ways to recover subtle, hidden or unexpected information. A series of measurements of a side-channel constitute an identifiable signature which can then be matched against a signature database to identify target information, without having to explicitly decode the side-channel.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Signal Interception",
+                "external_id": "EXF-0003",
+                "description": "Threat actors may seek to capture network communications throughout the ground station and communication channel (i.e. radio frequency, optical) used for uplink and downlink communications",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Out-of-Band Communications Link",
+                "external_id": "EXF-0004",
+                "description": "Threat actors may attempt to exfiltrate data via the out-of-band communication channels. While performing eavesdropping on the primary/second uplinks and downlinks is a method for exfiltration, some spacecrafts leverage out-of-band communication links to perform actions on the spacecraft (i.e., re-keying). These out-of-band links would occur on completely different channels/frequencies and often operate on separate hardware on the spacecraft. Typically these out-of-band links have limited built-for-purpose functionality and likely do not present an initial access vector but they do provide ample exfiltration opportunity.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Proximity Operations",
+                "external_id": "EXF-0005",
+                "description": "Threat actors may leverage the lack of emission security or tempest controls to exfiltrate information using a visiting spacecraft. This is similar to side-channel attacks but leveraging a visiting spacecraft to measure the signals for decoding purposes.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Modify Communications Configuration",
+                "external_id": "EXF-0006",
+                "description": "Threat actors can manipulate communications equipment, modifying the existing software, hardware, or the transponder configuration to exfiltrate data via unintentional channels the mission has no control over.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Compromised Ground System",
+                "external_id": "EXF-0007",
+                "description": "Threat actors may compromise target owned ground systems that can be used for future campaigns or to perpetuate other techniques. These ground systems have already been configured for communications to the victim spacecraft. By compromising this infrastructure, threat actors can stage, launch, and execute an operation. Threat actors may utilize these systems for various tasks, including Execution and Exfiltration.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Compromised Developer Site",
+                "external_id": "EXF-0008",
+                "description": "Threat actors may compromise development environments located within the ground system or a developer/partner site. This attack can take place in a number of different ways, including manipulation of source code, manipulating environment variables, or replacing compiled versions with a malicious one. This technique is usually performed before the target spacecraft is in orbit, with the hopes of adding malicious code to the actual FSW during the development process.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Compromised Partner Site",
+                "external_id": "EXF-0009",
+                "description": "Threat actors may compromise access to partner sites that can be used for future campaigns or to perpetuate other techniques. These sites are typically configured for communications to the primary ground station(s) or in some cases the spacecraft itself. Unlike mission operated ground systems, partner sites may provide an easier target for threat actors depending on the company, roles and responsibilities, and interests of the third-party. By compromising this infrastructure, threat actors can stage, launch, and execute an operation. Threat actors may utilize these systems for various tasks, including Execution and Exfiltration.",
+                "x_mitre_tactic_type": "Exfiltration"
+            },
+            {
+                "name": "Payload Communication Channel",
+                "external_id": "EXF-0010",
+                "description": "Threat actors can deploy malicious software on the payload(s) which can send data through the payload channel. Payloads often have their own communication channels outside of the main TT&C pathway which presents an opportunity for exfiltration of payload data or other spacecraft data depending on the interface and data exchange.",
+                "x_mitre_tactic_type": "Exfiltration"
+            }
+        ]
+    },
+    {
+        "type": "tactic",
+        "external_id": "ST0009",
+        "name": "Impact",
+        "description": "Threat actor is trying to manipulate, interrupt, or destroy the space system(s) and/or data.",
+        "techniques": [
+            {
+                "name": "Deception (or Misdirection)",
+                "external_id": "IMP-0001",
+                "description": "Measures designed to mislead an adversary by manipulation, distortion, or falsification of evidence or information into a system to induce the adversary to react in a manner prejudicial to their interests. Threat actors may seek to deceive mission stakeholders (or even military decision makers) for a multitude of reasons. Telemetry values could be modified, attacks could be designed to intentionally mimic another threat actor's TTPs, and even allied ground infrastructure could be compromised and used as the source of communications to the spacecraft.",
+                "x_mitre_tactic_type": "Impact"
+            },
+            {
+                "name": "Disruption",
+                "external_id": "IMP-0002",
+                "description": "Measures designed to temporarily impair the use or access to a system for a period of time. Threat actors may seek to disrupt communications from the victim spacecraft to the ground controllers or other interested parties. By disrupting communications during critical times, there is the potential impact of data being lost or critical actions not being performed. This could cause the spacecraft's purpose to be put into jeopardy depending on what communications were lost during the disruption. This behavior is different than Denial as this attack can also attempt to modify the data and messages as they are passed as a way to disrupt communications.",
+                "x_mitre_tactic_type": "Impact"
+            },
+            {
+                "name": "Denial",
+                "external_id": "IMP-0003",
+                "description": "Measures designed to temporarily eliminate the use, access, or operation of a system for a period of time, usually without physical damage to the affected system. Threat actors may seek to deny ground controllers and other interested parties access to the victim spacecraft. This would be done exhausting system resource, degrading subsystems, or blocking communications entirely. This behavior is different from Disruption as this seeks to deny communications entirely, rather than stop them for a length of time.",
+                "x_mitre_tactic_type": "Impact"
+            },
+            {
+                "name": "Degradation",
+                "external_id": "IMP-0004",
+                "description": "Measures designed to permanently impair (either partially or totally) the use of a system. Threat actors may target various subsystems or the hosted payload in such a way to rapidly increase it's degradation. This could potentially shorten the lifespan of the victim spacecraft.",
+                "x_mitre_tactic_type": "Impact"
+            },
+            {
+                "name": "Destruction",
+                "external_id": "IMP-0005",
+                "description": "Measures designed to permanently eliminate the use of a system, potentially through some physical damage to the system. Threat actors may destroy data, commands, subsystems, or attempt to destroy the victim spacecraft itself. This behavior is different from Degradation, as the individual parts are destroyed rather than put in a position in which they would slowly degrade over time.",
+                "x_mitre_tactic_type": "Impact"
+            },
+            {
+                "name": "Theft",
+                "external_id": "IMP-0006",
+                "description": "Threat actors may attempt to steal the data that is being gathered, processed, and sent from the victim spacecraft. Many spacecraft have a particular purpose associated with them and the data they gather is deemed mission critical. By attempting to steal this data, the mission, or purpose, of the spacecraft could be lost entirely.",
+                "x_mitre_tactic_type": "Impact"
+            }
+        ]
+    }
+]
