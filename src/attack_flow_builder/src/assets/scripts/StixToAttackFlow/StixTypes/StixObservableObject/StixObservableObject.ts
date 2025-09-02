@@ -16,7 +16,6 @@ import type { Url } from "./Url";
 import type { UserAccount } from "./UserAccount";
 import type { WindowsRegistryKey } from "./WindowsRegistryKey";
 import type { X509Certificate } from "./X509Certificate";
-import type { RadioFrequency } from "./RadioFrequency";
 
 /**
  * STIX 2.1 Cyber-Observable Object.
@@ -39,5 +38,4 @@ export type StixObservableObject
     | Url
     | UserAccount
     | WindowsRegistryKey
-    | X509Certificate
-    | RadioFrequency;
+    | X509Certificate;

@@ -23,15 +23,15 @@ import * as https from "https";
  * A map that relates STIX types to ATT&CK types.
  */
 const STIX_TO_ATTACK = {
-    "campaign": "campaign",
-    "course-of-action": "mitigation",
-    "intrusion-set": "group",
-    "malware": "software",
-    "tool": "software",
+    "campaign"           : "campaign",
+    "course-of-action"   : "mitigation",
+    "intrusion-set"      : "group",
+    "malware"            : "software",
+    "tool"               : "software",
     "x-mitre-data-source": "data_source",
-    "x-mitre-tactic": "tactic",
-    "attack-pattern": "technique",
-    "attack-subpattern": "subtechnique"
+    "x-mitre-tactic"     : "tactic",
+    "attack-pattern"     : "technique",
+    "attack-subpattern"  : "subtechnique"
 }
 
 /**
