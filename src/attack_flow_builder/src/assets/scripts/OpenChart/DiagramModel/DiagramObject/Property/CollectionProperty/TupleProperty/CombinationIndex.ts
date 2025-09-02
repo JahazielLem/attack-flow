@@ -27,9 +27,11 @@ export class CombinationIndex {
         this.props = new Map();
         this.values = new Map<string, number>();
         this.lookup = [];
-        for (const [prop1, value1, prop2, value2] of combos) {
+        console.log("combos", combos)
+        for (const [prop1, value1, prop2, value2, prop3, value3] of combos) {
             const valueId1 = `${prop1}.${value1}`;
             const valueId2 = `${prop2}.${value2}`;
+            const valueId3 = `${prop3}.${value3}`;
             // Register properties and values
             if (!this.props.has(prop1)) {
                 this.props.set(prop1, new Set());
@@ -37,8 +39,12 @@ export class CombinationIndex {
             if (!this.props.has(prop2)) {
                 this.props.set(prop2, new Set());
             }
+            if (!this.props.has(prop3)) {
+                this.props.set(prop3, new Set());
+            }
             this.props.get(prop1)!.add(value1);
             this.props.get(prop2)!.add(value2);
+            this.props.get(prop3)!.add(value3);
             // Map values to index
             if (!this.values.has(valueId1)) {
                 this.values.set(valueId1, this.values.size);
@@ -48,11 +54,17 @@ export class CombinationIndex {
                 this.values.set(valueId2, this.values.size);
                 this.lookup.push([]);
             }
+            if (!this.values.has(valueId3)) {
+                this.values.set(valueId3, this.values.size);
+                this.lookup.push([]);
+            }
             // Map relationships
             const idx1 = this.values.get(valueId1)!;
             const idx2 = this.values.get(valueId2)!;
+            const idx3 = this.values.get(valueId3)!;
             this.lookup[idx1].push(idx2);
             this.lookup[idx2].push(idx1);
+            this.lookup[idx3].push(idx2);
         }
     }
 

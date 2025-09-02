@@ -5,7 +5,7 @@ import AttackFlowCommandProcessor from "./AttackFlowCommandProcessor/AttackFlowC
 import { DarkTheme } from "./AttackFlowThemes/DarkTheme.ts";
 import { BlogTheme } from "./AttackFlowThemes/BlogTheme.ts";
 import { LightTheme } from "./AttackFlowThemes/LightTheme.ts";
-import { CtidIcon, CtidLogo } from "./Images";
+import { CtidIcon, CtidLogo, CtidSpartaLogo, CtidPwnsatLogo } from "./Images";
 import {
     AttackFlow,
     AttackFlowObjects,
@@ -20,12 +20,12 @@ const configuration: AppConfiguration = {
     /**
      * The application's name.
      */
-    application_name: "Attack Flow Builder",
+    application_name: "Attack Flow Builder Fork By PWNSAT",
 
     /**
      * The application's icon.
      */
-    application_icon: CtidIcon,
+    application_icon: CtidPwnsatLogo,
 
     /**
      * The application file type's name.
@@ -42,6 +42,7 @@ const configuration: AppConfiguration = {
      */
     splash: {
         organization: CtidLogo,
+        sparta: CtidSpartaLogo,
         new_file: {
             title: "New Flow",
             description: "Create a blank flow."
@@ -110,8 +111,12 @@ const configuration: AppConfiguration = {
                     url: "https://attack.mitre.org/"
                 },
                 {
-                    text: "GitHub Repository",
+                    text: "Base Project GitHub Repository",
                     url: "https://github.com/center-for-threat-informed-defense/attack-flow"
+                },
+                {
+                    text: "Fork GitHub Repository",
+                    url: "https://github.com/JahazielLem/attack-flow"
                 },
                 {
                     text: "Change Log",

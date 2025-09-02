@@ -2,6 +2,26 @@
 
 > NOTE: This fork it's based on the `Attack Flow` from MITTRE if you want the original version [check this link](https://github.com/center-for-threat-informed-defense/attack-flow).
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/26d2812c-dc7b-49db-b4fe-bd30fcf20b75">
+ <i><br>Main page</i>
+</p>
+
+# Running
+To use this repo you need to follow the next steps:
+```bash
+git clone https://github.com/JahazielLem/attack-flow
+cd attack-flow/src/attack_flow_builder
+npm install
+npm run dev
+```
+
+## SPARTA TTPS
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/26d2812c-dc7b-49db-b4fe-bd30fcf20b75">
+ <i><br>SPARTA Showcase</i>
+</p>
+
 ## Notice
 
 Copyright 2021 MITRE. Approved for public release. Document number CT0040

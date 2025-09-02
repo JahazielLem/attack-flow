@@ -37,6 +37,7 @@ export interface AppConfiguration {
          * The organization's logo.
          */
         organization: string;
+        sparta: string;
 
         /**
          * New file splash button.

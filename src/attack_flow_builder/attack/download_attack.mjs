@@ -23,15 +23,15 @@ import * as https from "https";
  * A map that relates STIX types to ATT&CK types.
  */
 const STIX_TO_ATTACK = {
-    "campaign": "campaign",
-    "course-of-action": "mitigation",
-    "intrusion-set": "group",
-    "malware": "software",
-    "tool": "software",
+    "campaign"           : "campaign",
+    "course-of-action"   : "mitigation",
+    "intrusion-set"      : "group",
+    "malware"            : "software",
+    "tool"               : "software",
     "x-mitre-data-source": "data_source",
-    "x-mitre-tactic": "tactic",
-    "attack-pattern": "technique",
-    "attack-subpatter": "subtechnique"
+    "x-mitre-tactic"     : "tactic",
+    "attack-pattern"     : "technique",
+    "attack-subpattern"  : "subtechnique"
 }
 
 /**
@@ -41,7 +41,8 @@ const MITRE_SOURCES = new Set([
     "mitre-attack",
     "mitre-ics-attack",
     "mitre-mobile-attack",
-    "mitre-sparta-attack"
+    "mitre-sparta-attack",
+    "space-attack"
 ])
 
 /**
@@ -178,6 +179,7 @@ function parseAttackObjectsFromManifest(data) {
         }
         tacticsMap.set(tactic.shortname, tactic);
     }
+
     // Assign tactics and techniques to each other
     for (const technique of objects.values()) {
         if(technique.type !== "technique") {

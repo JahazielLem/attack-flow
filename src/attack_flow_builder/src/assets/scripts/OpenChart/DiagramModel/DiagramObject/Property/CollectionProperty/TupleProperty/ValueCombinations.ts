@@ -24,4 +24,4 @@
  *    ["sound", "bark!", "animal", "dog"],
  *  ]
  */
-export type ValueCombinations = [string, string, string, string][];
+export type ValueCombinations = [string, string, string, string, string, string][];

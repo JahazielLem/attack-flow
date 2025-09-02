@@ -2,6 +2,9 @@ import json
 import uuid
 import datetime
 from pprint import pprint
+import requests
+
+SPARTA_VERSION = "3.0"
 
 class StixObject:
   def __init__(self):
@@ -37,41 +40,45 @@ class StixObject:
       "name": tactic['name'],
       "description": tactic['description'],
       "x_mitre_version": "1.0",
-      "x_mitre_attack_spec_version": "2.1.0",
+      "x_mitre_attack_spec_version": SPARTA_VERSION,
       "x_mitre_modified_by_ref": self.created_by_ref,
       "x_mitre_shortname": tactic['name'].lower().replace(" ", "-"),
       "spec_version": "2.1"
     }
     self.tactics_list.append(x_mitre_tactic)
-    # self.object_ref_list.append(self.create_object_ref(x_mitre_tactic))
     return tactic_object, x_mitre_tactic
   
-  def create_technique(self, technnique):
-    tactic_type = technnique["x_mitre_tactic_type"]
+  def create_technique(self, technique, is_sub=False):
+    attack_pattern = "attack-pattern"
+    tactic_type = technique["x_mitre_tactic_type"]
+    attack_pattern_id = f"{attack_pattern}--{uuid.uuid4()}"
     if isinstance(tactic_type, list):
       tactic_type = tactic_type[0]
-    attack_pattern_id = f"attack-pattern--{uuid.uuid4()}"
+    
+    if is_sub:
+      attack_pattern = "attack-subpattern"
+    attack_pattern_id = attack_pattern_id
     technnique_object = {
       "x_mitre_platforms": ["Spacecraft", "Ground Station"],
       "x_mitre_domains": ["space-attack"],
       "object_marking_refs": [self.marking_definition],
-      "type": "attack-pattern",
+      "type": attack_pattern,
       "id": attack_pattern_id,
       "created": self.now,
       "x_mitre_version": "1.0",
       "external_references": [
           {
               "source_name": "mitre-attack",
-              "external_id": technnique['external_id'],
-              "url": f"https://sparta.aerospace.org/technique/{technnique['external_id']}"
+              "external_id": technique['external_id'],
+              "url": f"https://sparta.aerospace.org/technique/{technique['external_id']}"
           }
       ],
       "x_mitre_deprecated": False,
       "revoked": False,
-      "description": technnique['description'],
+      "description": technique['description'],
       "modified": self.now,
       "created_by_ref": self.created_by_ref,
-      "name": technnique['name'],
+      "name": technique['name'],
       "x_mitre_detection": "",
       "kill_chain_phases": [
         {
@@ -80,17 +87,17 @@ class StixObject:
 
         }
       ],
-      "x_mitre_tactics": [technnique["x_mitre_tactic_type"]],
-      "x_mitre_is_subtechnique": False,
-      "x_mitre_tactic_type": [technnique["x_mitre_tactic_type"]],
-      "x_mitre_attack_spec_version": "2.1.0",
+
+      "x_mitre_tactics": [technique["x_mitre_tactic_type"]],
+      "x_mitre_is_subtechnique": is_sub,
+      "x_mitre_tactic_type": [technique["x_mitre_tactic_type"]],
+      "x_mitre_attack_spec_version": SPARTA_VERSION,
       "x_mitre_modified_by_ref": self.created_by_ref,
       "x_mitre_data_sources": [],
       "spec_version": "2.1"
     }
-    print(technnique["x_mitre_tactic_type"])
     self.object_ref_list.append(self.create_object_ref(attack_pattern_id))
-    return technnique_object
+    return technnique_object, attack_pattern_id
   
   def create_relationship_asset(self, source_ref, target_ref):
     relation_id = f"relationship--{uuid.uuid4()}"
@@ -105,10 +112,10 @@ class StixObject:
       "revoked": False,
       "description": "",
       "modified": self.now,
-      "relationship_type": "uses",
+      "relationship_type": "related-to",
       "source_ref": source_ref,
       "target_ref": target_ref,
-      "x_mitre_attack_spec_version": "2.1.0",
+      "x_mitre_attack_spec_version": SPARTA_VERSION,
       "created_by_ref": self.created_by_ref,
       "x_mitre_modified_by_ref": self.created_by_ref,
       "spec_version": "2.1",
@@ -139,7 +146,7 @@ class StixObject:
       "modified": self.now,
       "created_by_ref": self.created_by_ref,
       "name": "SPARTA TTPS",
-      "x_mitre_attack_spec_version": "2.1.0",
+      "x_mitre_attack_spec_version": SPARTA_VERSION,
       "x_mitre_modified_by_ref": self.created_by_ref,
       "spec_version": "2.1",
       "x_mitre_domains": ["space-attack"]
@@ -157,8 +164,8 @@ class StixObject:
           "type": "x-mitre-collection",
           "id": f"x-mitre-collection--{uuid.uuid4()}",
           "spec_version": "2.1",
-          "x_mitre_attack_spec_version": "2.1.0",
-          "name": "SPARTA TTPs",
+          "x_mitre_attack_spec_version": SPARTA_VERSION,
+          "name": "Aerospace SPARTA",
           "x_mitre_version": "11.1",
           "description": "The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (TTP). SPARTA is intended to provide unclassified information to space professionals about how spacecraft may be compromised via cyber and traditional counterspace means.",
           "created_by_ref": self.created_by_ref,
@@ -170,53 +177,29 @@ class StixObject:
       ]
     }
     for _, item in enumerate(sparta_json):
-      # print(item)
       if item["type"] == "tactic":
         tactic_obj, tactic_id = self.create_tactic(item)
         flow["objects"].append(tactic_obj)
         for _, subitem in enumerate(item["techniques"]):
-          technique_obj = self.create_technique(subitem)
+          technique_obj, technique_id = self.create_technique(subitem)
           flow["objects"].append(technique_obj)
-          # relation_obj = self.create_relationship_asset(technique_obj["id"], tactic_id)
-          # flow["objects"].append(relation_obj)
+          
+          # Subtechnique
+          if "subtechniques" in subitem and len(subitem["subtechniques"]) > 0:
+            for _, subtech in enumerate(subitem["subtechniques"]):
+              subtechnique_obj, subtechnique_id  = self.create_technique(subtech, is_sub=True)
+              flow["objects"].append(subtechnique_obj)
+              flow["objects"].append(self.create_relationship_asset(subtechnique_id, technique_id))
+              
+          
+          
     flow["objects"].append(self.create_tactic_refs())
     with open("../src/attack_flow_builder/data/sparta-attack.json", "w") as f:
       json.dump(flow, f, indent=2)
       
 
-# Ejemplo de SPARTA JSON
-sparta_data = [
-  {
-    "type": "tactic",
-    "external_id": "ST0001",
-    "name": "Reconnaissance",
-    "description": "Threat actor is trying to gather information they can use to plan future operations.",
-    "techniques": [
-      {
-        "external_id": "REC-0001",
-        "name": "Gather Spacecraft Design Information",
-        "description": "Threat actors may gather information about the victim spacecraft's design that can be used for future campaigns or to help perpetuate other techniques. Information about the spacecraft can include software, firmware, encryption type, purpose, as well as various makes and models of subsystems.",
-        "x_mitre_tactic_type": "Reconnaissance"
-      },
-    ]
-  },
-  {
-    "type": "tactic",
-    "external_id": "ST0002",
-    "name": "Resource Development",
-    "description": "Threat actor is trying to establish resources they can use to support operations.",
-    "techniques": [
-      {
-        "external_id": "RD-0001",
-        "name": "Acquire Infrastructure",
-        "description": "Threat actors may buy, lease, or rent infrastructure that can be used for future campaigns or to perpetuate other techniques. A wide variety of infrastructure exists for threat actors to connect to and communicate with target spacecraft.",
-        "x_mitre_tactic_type": "Resource Development"
-      },
-    ]
-  },
-]
-
-
 if __name__ == "__main__":
   stix = StixObject()
-  stix.sparta_to_attackflow(sparta_data)
+  with open("input.json", "r") as f:
+    input_data = json.loads(f.read())
+    stix.sparta_to_attackflow(input_data)

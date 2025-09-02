@@ -9,11 +9,6 @@
           Version {{ applicationVersion }}
         </p>
       </div>
-      <img
-        class="organization"
-        v-if="organization"
-        :src="organization"
-      >
     </div>
     <div class="menu-body">
       <div
@@ -129,6 +124,25 @@
           </div>
         </div>
       </div>
+      <div
+        class="section"
+        v-if="helpLinks.length"
+      >
+        <p class="section-title">
+          THIS PROJECT IS BASED ON:
+        </p>
+        <div class="project-footer">
+                  <img
+        class="organization"
+        v-if="organization"
+        :src="organization"
+      >
+       <img
+        class="sparta-logo"
+        :src="sparta"
+      >
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -156,6 +170,7 @@ export default defineComponent({
       applicationName: Configuration.application_name,
       applicationVersion: version,
       organization: Configuration.splash.organization,
+      sparta: Configuration.splash.sparta,
       newFile: Configuration.splash.new_file,
       openFile: Configuration.splash.open_file,
       importStix: Configuration.splash.import_stix,
@@ -264,9 +279,9 @@ export default defineComponent({
   flex-direction: column;
   min-width: 640px;
   max-width: 740px;
-  border: solid 1px #383838;
+  border: none;
   border-radius: 5px;
-  background: #242424;
+  background: #11111b;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.35);
   overflow: hidden;
 }
@@ -279,13 +294,13 @@ export default defineComponent({
   justify-content: space-between;
   padding: 18px 30px;
   border-bottom: solid 1px #383838;
-  background: #2e2e2e;
+  background: #181825;
   pointer-events: none;
   user-select: none;
 }
 
 .application-info {
-  color: #fff;
+  color: #cdd6f4;
 }
 
 .application-info .application-name {
@@ -299,7 +314,12 @@ export default defineComponent({
 }
 
 .organization {
-  height: 27px;
+    width: 50%;
+  /*height: 27px;*/
+}
+
+.sparta-logo {
+  width: 25%;
 }
 
 /** === Body === */
@@ -317,7 +337,7 @@ export default defineComponent({
 }
 
 .section-title {
-  color: #bfbfbf;
+  color: #bac2de;
   font-size: 9.5pt;
   font-weight: 500;
   margin-left: 2px;
@@ -348,8 +368,9 @@ export default defineComponent({
 
 .file,
 .button {
-  border: solid 1px #383838;
-  border-radius: 5px;
+    background-color: #1e1e2e;
+  border: none;
+  border-radius: 8px;
   box-sizing: border-box;
   user-select: none;
 }
@@ -392,7 +413,7 @@ export default defineComponent({
 
 .file-title,
 .button-title {
-  color: #89a0ec;
+  color: #bac2de;
   white-space: nowrap;
 }
 
@@ -407,12 +428,12 @@ export default defineComponent({
 }
 
 .file-date {
-  color: #bfbfbf;
+  color: #a6adc8;
   font-size: 11pt;
 }
 
 .button-description {
-  color: #bfbfbf;
+  color: #a6adc8;
   font-size: 10pt;
 }
 
@@ -471,6 +492,14 @@ export default defineComponent({
 .file-scrollbox:deep(.scroll-bar) {
   border: 1px solid #383838;
   border-radius: 5px;
+}
+
+/** === Footer === */
+.project-footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
 }
 
 </style>
