@@ -179,6 +179,7 @@ function parseAttackObjectsFromManifest(data) {
         }
         tacticsMap.set(tactic.shortname, tactic);
     }
+
     // Assign tactics and techniques to each other
     for (const technique of objects.values()) {
         if(technique.type !== "technique") {

@@ -66,7 +66,13 @@ async function updateApplicationAttackEnums(path, ...urls) {
             tact.id, `[${matrix}] ${tact.id} ${tact.name}`
         ]);
         for(const tech of tact.techniques) {
-            relationships.push(["tactic", tact.id, "technique", tech.id]);
+            if (tech.subtechniques != undefined){
+                for(const subtech of tech.subtechniques){
+                    relationships.push(["tactic", tact.id, "technique", tech.id, "subtechnique", subtech.id]);
+                }
+            }else{
+                relationships.push(["tactic", tact.id, "technique", tech.id]);
+            }
         }
         stixIds[tact.id] = tact.stixId;
     }
@@ -86,10 +92,24 @@ async function updateApplicationAttackEnums(path, ...urls) {
     }
     techniques.sort(([a],[b]) => a.localeCompare(b));
 
+    // Organize subtechniques
+    const subtechniques = [];
+    for(const tech of types.get("subtechnique")) {
+        if(tech.deprecated) {
+            continue;
+        }
+        const matrix = tech.domains.map(
+            o => o.substring(0,3).toLocaleUpperCase()
+        ).join(", ");
+        subtechniques.push([tech.id, `[${matrix}] ${tech.id} ${tech.name}`]);
+        stixIds[tech.id] = tech.stixId;
+    }
+    subtechniques.sort(([a],[b]) => a.localeCompare(b));
+
     // Generate enums file
     let file = "";
     file += `export const ${ EXPORT_KEY } = `;
-    file += JSON.stringify({ tactics, techniques, relationships, stixIds });
+    file += JSON.stringify({ tactics, techniques, subtechniques, relationships, stixIds });
     file += `;\n\nexport default ${ EXPORT_KEY };\n`
     writeFileSync(path, file);
 
