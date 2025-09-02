@@ -7,8 +7,8 @@ const BASE_URL = "https://raw.githubusercontent.com/JahazielLem/attack-flow/refs
  * The STIX sources.
  */
 export const STIX_SOURCES = [
-    // `${BASE_URL}/enterprise-attack.json`,
-    // `${BASE_URL}/ics-attack.json`,
-    // `${BASE_URL}/mobile-attack.json`,
+    `${BASE_URL}/enterprise-attack.json`,
+    `${BASE_URL}/ics-attack.json`,
+    `${BASE_URL}/mobile-attack.json`,
     `${BASE_URL}/sparta-attack.json`
 ]

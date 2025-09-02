@@ -84,16 +84,12 @@ export class CombinationIndex {
         }
         // Otherwise...
         const idxToId = [...this.values.keys()];
-        console.log("values: ", values);
-        console.log(idxToId);
-        console.log(this.props.keys())
         // Construct results matrix
         const matrix = new Map<string, Set<string>[]>(
             [...this.props.keys()].map(
                 f => [f, new Array(values.size).fill(new Set())]
             )
         );
-        console.log("matrix: ", matrix);
         let i = 0;
         for (const [prop, value] of new Map(values)) {
             // Add complete set of values to results matrix
