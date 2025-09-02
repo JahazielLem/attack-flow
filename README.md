@@ -3,7 +3,7 @@
 > NOTE: This fork it's based on the `Attack Flow` from MITTRE if you want the original version [check this link](https://github.com/center-for-threat-informed-defense/attack-flow).
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/26d2812c-dc7b-49db-b4fe-bd30fcf20b75">
+  <img src="https://github.com/JahazielLem/attack-flow/blob/main/static/main_screen.png">
  <i><br>Main page</i>
 </p>
 
@@ -18,7 +18,7 @@ npm run dev
 
 ## SPARTA TTPS
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/26d2812c-dc7b-49db-b4fe-bd30fcf20b75">
+  <img src="https://github.com/JahazielLem/attack-flow/blob/main/static/Shocase.gif">
  <i><br>SPARTA Showcase</i>
 </p>
 
