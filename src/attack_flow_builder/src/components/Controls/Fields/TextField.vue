@@ -323,6 +323,7 @@ export default defineComponent({
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   color: #cccccc;
+  background-color: #11111b;
   box-sizing: border-box;
 }
 

@@ -314,8 +314,8 @@ ul {
 #app-title-bar {
   flex-shrink: 0;
   height: 31px;
-  color: #9e9e9e;
-  background: #2e008b;
+  color: #cdd6f4;
+  background: #181825;
 }
 
 #app-body {
@@ -346,7 +346,7 @@ ul {
   width: 100%;
   height: 100%;
   border-top: solid 1px #333333;
-  background: #2e008b;
+  background: #181825;
 }
 
 .readonly #block-diagram {

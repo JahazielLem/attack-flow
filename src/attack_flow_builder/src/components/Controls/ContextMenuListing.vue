@@ -263,7 +263,7 @@ export default defineComponent({
   border: solid 1px #242424;
   border-radius: 3px;
   box-sizing: border-box;
-  background: #383838;
+  background: #181825;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.22);
 }
 
@@ -295,7 +295,7 @@ li {
 }
 li:not(.disabled):hover {
   color: #fff;
-  background: #726de2;
+  background: #89b4fa;
 }
 
 a {

@@ -460,7 +460,7 @@ type AccordionPaneHeight = {
   top: -2px;
   width: 100%;
   height: 4px;
-  background: #726de2;
+  background: #b4befe;
   cursor: n-resize;
   transition: 0.15s opacity;
   opacity: 0;
@@ -473,13 +473,13 @@ type AccordionPaneHeight = {
 .accordion-box-head {
   display: flex;
   align-items: center;
-  color: #d9d9d9;
+  color: #cdd6f4;
   font-size: 9.5pt;
   font-weight: 600;
   user-select: none;
   border-top: solid 1px #474747;
   box-sizing: border-box;
-  background: #3b3b3b;
+  background: #11111b;
   box-shadow: 0px 2px 2px 0px rgb(0 0 0 / 16%);
 }
 

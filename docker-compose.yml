@@ -1,9 +1,7 @@
 version: '3.8'
 
 services:
-  attack-flow:
-    # image: ghcr.io/center-for-threat-informed-defense/attack-flow:latest
-    ## Uncomment this to use the local Dockerfile instead of the official image
+  pwnsat-flow:
     build:
       context: .
       dockerfile: ./Dockerfile

@@ -75,8 +75,8 @@ export default defineComponent({
 /** === Main Element === */
 
 .editor-tabs-element {
-  border-left: solid 1px #303030;
-  background: #242424;
+  border-left: solid 1px #181825;
+  background: #181825;
 }
 
 .properties-pane,
