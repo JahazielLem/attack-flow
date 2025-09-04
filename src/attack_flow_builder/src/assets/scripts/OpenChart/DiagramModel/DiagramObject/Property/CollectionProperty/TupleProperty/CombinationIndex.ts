@@ -27,7 +27,7 @@ export class CombinationIndex {
         this.props = new Map();
         this.values = new Map<string, number>();
         this.lookup = [];
-        console.log("combos", combos)
+        console.log("combos", combos);
         for (const [prop1, value1, prop2, value2, prop3, value3] of combos) {
             const valueId1 = `${prop1}.${value1}`;
             const valueId2 = `${prop2}.${value2}`;

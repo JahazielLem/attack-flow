@@ -5,7 +5,7 @@ import AttackFlowCommandProcessor from "./AttackFlowCommandProcessor/AttackFlowC
 import { DarkTheme } from "./AttackFlowThemes/DarkTheme.ts";
 import { BlogTheme } from "./AttackFlowThemes/BlogTheme.ts";
 import { LightTheme } from "./AttackFlowThemes/LightTheme.ts";
-import { CtidIcon, CtidLogo, CtidSpartaLogo, CtidPwnsatLogo } from "./Images";
+import { CtidLogo, CtidSpartaLogo, CtidPwnsatLogo } from "./Images";
 import {
     AttackFlow,
     AttackFlowObjects,

@@ -24,7 +24,7 @@ export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
         }
         // Get name property
         const name = properties.get("name", StringProperty);
-        
+
         if (name === undefined) {
             return undefined;
         }

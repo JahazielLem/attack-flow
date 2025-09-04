@@ -132,15 +132,15 @@
           THIS PROJECT IS BASED ON:
         </p>
         <div class="project-footer">
-                  <img
-        class="organization"
-        v-if="organization"
-        :src="organization"
-      >
-       <img
-        class="sparta-logo"
-        :src="sparta"
-      >
+          <img
+            class="organization"
+            v-if="organization"
+            :src="organization"
+          >
+          <img
+            class="sparta-logo"
+            :src="sparta"
+          >
         </div>
       </div>
     </div>

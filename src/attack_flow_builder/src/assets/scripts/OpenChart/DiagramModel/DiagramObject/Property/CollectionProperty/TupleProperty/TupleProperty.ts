@@ -165,8 +165,8 @@ export class TupleProperty extends DictionaryProperty {
 
         // Align tuple state
         for (const [id, values] of this._validPropValues) {
-            console.log(id, values)
-            console.log(this.value)
+            console.log(id, values);
+            console.log(this.value);
             const prop = this.value.get(id);
             if (!prop || property === prop) {
                 continue;
@@ -176,11 +176,11 @@ export class TupleProperty extends DictionaryProperty {
             const isEnu = prop instanceof EnumProperty;
 
             console.log(isStr, isEnu);
-            console.log(values.size)
+            console.log(values.size);
             // If property has only one valid option...
             if (values.size === 1 && (isEnu || isStr)) {
                 // ...set it to that option
-                console.log("Set prop", [...values][0])
+                console.log("Set prop", [...values][0]);
                 prop.setValue([...values][0]);
             }
             // If property's value is no longer valid...
