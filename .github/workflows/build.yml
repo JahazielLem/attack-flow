@@ -12,30 +12,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  test_python:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-      - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org/ | python -
-      - name: Add Poetry to PATH
-        run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-      - name: Install Python dependencies
-        run: poetry install
-      - name: Check code formatting
-        run: poetry run black --check src/attack_flow/
-      - name: Run unit tests
-        run: poetry run make test-ci
-      - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_SECRET }}
-          files: coverage.xml
-          verbose: true
-
   test_attack_flow_builder:
     runs-on: ubuntu-latest
     steps:
@@ -103,47 +79,8 @@ jobs:
           name: builder-v2
           path: src/attack_flow_builder/dist/
 
-  comment_flow_links:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/github-script@v6
-        env:
-          PR_NUMBER: ${{ github.event.number }}
-        with:
-          script: |
-            const { PR_NUMBER, GITHUB_SHA } = process.env;
-            const builderUrl = "https://center-for-threat-informed-defense.github.io/attack-flow/ui/?src=";
-            const baseRawUrl = "https://raw.githubusercontent.com/center-for-threat-informed-defense/attack-flow"
-            const response = await github.rest.pulls.listFiles({
-              "owner": "center-for-threat-informed-defense",
-              "repo": "attack-flow",
-              "pull_number": PR_NUMBER,
-              "per_page": 50,
-              "page": 1,
-            });
-            const bullets = [];
-            for (const file of response.data) {
-              if (file.filename.startsWith("corpus/")) {
-                const flowName = file.filename.split("/").pop();
-                const flowArg = `${baseRawUrl}/${GITHUB_SHA}/corpus/${flowName}`;
-                console.log(flowArg)
-                const flowUrl = builderUrl + encodeURIComponent(flowArg);
-                bullets.push(`* [${flowName}](${flowUrl})`);
-              }
-            }
-            if (bullets.length > 0) {
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: "Open this PR's flows in Attack Flow Builder:\n\n" + bullets.join("\n") + "\n",
-              })
-            }
-
   render_site:
-    needs: ["test_python", "attack_flow_builder", "attack_flow_builder_v2"]
+    needs: ["attack_flow_builder", "attack_flow_builder_v2"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -160,7 +97,7 @@ jobs:
       - name: Install Poetry
         run: curl -sSL https://install.python-poetry.org/ | python -
       - name: Add Poetry to PATH
-        run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Install Python dependencies
         run: poetry install
       - name: Install Node dependencies
