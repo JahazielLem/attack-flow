@@ -1,11 +1,17 @@
 # Attack Flow for SPARTA
 
-> NOTE: This fork it's based on the `Attack Flow` from MITTRE if you want the original version [check this link](https://github.com/center-for-threat-informed-defense/attack-flow).
+> NOTE: This fork it's based on the `Attack Flow` from MITRE ATT&CK® if you want the original version [check this link](https://github.com/center-for-threat-informed-defense/attack-flow).
 
 <p align="center">
   <img src="https://github.com/JahazielLem/attack-flow/blob/main/static/main_screen.png">
  <i><br>Main page</i>
 </p>
+
+
+# About Space Attack Research and Tactic Analysis (SPARTA) 
+The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (T
+
+> More information [here](https://sparta.aerospace.org/)
 
 # Running
 To use this repo you need to follow the next steps:
