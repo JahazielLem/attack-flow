@@ -13,24 +13,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
-
       - name: Install dependencies
+        working-directory: ./src/attack_flow_builder/
         run: npm ci
-
-      - name: Build project
+      - name: Build
+        working-directory: ./src/attack_flow_builder/
         run: npm run build
-
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ./dist 
+          name: attack-flow-builder
+          path: src/attack_flow_builder/dist/
 
   deploy:
     needs: build
