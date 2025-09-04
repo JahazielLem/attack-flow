@@ -1,42 +1,20 @@
-name: Build
+name: Deploy Vue.js app to GitHub Pages
 
 on:
   push:
-    branches: [main]
-  pull_request:
+    branches: [ deploy ]
 
 permissions:
   contents: read
-  id-token: write
   pages: write
-  pull-requests: write
+  id-token: write
 
 jobs:
-  test_attack_flow_builder:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - name: Install dependencies
-        working-directory: ./src/attack_flow_builder/
-        run: npm ci
-      - name: Lint
-        working-directory: ./src/attack_flow_builder/
-        run: npm run lint
-      - name: Run unit tests
-        working-directory: ./src/attack_flow_builder/
-        run: npm run test:unit
-
-  attack_flow_builder:
-    needs: ["test_attack_flow_builder"]
-    runs-on: ubuntu-latest
-    env:
-      AFB_BASE_URL: "${{ github.ref == 'refs/heads/main' && '/attack-flow/ui/' || format('{0}/ui/', github.head_ref || github.ref_name) }}"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
         with:
           node-version: "20"
       - name: Install dependencies
@@ -51,109 +29,13 @@ jobs:
           name: attack-flow-builder
           path: src/attack_flow_builder/dist/
 
-  attack_flow_builder_v2:
-    needs: ["test_attack_flow_builder"]
-    runs-on: ubuntu-latest
-    env:
-      AFB_BASE_URL: "${{ github.ref == 'refs/heads/main' && '/attack-flow/ui-v2/' || format('{0}/ui-v2/', github.head_ref || github.ref_name) }}"
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: center-for-threat-informed-defense/attack-flow
-          ref: v2.3.3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "19"
-      - name: Install dependencies
-        working-directory: ./src/attack_flow_builder/
-        run: npm ci
-      - name: Build
-        working-directory: ./src/attack_flow_builder/
-        env:
-          # Workaround for node.js bug: https://github.com/webpack/webpack/issues/14532
-          NODE_OPTIONS: "--openssl-legacy-provider"
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: builder-v2
-          path: src/attack_flow_builder/dist/
-
-  render_site:
-    needs: ["attack_flow_builder", "attack_flow_builder_v2"]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - name: Update APT
-        run: sudo apt update
-      - name: Install APT dependencies
-        run: sudo apt install graphviz
-      - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org/ | python -
-      - name: Add Poetry to PATH
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-      - name: Install Python dependencies
-        run: poetry install
-      - name: Install Node dependencies
-        working-directory: ./src/attack_flow_builder/
-        run: npm ci
-      - name: Create client directory
-        run: mkdir docs/extra/ui
-      - name: Download Attack Flow Builder
-        uses: actions/download-artifact@v4
-        with:
-          name: attack-flow-builder
-          path: docs/extra/ui
-      - name: Create v2 directory
-        run: mkdir docs/extra/ui-v2
-      - name: Download v2 Builder
-        uses: actions/download-artifact@v4
-        with:
-          name: builder-v2
-          path: docs/extra/ui-v2
-      - name: Make Attack Flow schema
-        run: poetry run make docs-schema
-      - name: Validate Corpus
-        run: poetry run make validate
-      - name: Copy corpus into docs
-        env:
-          DOCS_BASE_URL: "${{ github.ref == 'refs/heads/main' && 'https://center-for-threat-informed-defense.github.io/attack-flow/' || format('https://ctidflow.z13.web.core.windows.net/{0}/', github.head_ref || github.ref_name) }}"
-        run: poetry run make docs-examples
-      - name: Copy matrix-viz code into docs
-        run: poetry run make docs-matrix
-      - name: Build HTML docs
-        run: poetry run make docs
-      - name: Upload HTML docs
-        uses: actions/upload-artifact@v4
-        with:
-          name: attack-flow-docs-html
-          path: docs/_build/dirhtml/
-
-  deploy_prod:
-    if: github.ref == 'refs/heads/main'
-    needs: render_site
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Download HTML docs
-        uses: actions/download-artifact@v4
-        with:
-          name: attack-flow-docs-html
-          path: docs
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./docs
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
