@@ -108,11 +108,6 @@ jobs:
           path: docs/extra/ui
       - name: Create v2 directory
         run: mkdir docs/extra/ui-v2
-      - name: Download v2 Builder
-        uses: actions/download-artifact@v4
-        with:
-          name: builder-v2
-          path: docs/extra/ui-v2
       - name: Make Attack Flow schema
         run: poetry run make docs-schema
       - name: Validate Corpus
