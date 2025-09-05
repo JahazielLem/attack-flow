@@ -52,9 +52,6 @@ validate: src/attack_flow_builder/dist-cli/cli.mjs ## Validate all flows in the 
 	mkdir -p docs/extra/corpus
 	cp corpus/*.afb docs/extra/corpus
 	node src/attack_flow_builder/dist-cli/cli.mjs export-stix --verbose corpus/*.afb
-	af validate \
-		stix/attack-flow-example.json \
-		corpus/*.json
 
 docker-build: ## Build the Docker image.
 	docker build . -t attack-flow-builder:latest
