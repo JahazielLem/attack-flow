@@ -20,11 +20,6 @@ docs-examples: src/attack_flow_builder/dist-cli/cli.mjs ## Build example flows
 	mkdir -p docs/extra/corpus
 	cp corpus/*.afb docs/extra/corpus
 	node src/attack_flow_builder/dist-cli/cli.mjs export-stix --verbose corpus/*.afb
-	cp corpus/*.json docs/extra/corpus
-	ls -1 corpus/*.json | sed 's/corpus\/\(.*\)\.json/\1/' | xargs -t -I {} af graphviz "corpus/{}.json" "docs/extra/corpus/{}.dot"
-	ls -1 docs/extra/corpus/*.dot | xargs -t -I {} dot -Tpng -O -q1 "{}"
-	ls -1 corpus/*.json | sed 's/corpus\/\(.*\)\.json/\1/' | xargs -t -I {} af mermaid "corpus/{}.json" "docs/extra/corpus/{}.mmd"
-	af doc-examples corpus/ docs/example_flows.rst
 
 docs-matrix: ## Build the Navigator visualization JS code
 	mkdir -p docs/extra/matrix
