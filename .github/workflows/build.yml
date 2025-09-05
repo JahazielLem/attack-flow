@@ -23,11 +23,10 @@ jobs:
       - name: Build
         working-directory: ./src/attack_flow_builder/
         run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload build output
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: attack-flow-builder
-          path: src/attack_flow_builder/dist/
+          path: src/attack_flow_builder/dist
 
   deploy:
     needs: build
