@@ -75,36 +75,8 @@ jobs:
           name: attack-flow-builder
           path: src/attack_flow_builder/dist/
 
-  attack_flow_builder_v2:
-    needs: ["test_attack_flow_builder"]
-    runs-on: ubuntu-latest
-    env:
-      AFB_BASE_URL: "${{ github.ref == 'refs/heads/main' && '/attack-flow/ui-v2/' || format('{0}/ui-v2/', github.head_ref || github.ref_name) }}"
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: JahazielLem/attack-flow
-          ref: v2.3.3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "19"
-      - name: Install dependencies
-        working-directory: ./src/attack_flow_builder/
-        run: npm ci
-      - name: Build
-        working-directory: ./src/attack_flow_builder/
-        env:
-          # Workaround for node.js bug: https://github.com/webpack/webpack/issues/14532
-          NODE_OPTIONS: "--openssl-legacy-provider"
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: builder-v2
-          path: src/attack_flow_builder/dist/
-
   render_site:
-    needs: ["test_python", "attack_flow_builder", "attack_flow_builder_v2"]
+    needs: ["test_python", "attack_flow_builder"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
