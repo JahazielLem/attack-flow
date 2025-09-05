@@ -110,7 +110,7 @@ jobs:
 
   deploy_prod:
     if: github.ref == 'refs/heads/main'
-    needs: render_site
+    needs: attack_flow_builder
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -121,12 +121,12 @@ jobs:
       - name: Download HTML docs
         uses: actions/download-artifact@v4
         with:
-          name: attack-flow-docs-html
-          path: docs
+          name: attack-flow-builder
+          path: dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
