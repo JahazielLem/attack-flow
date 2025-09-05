@@ -122,11 +122,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: attack-flow-builder
-          path: dist
+          path: docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./docs
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
