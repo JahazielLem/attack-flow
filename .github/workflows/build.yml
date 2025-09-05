@@ -128,7 +128,7 @@ jobs:
 
   deploy_prod:
     if: github.ref == 'refs/heads/main'
-    needs: attack_flow_builder
+    needs: render_site
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -136,18 +136,15 @@ jobs:
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      - name: Download Vue artifact
+      - name: Download HTML docs
         uses: actions/download-artifact@v4
         with:
-          name: attack-flow-builder
-          path: dist
-
+          name: attack-flow-docs-html
+          path: docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
-
+          path: ./docs
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
