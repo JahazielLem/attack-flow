@@ -36,7 +36,25 @@ jobs:
           files: coverage.xml
           verbose: true
 
+  test_attack_flow_builder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        working-directory: ./src/attack_flow_builder/
+        run: npm ci
+      - name: Lint
+        working-directory: ./src/attack_flow_builder/
+        run: npm run lint
+      - name: Run unit tests
+        working-directory: ./src/attack_flow_builder/
+        run: npm run test:unit
+
   attack_flow_builder:
+    needs: ["test_attack_flow_builder"]
     runs-on: ubuntu-latest
     env:
       AFB_BASE_URL: "${{ github.ref == 'refs/heads/main' && '/attack-flow/ui/' || format('{0}/ui/', github.head_ref || github.ref_name) }}"
@@ -118,15 +136,18 @@ jobs:
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Download HTML docs
+
+      - name: Download Vue artifact
         uses: actions/download-artifact@v4
         with:
           name: attack-flow-builder
-          path: docs
+          path: dist
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./dist
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
