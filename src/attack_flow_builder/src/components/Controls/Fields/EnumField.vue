@@ -74,8 +74,8 @@ export default defineComponent({
     },
     featuredOptions: {
       type: Set as PropType<Set<string>>,
-      required: false
-    },
+      default: undefined
+    }
   },
   data() {
     return {

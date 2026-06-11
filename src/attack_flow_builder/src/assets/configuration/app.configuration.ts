@@ -2,10 +2,12 @@ import AttackFlowValidator from "./AttackFlowValidator/AttackFlowValidator.ts";
 import AttackFlowPublisher from "./AttackFlowPublisher/AttackFlowPublisher.ts";
 import AttackFlowFilePreprocessor from "./AttackFlowFilePreprocessor/AttackFlowFilePreprocessor.ts";
 import AttackFlowCommandProcessor from "./AttackFlowCommandProcessor/AttackFlowCommandProcessor.ts";
+import SpartaEnums from "./AttackFlowTemplates/MitreSparta.ts";
+import { CatppuccinTheme } from "./AttackFlowThemes/CatppuccinTheme.ts";
 import { DarkTheme } from "./AttackFlowThemes/DarkTheme.ts";
 import { BlogTheme } from "./AttackFlowThemes/BlogTheme.ts";
 import { LightTheme } from "./AttackFlowThemes/LightTheme.ts";
-import { CtidIcon, CtidLogo, CtidSpartaLogo, CtidPwnsatLogo } from "./Images";
+import { CtidLogo, CtidPwnsatLogo, CtidSpartaLogo } from "./Images";
 import {
     AttackFlow,
     AttackFlowObjects,
@@ -20,7 +22,7 @@ const configuration: AppConfiguration = {
     /**
      * The application's name.
      */
-    application_name: "Attack Flow Builder Fork By PWNSAT",
+    application_name: "Attack Flow Builder SPARTA by PWNSAT",
 
     /**
      * The application's icon.
@@ -43,6 +45,9 @@ const configuration: AppConfiguration = {
     splash: {
         organization: CtidLogo,
         sparta: CtidSpartaLogo,
+        sparta_version: SpartaEnums.version
+            ? `SPARTA v${SpartaEnums.version}`
+            : undefined,
         new_file: {
             title: "New Flow",
             description: "Create a blank flow."
@@ -59,12 +64,12 @@ const configuration: AppConfiguration = {
             {
                 title: "Example Flows",
                 description: "Visit a list of example Flows.",
-                url: "https://center-for-threat-informed-defense.github.io/attack-flow/example_flows/"
+                url: "https://jahaziellem.github.io/attack-flow/example_flows/"
             },
             {
                 title: "Builder Help",
                 description: "Read the builder's user guide.",
-                url: "https://center-for-threat-informed-defense.github.io/attack-flow/builder/"
+                url: "https://jahaziellem.github.io/attack-flow/builder/"
             }
         ]
     },
@@ -87,6 +92,7 @@ const configuration: AppConfiguration = {
      * The application's themes.
      */
     themes: [
+        CatppuccinTheme,
         BlogTheme,
         DarkTheme,
         LightTheme
@@ -100,11 +106,11 @@ const configuration: AppConfiguration = {
             help_links: [
                 {
                     text: "Attack Flow Website",
-                    url: "https://center-for-threat-informed-defense.github.io/attack-flow/"
+                    url: "https://jahaziellem.github.io/attack-flow/"
                 },
                 {
                     text: "Attack Flow Builder Help",
-                    url: "https://center-for-threat-informed-defense.github.io/attack-flow/builder/"
+                    url: "https://jahaziellem.github.io/attack-flow/builder/"
                 },
                 {
                     text: "MITRE ATT&CK Framework",
@@ -119,8 +125,12 @@ const configuration: AppConfiguration = {
                     url: "https://github.com/JahazielLem/attack-flow"
                 },
                 {
+                    text: "SPARTA STIX Repository",
+                    url: "https://github.com/JahazielLem/attack-stix-data"
+                },
+                {
                     text: "Change Log",
-                    url: "https://center-for-threat-informed-defense.github.io/attack-flow/builder/"
+                    url: "https://github.com/JahazielLem/attack-flow/releases"
                 }
             ]
         }

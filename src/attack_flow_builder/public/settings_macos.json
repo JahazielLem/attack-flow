@@ -14,7 +14,7 @@
             "display_animations": true,
             "display_shadows": true,
             "display_debug_info": false,
-            "theme": "dark_theme"
+            "theme": "catppuccin_theme"
         },
         "search": {
             "display": false

@@ -1,46 +1,160 @@
-# Attack Flow for SPARTA
+[![build](https://github.com/JahazielLem/attack-flow/actions/workflows/build.yml/badge.svg)](https://github.com/JahazielLem/attack-flow/actions/workflows/build.yml)
 
-> NOTE: This fork it's based on the `Attack Flow` from MITRE ATT&CK® if you want the original version [check this link](https://github.com/center-for-threat-informed-defense/attack-flow).
+# Attack Flow Builder SPARTA by PWNSAT
 
-<p align="center">
-  <img src="https://github.com/JahazielLem/attack-flow/blob/main/static/main_screen.png">
- <i><br>Main page</i>
-</p>
+This repository is a maintained fork of [center-for-threat-informed-defense/attack-flow](https://github.com/center-for-threat-informed-defense/attack-flow) with a production-ready SPARTA integration layered on top of the latest upstream codebase.
 
+The goal of this fork is to keep pace with upstream Attack Flow changes while adding SPARTA-specific capabilities that are safe to regenerate during future updates instead of relying on manual patches.
 
-# About Space Attack Research and Tactic Analysis (SPARTA) 
-The Aerospace Corporation created the Space Attack Research and Tactic Analysis (SPARTA) matrix to address the information and communication barriers that hinder the identification and sharing of space-system Tactic, Techniques, and Procedures (T
+## Key Features
 
-> More information [here](https://sparta.aerospace.org/)
+- Upstream Attack Flow updates rebased into this fork.
+- SPARTA framework integration using the maintained STIX source from [JahazielLem/attack-stix-data](https://github.com/JahazielLem/attack-stix-data).
+- Automatic resolution of the latest `sparta-attack-*.json` bundle during source regeneration.
+- Full SPARTA tactic, technique, and sub-technique support.
+- Action TTP autocompletion for tactic, technique, and sub-technique combinations.
+- Export and import support for `subtechnique_id` and `subtechnique_ref` in `attack-action`.
+- Splash screen SPARTA version display sourced from the generated SPARTA bundle metadata.
+- A dedicated blue `countermeasure` card mapped to STIX `course-of-action`.
+- Red `action` cards for easier visual distinction.
+- Catppuccin theme support and Catppuccin-based default styling.
+- Customized splash screen and branding for the SPARTA-enabled builder.
+- Custom STIX observables for:
+  - `x-sigmf-capture`
+  - `x-raw-iq-capture`
 
-# Running
-To use this repo you need to follow the next steps:
+## SPARTA Data Handling
+
+SPARTA data is generated from the latest versioned bundle published in the `sparta-attack` directory of the STIX source repository. During regeneration, the builder:
+
+- Detects the newest available SPARTA bundle version.
+- Synthesizes SPARTA tactics from `kill_chain_phases` when the STIX bundle does not ship standalone tactic objects.
+- Preserves SPARTA sub-techniques and their relationships.
+- Excludes non-matrix `SV-*` threat reference objects from offensive matrix autocompletion.
+
+To regenerate all source enumerations, including SPARTA:
+
 ```bash
-git clone https://github.com/JahazielLem/attack-flow
-cd attack-flow/src/attack_flow_builder
-npm install
+cd src/attack_flow_builder
+npm run update-sources
+```
+
+## Custom Observables
+
+This fork adds two custom observables intended for RF and signal-capture workflows:
+
+### `x-sigmf-capture`
+
+Fields:
+
+- `name`
+- `file_name`
+- `frequency_hz`
+- `sample_rate_hz`
+- `modulation`
+- `capture_date`
+- `description`
+
+### `x-raw-iq-capture`
+
+Fields:
+
+- `name`
+- `file_name`
+- `frequency_hz`
+- `sample_rate_hz`
+- `modulation`
+- `capture_date`
+- `description`
+
+These observables are available in the builder UI and round-trip through STIX export/import.
+
+## Local Development
+
+### Requirements
+
+- Python 3.12
+- [Poetry](https://python-poetry.org/)
+- Node.js 20
+- npm
+- [Graphviz](https://graphviz.org/) for `make docs-examples`
+
+### Install Dependencies
+
+```bash
+poetry install
+cd src/attack_flow_builder
+npm ci
+```
+
+### Run the Builder Locally
+
+```bash
+cd src/attack_flow_builder
 npm run dev
 ```
 
-## SPARTA TTPS
-<p align="center">
-  <img src="https://github.com/JahazielLem/attack-flow/blob/main/static/Shocase.gif">
- <i><br>SPARTA Showcase</i>
-</p>
+### Build the Builder
 
-## Notice
+```bash
+cd src/attack_flow_builder
+npm run build
+```
 
-Copyright 2021 MITRE. Approved for public release. Document number CT0040
+### Run Builder Quality Checks
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License at
+These commands mirror the Attack Flow Builder GitHub Actions checks:
 
-http://www.apache.org/licenses/LICENSE-2.0
+```bash
+cd src/attack_flow_builder
+npm run lint
+npm run test:unit
+npm run build
+```
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is
-distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
-the License for the specific language governing permissions and limitations under the License.
+### Run Python Quality Checks
 
-This project makes use of MITRE ATT&CK®
+These commands cover the Python-side GitHub Actions checks:
 
-[ATT&CK Terms of Use](https://attack.mitre.org/resources/terms-of-use/)
+```bash
+poetry run black --check src/attack_flow/
+poetry run make test-ci
+```
+
+### Build the Documentation Site
+
+`make docs-examples` requires Graphviz's `dot` binary to be installed locally.
+
+```bash
+poetry run make docs-schema
+poetry run make validate
+poetry run make docs-examples
+poetry run make docs-matrix
+poetry run make docs
+```
+
+## GitHub Actions Compatibility
+
+The workflow in `.github/workflows/build.yml` has been updated to work correctly in a forked repository by:
+
+- Using the current repository name for GitHub Pages base paths.
+- Generating PR flow links from the active repository instead of hardcoded upstream paths.
+- Building docs with repository-relative Pages URLs.
+
+This makes the fork safer to push, test, and publish with GitHub Actions without re-editing workflow URLs after every upstream sync.
+
+## Upstream Project
+
+The original Attack Flow project is maintained by the MITRE Center for Threat-Informed Defense:
+
+- Fork documentation: [Attack Flow Builder SPARTA Documentation](https://jahaziellem.github.io/attack-flow/)
+- Upstream repository: [center-for-threat-informed-defense/attack-flow](https://github.com/center-for-threat-informed-defense/attack-flow)
+- Project documentation: [Attack Flow Documentation](https://center-for-threat-informed-defense.github.io/attack-flow/)
+
+## License
+
+Copyright 2021 MITRE.
+
+Licensed under the Apache License, Version 2.0.
+
+This project makes use of MITRE ATT&CK.

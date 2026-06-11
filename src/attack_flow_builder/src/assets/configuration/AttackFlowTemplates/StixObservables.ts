@@ -66,6 +66,84 @@ export const StixObservables: DiagramObjectTemplate[] = [
         anchors: AnchorConfiguration
     },
     {
+        name: "sigmf_capture",
+        namespace: ["stix_observable", "sigmf_capture"],
+        type: DiagramObjectType.Block,
+        properties: {
+            name: {
+                type: PropertyType.String,
+                is_representative: true,
+                metadata: {
+                    validator: {
+                        is_required: true
+                    }
+                }
+            },
+            file_name: {
+                name: "File",
+                type: PropertyType.String
+            },
+            frequency_hz: {
+                name: "Frequency (Hz)",
+                type: PropertyType.Float
+            },
+            sample_rate_hz: {
+                name: "Sample Rate (Hz)",
+                type: PropertyType.Float
+            },
+            modulation: {
+                type: PropertyType.String
+            },
+            capture_date: {
+                name: "Capture Date",
+                type: PropertyType.Date
+            },
+            description: {
+                type: PropertyType.String
+            }
+        },
+        anchors: AnchorConfiguration
+    },
+    {
+        name: "raw_iq_capture",
+        namespace: ["stix_observable", "raw_iq_capture"],
+        type: DiagramObjectType.Block,
+        properties: {
+            name: {
+                type: PropertyType.String,
+                is_representative: true,
+                metadata: {
+                    validator: {
+                        is_required: true
+                    }
+                }
+            },
+            file_name: {
+                name: "File",
+                type: PropertyType.String
+            },
+            frequency_hz: {
+                name: "Frequency (Hz)",
+                type: PropertyType.Float
+            },
+            sample_rate_hz: {
+                name: "Sample Rate (Hz)",
+                type: PropertyType.Float
+            },
+            modulation: {
+                type: PropertyType.String
+            },
+            capture_date: {
+                name: "Capture Date",
+                type: PropertyType.Date
+            },
+            description: {
+                type: PropertyType.String
+            }
+        },
+        anchors: AnchorConfiguration
+    },
+    {
         name: "autonomous_system",
         namespace: ["stix_observable", "autonomous_system"],
         type: DiagramObjectType.Block,

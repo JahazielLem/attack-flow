@@ -4,6 +4,10 @@ Builder
 Attack Flow Builder is a free and open source tool for creating, viewing, and editing
 Attack Flows.
 
+This forked builder distribution adds SPARTA matrix support, SPARTA sub-technique
+autocompletion, custom RF capture observables, a countermeasure card, and UI/theme
+adjustments on top of the upstream Attack Flow Builder experience.
+
 .. figure:: _static/builder-overview.png
    :alt: Screenshot of Attack Flow Builder displaying a complex attack flow.
    :align: center

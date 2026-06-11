@@ -31,13 +31,12 @@ export interface Action extends BaseStixDomainObject<"attack-action"> {
     technique_ref?: string;
 
     /**
-     * The action's technique id.
+     * The action's subtechnique id.
      */
     subtechnique_id?: string;
 
-
     /**
-     * The action's technique id.
+     * The subtechnique's STIX id.
      */
     subtechnique_ref?: string;
 

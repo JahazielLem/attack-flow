@@ -60,12 +60,17 @@ const AttackObjects = {
     action: {
         type: FaceType.DictionaryBlock,
         attributes: Alignment.Grid,
-        style: LightStyle.DictionaryBlock({ head: Colors.LightThemeBlue })
+        style: LightStyle.DictionaryBlock({ head: Colors.LightThemeRed })
     },
     asset: {
         type: FaceType.DictionaryBlock,
         attributes: Alignment.Grid,
         style: LightStyle.DictionaryBlock({ head: Colors.LightThemeOrange })
+    },
+    countermeasure: {
+        type: FaceType.DictionaryBlock,
+        attributes: Alignment.Grid,
+        style: LightStyle.DictionaryBlock({ head: Colors.LightThemeBlue })
     },
     condition: {
         type: FaceType.BranchBlock,

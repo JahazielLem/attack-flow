@@ -59,11 +59,6 @@ const TACTIC_LOOKUP = {
     "TA0107": "inhibit-response-function",
     "TA0106": "impair-process-control",
     "TA0105": "impact",
-    // SPARTA:
-    "ST0001": "reconnaissance",
-    "ST0002": "resource-development",
-    "ST0003": "initial-access",
-    "ST0004": "execution",
 }
 
 /**

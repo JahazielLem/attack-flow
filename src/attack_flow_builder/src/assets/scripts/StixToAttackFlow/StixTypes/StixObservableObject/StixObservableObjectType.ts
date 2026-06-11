@@ -15,6 +15,8 @@ export type StixObservableObjectType
     | "mutex"
     | "network-traffic"
     | "process"
+    | "x-sigmf-capture"
+    | "x-raw-iq-capture"
     | "software"
     | "url"
     | "user-account"

@@ -10,6 +10,13 @@ the state of the art and the state of the practice in threat-informed defense
 globally. The project is funded by our `research participants
 <https://ctid.mitre.org/projects/attack-flow#participants-section>`__. The development of these usage guides has been shaped by direct input and feedback from our members—practitioners at large, international organizations with advanced cybersecurity programs. Their real-world experience and operational insights have grounded this work in practical, applicable guidance for defenders around the world.
 
+.. note::
+
+   This documentation site also publishes the PWNSAT-maintained fork of Attack Flow.
+   The fork tracks upstream changes while adding SPARTA framework support, SPARTA
+   sub-technique-aware autocompletion, custom observables for RF capture workflows,
+   and UI customizations for the builder experience.
+
 .. toctree::
     :maxdepth: 1
     :caption: Contents

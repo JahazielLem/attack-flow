@@ -11,6 +11,8 @@ import type { MacAddress } from "./MacAddress";
 import type { Mutex } from "./Mutex";
 import type { NetworkTraffic } from "./NetworkTraffic";
 import type { Process } from "./Process";
+import type { RawIQCapture } from "./RawIQCapture";
+import type { SigMFCapture } from "./SigMFCapture";
 import type { Software } from "./Software";
 import type { Url } from "./Url";
 import type { UserAccount } from "./UserAccount";
@@ -34,6 +36,8 @@ export type StixObservableObject
     | Mutex
     | NetworkTraffic
     | Process
+    | SigMFCapture
+    | RawIQCapture
     | Software
     | Url
     | UserAccount

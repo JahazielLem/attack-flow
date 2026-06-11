@@ -63,7 +63,8 @@ export class LoadFile extends AppCommand {
         const marqueeThemes = {
             dark_theme  : DarkThemeMarquee,
             blog_theme  : LightThemeMarquee,
-            light_theme : LightThemeMarquee
+            light_theme : LightThemeMarquee,
+            catppuccin_theme : DarkThemeMarquee
         };
         // Configure interface plugins
         if (!context.readOnlyMode) {

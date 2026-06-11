@@ -37,7 +37,16 @@ export interface AppConfiguration {
          * The organization's logo.
          */
         organization: string;
-        sparta: string;
+
+        /**
+         * The secondary framework logo.
+         */
+        sparta?: string;
+
+        /**
+         * The secondary framework version label.
+         */
+        sparta_version?: string;
 
         /**
          * New file splash button.

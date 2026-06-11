@@ -19,6 +19,16 @@ NON_ALPHA = re.compile(r"[^a-zA-Z0-9]+")
 EXTRACT_ONE_TYPE_FROM_RE = re.compile(r"\^([-a-z]+)--")
 EXTRACT_MULTIPLE_TYPES_FROM_RE = re.compile(r"\^\(([-a-z-\|]+)\)--")
 
+EXAMPLE_FLOW_OVERRIDES = {
+    "Pwnsat - Assisted Analysis": {
+        "author": "Kevin Leon",
+        "description": (
+            "Default vulnerable Pwnsat card. This file contains the identified "
+            "vulnerabilities and test scenarios that can be used during analysis."
+        ),
+    }
+}
+
 
 class RefType:
     """Helper class for JSON Schema references."""
@@ -288,12 +298,13 @@ def generate_example_flows(jsons, afds):
         flow_name = flow["name"]
         flow_description = flow["description"]
 
+        override = EXAMPLE_FLOW_OVERRIDES.get(path.stem, {})
         reports.append(
             (
                 path.stem,
-                flow_name,
-                author_name,
-                flow_description,
+                override.get("name", flow_name),
+                override.get("author", author_name),
+                override.get("description", flow_description),
             )
         )
 
@@ -303,6 +314,7 @@ def generate_example_flows(jsons, afds):
         stem, name, author, description = report
         quoted_stem = quote(stem)
         open_link = quote(urljoin(os.environ["DOCS_BASE_URL"], f"./corpus/{stem}.afb"))
+        builder_url = os.environ.get("DOCS_BUILDER_URL", "../ui/")
         doc_lines.append(f"**{name}**")
         doc_lines.append("")
         doc_lines.append(f"*Author:* {author}")
@@ -312,7 +324,7 @@ def generate_example_flows(jsons, afds):
         doc_lines.append(".. raw:: html")
         doc_lines.append("")
         doc_lines.append(
-            f'    <p><em>Open:</em> <a href="../ui/?src={open_link}" target="_blank">Attack Flow Builder</a></p>'
+            f'    <p><em>Open:</em> <a href="{builder_url}?src={open_link}" target="_blank">Attack Flow Builder</a></p>'
         )
         doc_lines.append(
             f'    <p><em>Download:</em> <a href="../corpus/{quoted_stem}.afb" download>Attack Flow</a> | <a href="../corpus/{quoted_stem}.json" download>STIX</a> | <a href="../corpus/{quoted_stem}.dot" download>GraphViz</a> (<a href="../corpus/{quoted_stem}.dot.png">PNG</a>) | <a href="../corpus/{quoted_stem}.mmd" download>Mermaid</a></p>'

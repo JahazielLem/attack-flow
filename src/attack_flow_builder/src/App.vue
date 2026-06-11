@@ -342,10 +342,10 @@ ul {
 }
 
 #app-footer-bar {
-  color: #bfbfbf;
+  color: #a6adc8;
   width: 100%;
   height: 100%;
-  border-top: solid 1px #333333;
+  border-top: solid 1px #313244;
   background: #181825;
 }
 
@@ -374,7 +374,7 @@ ul {
 .resize-handle {
   position: absolute;
   display: block;
-  background: #726de2;
+  background: #89b4fa;
   transition: 0.15s opacity;
   opacity: 0;
   z-index: 1;

@@ -61,12 +61,18 @@ const AttackObjects = {
         type: FaceType.DictionaryBlock,
         attributes: Alignment.Grid,
         properties: { include: ["description"] },
-        style: BlogStyle.DictionaryBlock({ head: Colors.SimpleBlue })
+        style: BlogStyle.DictionaryBlock({ head: Colors.SimpleRed })
     },
     asset: {
         type: FaceType.DictionaryBlock,
         attributes: Alignment.Grid,
         style: BlogStyle.DictionaryBlock({ head: Colors.SimpleOrange })
+    },
+    countermeasure: {
+        type: FaceType.DictionaryBlock,
+        attributes: Alignment.Grid,
+        properties: { include: ["description"] },
+        style: BlogStyle.DictionaryBlock({ head: Colors.SimpleBlue })
     },
     condition: {
         type: FaceType.BranchBlock,

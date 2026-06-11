@@ -126,21 +126,28 @@
       </div>
       <div
         class="section"
-        v-if="helpLinks.length"
+        v-if="organization || sparta"
       >
         <p class="section-title">
           THIS PROJECT IS BASED ON:
         </p>
+        <p
+          class="section-subtitle"
+          v-if="spartaVersion"
+        >
+          {{ spartaVersion }}
+        </p>
         <div class="project-footer">
-                  <img
-        class="organization"
-        v-if="organization"
-        :src="organization"
-      >
-       <img
-        class="sparta-logo"
-        :src="sparta"
-      >
+          <img
+            class="organization"
+            v-if="organization"
+            :src="organization"
+          >
+          <img
+            class="sparta-logo"
+            v-if="sparta"
+            :src="sparta"
+          >
         </div>
       </div>
     </div>
@@ -171,6 +178,7 @@ export default defineComponent({
       applicationVersion: version,
       organization: Configuration.splash.organization,
       sparta: Configuration.splash.sparta,
+      spartaVersion: Configuration.splash.sparta_version,
       newFile: Configuration.splash.new_file,
       openFile: Configuration.splash.open_file,
       importStix: Configuration.splash.import_stix,
@@ -314,8 +322,7 @@ export default defineComponent({
 }
 
 .organization {
-    width: 50%;
-  /*height: 27px;*/
+  width: 50%;
 }
 
 .sparta-logo {
@@ -344,6 +351,14 @@ export default defineComponent({
   margin-bottom: 15px;
 }
 
+.section-subtitle {
+  color: #89b4fa;
+  font-size: 8.5pt;
+  font-weight: 600;
+  margin: -8px 0 14px 2px;
+  letter-spacing: 0.04em;
+}
+
 .section-grid {
     display: flex;
     flex-wrap: wrap;
@@ -368,7 +383,7 @@ export default defineComponent({
 
 .file,
 .button {
-    background-color: #1e1e2e;
+  background-color: #1e1e2e;
   border: none;
   border-radius: 8px;
   box-sizing: border-box;
@@ -440,20 +455,21 @@ export default defineComponent({
 .delete-file {
   display: flex;
   align-items: center;
-  color: #89a0ec;
+  color: #89b4fa;
   font-size: 9.5pt;
   user-select: none;
   box-sizing: border-box;
   padding: 0px 10px;
-  border: solid 1px #383838;
-  border-radius: 5px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1e1e2e;
   margin-left: 8px;
 }
 
 .file:hover,
 .button:hover,
 .delete-file:hover {
-  background: #383838;
+  background: #313244;
 }
 
 /** === Open File Section === */
@@ -494,12 +510,11 @@ export default defineComponent({
   border-radius: 5px;
 }
 
-/** === Footer === */
-.project-footer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
+.project-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
 }
 
 </style>

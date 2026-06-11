@@ -460,7 +460,7 @@ type AccordionPaneHeight = {
   top: -2px;
   width: 100%;
   height: 4px;
-  background: #b4befe;
+  background: #726de2;
   cursor: n-resize;
   transition: 0.15s opacity;
   opacity: 0;

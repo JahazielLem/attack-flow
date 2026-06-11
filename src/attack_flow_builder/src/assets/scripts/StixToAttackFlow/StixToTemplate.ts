@@ -8,7 +8,7 @@ export const StixToTemplate: { [key in StixObjectType]: string | null } = {
     // Domain Objects
     "attack-pattern"        : "attack_pattern",
     "campaign"              : "campaign",
-    "course-of-action"      : "course_of_action",
+    "course-of-action"      : "countermeasure",
     "grouping"              : "grouping",
     "identity"              : "identity",
     "incident"              : null,
@@ -47,6 +47,8 @@ export const StixToTemplate: { [key in StixObjectType]: string | null } = {
     "mutex"                 : "mutex",
     "network-traffic"       : "network_traffic",
     "process"               : "process",
+    "x-sigmf-capture"       : "sigmf_capture",
+    "x-raw-iq-capture"      : "raw_iq_capture",
     "software"              : "software",
     "url"                   : "url",
     "user-account"          : "user_account",

@@ -8,7 +8,7 @@ import {
 } from "@OpenChart/DiagramModel";
 import type { GraphExport, JsonValue } from "@OpenChart/DiagramModel";
 import type { FilePublisher } from "@/assets/scripts/Application";
-import Enums from "../AttackFlowTemplates/MitreAttack";
+import Enums from "../AttackFlowTemplates/SourceEnumeration";
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,10 +62,13 @@ const AttackFlowTemplatesMap: Map<string, string>
         ["flow", "attack-flow"],
         ["action", "attack-action"],
         ["asset", "attack-asset"],
+        ["countermeasure", "course-of-action"],
         ["condition", "attack-condition"],
         ["OR_operator", "attack-operator"],
         ["AND_operator", "attack-operator"],
-        ["email_address", "email-addr"]
+        ["email_address", "email-addr"],
+        ["sigmf_capture", "x-sigmf-capture"],
+        ["raw_iq_capture", "x-raw-iq-capture"]
     ]);
 
 
@@ -208,7 +211,7 @@ class AttackFlowPublisher implements FilePublisher {
                         }
                     }
                     const subtechnique = json?.subtechnique as null | string;
-                     if (subtechnique) {
+                    if (subtechnique) {
                         node["subtechnique_id"] = subtechnique;
                         if (subtechnique in Enums.stixIds) {
                             node["subtechnique_ref"] = Enums.stixIds[subtechnique as keyof typeof Enums.stixIds];

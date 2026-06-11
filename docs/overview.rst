@@ -24,6 +24,10 @@ from blue team to red team, from manual analysis to autonomous response, and fro
 front-line worker to the C-suite. Attack Flow provides a common language and toolset for
 describing complex, adversarial behavior.
 
+This documentation set is published from a maintained fork that keeps the upstream
+Attack Flow project current while extending the builder with SPARTA support and a small
+set of operational customizations used by PWNSAT workflows.
+
 Who is Attack Flow For?
 -----------------------
 

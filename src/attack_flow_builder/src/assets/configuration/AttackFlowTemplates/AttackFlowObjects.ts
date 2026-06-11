@@ -84,6 +84,36 @@ export const AttackFlowObjects: DiagramObjectTemplate[] = [
         anchors: AnchorConfiguration
     },
     {
+        name: "countermeasure",
+        namespace: ["attack_flow", "countermeasure"],
+        type: DiagramObjectType.Block,
+        properties: {
+            name: {
+                type: PropertyType.String,
+                is_representative: true,
+                metadata: {
+                    validator: {
+                        is_required: true
+                    }
+                }
+            },
+            description: {
+                type: PropertyType.String
+            },
+            action_type: {
+                type: PropertyType.String
+            },
+            os_execution_envs: {
+                type: PropertyType.List,
+                form: { type: PropertyType.String }
+            },
+            action_bin: {
+                type: PropertyType.String
+            }
+        },
+        anchors: AnchorConfiguration
+    },
+    {
         name: "condition",
         namespace: ["attack_flow", "condition"],
         type: DiagramObjectType.Block,
