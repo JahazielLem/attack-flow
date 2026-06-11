@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { DiagramObjectFactory } from "@/assets/scripts/OpenChart/DiagramModel";
-import { PropertyType } from "@/assets/scripts/OpenChart/DiagramModel/DiagramObjectFactory";
+import {
+    DiagramObjectType,
+    PropertyType
+} from "@/assets/scripts/OpenChart/DiagramModel/DiagramObjectFactory";
 import type {
     DiagramSchemaConfiguration,
     TuplePropertyDescriptor
@@ -10,7 +13,7 @@ const schema: DiagramSchemaConfiguration = {
     id: "tuple_spec_schema",
     canvas: {
         name: "tuple_spec_canvas",
-        type: "canvas",
+        type: DiagramObjectType.Canvas,
         properties: {}
     },
     templates: []
