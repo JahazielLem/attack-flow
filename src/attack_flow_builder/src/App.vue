@@ -6,6 +6,13 @@
     <AppTitleBar
       id="app-title-bar"
       v-if="!application.readOnlyMode"
+      @open-wiki="openWiki"
+    />
+    <TtpWikiModal
+      v-if="wikiModalShown"
+      :visible="wikiModalShown"
+      :initial-query="wikiQuery"
+      @close="closeWiki"
     />
     <FindDialog
       id="find-dialog"
@@ -48,7 +55,7 @@
 // Dependencies
 import * as AppCommand from "./assets/scripts/Application/Commands";
 import { useApplicationStore } from './stores/ApplicationStore';
-import { defineComponent, markRaw, ref } from 'vue';
+import { defineAsyncComponent, defineComponent, markRaw, ref } from 'vue';
 import { Device, clamp, OperatingSystem, PointerTracker } from "./assets/scripts/Browser";
 import type { Command } from "./assets/scripts/Application"
 // Components
@@ -59,6 +66,10 @@ import AppHotkeyBox from "@/components/Elements/AppHotkeyBox.vue";
 import BlockDiagram from "@/components/Elements/BlockDiagram.vue";
 import AppFooterBar from "@/components/Elements/AppFooterBar.vue";
 import EditorSidebar from "@/components/Elements/EditorSidebar.vue";
+
+const TtpWikiModal = defineAsyncComponent(
+  () => import("@/components/Elements/TtpWikiModal.vue")
+);
 
 const Handle = {
   None   : 0,
@@ -83,7 +94,10 @@ export default defineComponent({
         [Handle.Right]: 310
       },
       track: markRaw(new PointerTracker()),
-      onResizeObserver: null as ResizeObserver | null
+      onResizeObserver: null as ResizeObserver | null,
+      onKeyDown: null as ((event: KeyboardEvent) => void) | null,
+      wikiModalShown: false,
+      wikiQuery: ""
     }
   },
   computed: {
@@ -194,6 +208,23 @@ export default defineComponent({
       const max = this.bodyWidth;
       const min = this.minFrameSize[Handle.Right];
       this.frameSize[Handle.Right] = clamp(size, min, max);
+    },
+
+    openWiki(query: string = "") {
+      this.wikiQuery = query;
+      this.wikiModalShown = true;
+    },
+
+    closeWiki() {
+      this.wikiModalShown = false;
+    },
+
+    onGlobalKeyDown(event: KeyboardEvent) {
+      const isModifierPressed = event.ctrlKey || event.metaKey;
+      if (isModifierPressed && event.shiftKey && event.key.toLocaleLowerCase() === "k") {
+        event.preventDefault();
+        this.openWiki("");
+      }
     }
 
   },
@@ -249,10 +280,15 @@ export default defineComponent({
       this.setRightFrameSize(this.frameSize[Handle.Right]);
     });
     this.onResizeObserver.observe(this.body!);
+    this.onKeyDown = this.onGlobalKeyDown.bind(this);
+    window.addEventListener("keydown", this.onKeyDown);
 
   },
   unmounted() {
     this.onResizeObserver?.disconnect();
+    if (this.onKeyDown) {
+      window.removeEventListener("keydown", this.onKeyDown);
+    }
   },
   components: {
     AppHotkeyBox,
@@ -261,7 +297,8 @@ export default defineComponent({
     AppFooterBar,
     EditorSidebar,
     FindDialog,
-    SplashMenu
+    SplashMenu,
+    TtpWikiModal
   },
 });
 </script>

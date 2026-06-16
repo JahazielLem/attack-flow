@@ -15,6 +15,18 @@
         </span>
       </template>
     </TitleBar>
+    <div class="wiki-search-shell">
+      <input
+        v-model="wikiSearch"
+        class="wiki-search-input"
+        type="search"
+        placeholder="Search TTP wiki"
+        title="Search TTP wiki"
+        @input="onWikiSearchInput"
+        @keydown.enter.stop="openWiki"
+        @keydown.stop
+      >
+    </div>
     <div
       v-if="classificationMarking && classificationMarking.value"
       class="classification-marking"
@@ -44,8 +56,12 @@ export default defineComponent({
     return {
       application: useApplicationStore(),
       contextMenus: useContextMenuStore(),
-      icon: Configuration.application_icon
+      icon: Configuration.application_icon,
+      wikiSearch: ""
     };
+  },
+  emits: {
+    openWiki: (query: string) => typeof query === "string"
   },
   computed: {
 
@@ -82,6 +98,17 @@ export default defineComponent({
     }
   },
   methods: {
+    openWiki() {
+      this.$emit("openWiki", this.wikiSearch);
+    },
+
+    onWikiSearchInput(event: Event) {
+      const target = event.target as HTMLInputElement;
+      this.wikiSearch = target.value;
+      if (this.wikiSearch.trim()) {
+        this.$emit("openWiki", this.wikiSearch);
+      }
+    },
 
     /**
      * Menu item selection behavior.
@@ -118,9 +145,37 @@ export default defineComponent({
 
 .app-title-bar-container {
   display: flex;
+  align-items: center;
   position: relative;
   z-index: 2;
   /* Make sure find-dialog hides underneath title bar. */
+}
+
+.app-title-bar-element {
+  min-width: 0;
+  flex: 1;
+}
+
+.wiki-search-shell {
+  width: min(280px, 32vw);
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.wiki-search-input {
+  width: 100%;
+  height: 22px;
+  color: #cdd6f4;
+  background: #11111b;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 9pt;
+  outline: none;
+}
+
+.wiki-search-input:focus {
+  border-color: #89b4fa;
 }
 
 /* Styling similar to classification markings in DiagramImage.ts. Change both together. */

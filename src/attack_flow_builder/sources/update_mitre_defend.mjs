@@ -20,6 +20,7 @@ const ENUM_DIR = `../src/assets/configuration/AttackFlowTemplates`;
  * @property {string} ['@id']
  * @property {Array<string>} ['@type']
  * @property {Array<string>} ['rdfs:label']
+ * @property {Array<string>} ['rdfs:comment']
  * @property {Array<string>} ['d3f:d3fend-id']
  * @property {Array<ChildRef>} ['d3f:children']
  */
@@ -92,6 +93,17 @@ function getTechniqueCode(node) {
 }
 
 /**
+ * Extracts a plain text description from a D3FEND node.
+ * @param {SourceObject} node
+ *  The node.
+ * @returns {string}
+ *  The node description, if present.
+ */
+function getDescription(node) {
+  return asArray(node?.["rdfs:comment"])?.[0] ?? "";
+}
+
+/**
  * Returns the child @id values for a node.
  * @param {SourceObject} node
  *  The node.
@@ -154,6 +166,7 @@ function collectDescendantTechniques(rootNode, byId) {
 export default async function updateMitreDefend() {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const outPath = resolve(__dirname, `${ENUM_DIR}/MitreDefend.ts`);
+  const wikiOutPath = resolve(__dirname, `${ENUM_DIR}/MitreDefendWiki.ts`);
 
   // Download and index graph
   console.log("→ Downloading D3FEND matrix graph...");
@@ -194,6 +207,44 @@ export default async function updateMitreDefend() {
     .map(([code, label]) => [code, `[D3F] ${code} ${label}`])
     .sort(([a], [b]) => a.localeCompare(b));
 
+  const tacticByTechnique = new Map();
+  for (const [kind, tacticId, , techniqueId] of relationships) {
+    if (kind !== "tactic") continue;
+    if (!tacticByTechnique.has(techniqueId)) tacticByTechnique.set(techniqueId, []);
+    tacticByTechnique.get(techniqueId).push({
+      id: tacticId,
+      name: tacticId,
+      shortname: tacticId
+    });
+  }
+
+  const nodeByTechnique = new Map();
+  for (const node of graph) {
+    const code = getTechniqueCode(node);
+    if (code) nodeByTechnique.set(code, node);
+  }
+
+  const wiki = techniques.map(([code, label]) => {
+    const node = nodeByTechnique.get(code);
+    const name = techniqueLabelByCode.get(code) ?? code;
+    return {
+      id: code,
+      stixId: "",
+      model: "MITRE D3FEND",
+      matrix: "D3F",
+      type: "countermeasure",
+      name,
+      label,
+      description: node ? getDescription(node) : "",
+      url: `https://d3fend.mitre.org/technique/d3f:${code}/`,
+      platforms: [],
+      tactics: tacticByTechnique.get(code) ?? [],
+      parentTechniques: [],
+      mitigations: [],
+      externalReferences: []
+    };
+  });
+
   // Generate UUIDv4 refs for all tactics and techniques (no STIX, but we need these anyway)
   const stixIds = Object.fromEntries([
     ...tactics.map(([id]) => [id, `x-mitre-tactic--${randomUUID()}`]),
@@ -202,11 +253,20 @@ export default async function updateMitreDefend() {
 
   // Generate enums file
   let file = "";
+  file += "/* eslint-disable */\n";
   file += `export const ${EXPORT_KEY} = `;
   file += JSON.stringify({ tactics, techniques, subtechniques: [], relationships, stixIds });
   file += `;\n\nexport default ${EXPORT_KEY};\n`;
 
   writeFileSync(outPath, file);
+
+  file = "";
+  file += "/* eslint-disable */\n";
+  file += `export const ${EXPORT_KEY} = `;
+  file += JSON.stringify({ wiki });
+  file += `;\n\nexport default ${EXPORT_KEY};\n`;
+
+  writeFileSync(wikiOutPath, file);
   console.log("\nMitreDefend enums updated successfully.\n");
 }
 
