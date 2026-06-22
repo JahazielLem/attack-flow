@@ -150,12 +150,16 @@ locally `using Docker <https://www.docker.com/>`__ as shown below.
 
 .. code:: shell
 
-   $ docker pull ghcr.io/center-for-threat-informed-defense/attack-flow:main
+   $ docker pull ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
    $ docker run --rm --name AttackFlowBuilder -p8000:80 \
-      ghcr.io/center-for-threat-informed-defense/attack-flow:main
+      ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
 
 Once the container is running, you can open a brower tab to http://localhost:8000/ to
 view the Builder.
+
+The fork image is published for both ``linux/amd64`` and ``linux/arm64``. Docker should
+select the native platform automatically on Apple Silicon and other ARM hosts without
+requiring a manual ``platform`` override.
 
 If you want to customize and build your own Docker images, edit the `Dockerfile` and
 then run this command to create the Docker image:
@@ -163,7 +167,7 @@ then run this command to create the Docker image:
 .. code:: shell
 
    $ make docker-build
-   docker build . -t attack-flow-builder:latest
+   docker build . -t ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
    [+] Building 2.9s (13/13) FINISHED
    => [internal] load build definition from Dockerfile                                                                                0.0s
    => => transferring dockerfile: 269B                                                                                                0.0s
@@ -175,7 +179,7 @@ If building the image completes successfully, then use this command to run the i
 .. code:: shell
 
    $ make docker-run
-   docker run --rm -p 8080:80 attack-flow-builder:latest
+   docker run --rm -p 8080:80 ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
    /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
    /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
    /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
@@ -188,10 +192,10 @@ Alternatively, you can run the Attack Flow Builder with Docker Compose:
 
 .. code:: shell
 
-    $ curl https://raw.githubusercontent.com/center-for-threat-informed-defense/attack-flow/main/docker-compose.yml
-    $ docker compose up
+    $ curl https://raw.githubusercontent.com/JahazielLem/attack-flow/main/docker-compose.yml
+    $ docker compose up --build
 
-This will launch a container with Attack Flow Builder accessible at `http://localhost:8081 <http://localhost:8081>`_ . You can customize the provided docker-compose.yml sample file (volumes, ports, ...).
+This will launch a container with Attack Flow Builder accessible at `http://localhost:8080 <http://localhost:8080>`_ . The Compose file builds the local fork by default and tags it as ``ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta``. You can customize the provided docker-compose.yml sample file (volumes, ports, ...).
 
 Developer
 ---------

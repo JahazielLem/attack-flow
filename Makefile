@@ -57,7 +57,7 @@ validate: src/attack_flow_builder/dist-cli/cli.mjs ## Validate all flows in the 
 		corpus/*.json
 
 docker-build: ## Build the Docker image.
-	docker build . -t attack-flow-builder:latest
+	docker build . -t ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
 
 docker-run: ## Run the Docker image.
-	docker run --rm -p 8080:80 attack-flow-builder:latest
+	docker run --rm -p 8080:80 ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta

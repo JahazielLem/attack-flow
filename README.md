@@ -101,6 +101,21 @@ cd src/attack_flow_builder
 npm run build
 ```
 
+### Run with Docker
+
+The fork publishes a multi-architecture image for `linux/amd64` and `linux/arm64`, so Apple Silicon and other ARM hosts should not need to force an amd64 platform.
+
+```bash
+docker pull ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+docker run --rm --name AttackFlowBuilder -p 8080:80 ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+```
+
+For local development, Docker Compose builds this fork from the local checkout and tags it with the same release image name:
+
+```bash
+docker compose up --build
+```
+
 ### Run Builder Quality Checks
 
 These commands mirror the Attack Flow Builder GitHub Actions checks:

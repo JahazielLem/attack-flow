@@ -1,12 +1,12 @@
-version: '3.8'
-
 services:
   attack-flow:
-    image: ghcr.io/center-for-threat-informed-defense/attack-flow:latest
-    ## Uncomment this to use the local Dockerfile instead of the official image
-    #build:
-    #  context: .
-    #  dockerfile: ./Dockerfile
+    image: ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        APP_VERSION: v3.2.1-sparta
+    pull_policy: build
     ports:
       - 8080:80
     restart: always
