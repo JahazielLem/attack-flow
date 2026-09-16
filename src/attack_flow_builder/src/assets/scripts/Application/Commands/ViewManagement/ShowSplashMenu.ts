@@ -1,5 +1,5 @@
 import { AppCommand } from "../AppCommand";
-import type { ApplicationStore } from "@/stores/ApplicationStore";
+import type { ApplicationStore, SplashMenuMode } from "@/stores/ApplicationStore";
 
 export class ShowSplashMenu extends AppCommand {
 
@@ -8,15 +8,23 @@ export class ShowSplashMenu extends AppCommand {
      */
     public readonly context: ApplicationStore;
 
+    /**
+     * The splash screen to display.
+     */
+    public readonly mode: SplashMenuMode;
+
 
     /**
      * Display the splash menu.
      * @param context
      *  The application context.
+     * @param mode
+     *  The splash screen to display.
      */
-    constructor(context: ApplicationStore) {
+    constructor(context: ApplicationStore, mode: SplashMenuMode = "home") {
         super();
         this.context = context;
+        this.mode = mode;
     }
 
 
@@ -24,6 +32,7 @@ export class ShowSplashMenu extends AppCommand {
      * Executes the command.
      */
     public async execute(): Promise<void> {
+        this.context.splashMenuMode = this.mode;
         this.context.settings.view.splash_menu.display_menu = true;
     }
 

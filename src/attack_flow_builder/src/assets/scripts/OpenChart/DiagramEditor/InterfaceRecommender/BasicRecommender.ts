@@ -32,6 +32,7 @@ export class BasicRecommender extends ObjectRecommender {
     public start(editor: DiagramViewEditor, object: DiagramObjectView) {
         super.start(editor, object);
         // Configure basic recommendations
+        this.recommendations = [];
         const factory = editor.file.factory;
         const templates = factory.templates;
         for (const template of templates.values()) {
@@ -51,12 +52,10 @@ export class BasicRecommender extends ObjectRecommender {
 
     /**
      * Returns the set of recommendations.
-     * @param search
-     *  The search term.
      * @returns
      *  A Promise that resolves with the recommendations.
      */
-    public async getRecommendations(_search: string): Promise<ObjectRecommendations> {
+    public async getRecommendations(): Promise<ObjectRecommendations> {
         return {
             items: this.recommendations
         };

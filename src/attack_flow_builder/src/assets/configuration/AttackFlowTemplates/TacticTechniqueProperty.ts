@@ -1,9 +1,9 @@
 import Enums from "./SourceEnumeration";
 import { PropertyType } from "@OpenChart/DiagramModel";
-import type { TuplePropertyDescriptor, ValueCombinations } from "@OpenChart/DiagramModel";
+import type { TTPTuplePropertyDescriptor, ValueCombinations } from "@OpenChart/DiagramModel";
 
-export const TacticTechniqueProperty: TuplePropertyDescriptor = {
-    type: PropertyType.Tuple,
+export const TacticTechniqueProperty: TTPTuplePropertyDescriptor = {
+    type: PropertyType.TTPTuple,
     form: {
         tactic: {
             type: PropertyType.String,

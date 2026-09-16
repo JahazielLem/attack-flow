@@ -3,10 +3,16 @@ import { Canvas, DiagramModelFile, DiagramObjectSerializer } from "@OpenChart/Di
 import type { CameraLocation } from "./CameraLocation";
 import type { DiagramViewExport } from "./DiagramViewExport";
 import type { DiagramLayoutEngine } from "./DiagramLayoutEngine";
+import { BlockView } from "./DiagramObjectView";
 import type { CanvasView, DiagramObjectView } from "./DiagramObjectView";
 import type { DiagramTheme, DiagramObjectViewFactory } from "./DiagramObjectViewFactory";
 
 export class DiagramViewFile extends DiagramModelFile {
+
+    /**
+     * The clear vertical space preserved between assets attached to one action.
+     */
+    private static readonly ACTION_ASSET_CLEARANCE = 50;
 
     /**
      * The file's camera location.
@@ -75,6 +81,85 @@ export class DiagramViewFile extends DiagramModelFile {
     }
 
     /**
+     * Vertically center direct support-card children of each action using their
+     * rendered dimensions. This includes typed STIX cards (file, software,
+     * process, etc.), not only generic assets.
+     */
+    public compactActionAssetStacks(): void {
+        const assetsByAction = new Map<BlockView, Set<BlockView>>();
+        const actionCountByAsset = new Map<BlockView, number>();
+
+        for (const line of this.canvas.lines) {
+            const source = line.sourceObject;
+            const target = line.targetObject;
+            if (source?.id !== "action" || !(target instanceof BlockView) || !DiagramViewFile.isActionSupportCard(target)) {
+                continue;
+            }
+
+            const action = source as BlockView;
+            const asset = target as BlockView;
+            const assets = assetsByAction.get(action) ?? new Set<BlockView>();
+            assets.add(asset);
+            assetsByAction.set(action, assets);
+            actionCountByAsset.set(asset, (actionCountByAsset.get(asset) ?? 0) + 1);
+        }
+
+        for (const [action, assetSet] of assetsByAction) {
+            const assets = [...assetSet]
+                .filter(asset => actionCountByAsset.get(asset) === 1)
+                .sort((left, right) => left.face.boundingBox.yMid - right.face.boundingBox.yMid);
+            if (assets.length < 2) {
+                continue;
+            }
+
+            const stackHeight = assets.reduce(
+                (total, asset) => total + asset.face.boundingBox.height,
+                0
+            ) + DiagramViewFile.ACTION_ASSET_CLEARANCE * (assets.length - 1);
+            let nextTop = action.face.boundingBox.yMid - stackHeight / 2;
+
+            for (const asset of assets) {
+                const bounds = asset.face.boundingBox;
+                const nextCenter = nextTop + bounds.height / 2;
+                asset.moveBy(0, nextCenter - bounds.yMid);
+                nextTop += bounds.height + DiagramViewFile.ACTION_ASSET_CLEARANCE;
+            }
+        }
+
+        this.canvas.calculateLayout();
+    }
+
+    private static isActionSupportCard(block: BlockView): boolean {
+        return !new Set([
+            "action",
+            "condition",
+            "AND_operator",
+            "OR_operator"
+        ]).has(block.id);
+    }
+
+    /**
+     * Set camera position to the average position of blocks in the diagram.
+     * Set k value to 0.25.
+     */
+    public centerAndZoomCamera(): void {
+        const totalPosition = { x: 0, y: 0 };
+        for (const block of this.canvas.blocks) {
+            totalPosition.x += block.x;
+            totalPosition.y += block.y;
+        }
+        const numBlocks = this.canvas.blocks.length;
+        const averagePosition = { x: 0, y:0 };
+        if (numBlocks > 0) {
+            averagePosition.x = totalPosition.x / numBlocks;
+            averagePosition.y = totalPosition.y / numBlocks;
+        }
+        this.camera.x = averagePosition.x;
+        this.camera.y = averagePosition.y;
+        this.camera.k = 0.25;
+    }
+
+    /**
      * Clones the {@link DiagramViewFile}.
      * @param match
      *  A predicate which is applied to each child of the canvas. If the
@@ -139,7 +224,6 @@ export class DiagramViewFile extends DiagramModelFile {
         const model = super.toExport();
         return {
             schema  : model.schema,
-            theme   : this.factory.theme.id,
             objects : model.objects,
             layout  : ManualLayoutEngine.generatePositionMap([this.canvas]),
             camera  : this.camera

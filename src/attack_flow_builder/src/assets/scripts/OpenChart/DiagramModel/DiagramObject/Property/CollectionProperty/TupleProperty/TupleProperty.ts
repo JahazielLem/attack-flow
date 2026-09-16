@@ -12,7 +12,7 @@ export class TupleProperty extends DictionaryProperty {
     /**
      * The property's combination index.
      */
-    private _combinations: CombinationIndex | undefined;
+    protected _combinations: CombinationIndex | undefined;
 
     /**
      * The property's valid sub-values.
@@ -174,6 +174,10 @@ export class TupleProperty extends DictionaryProperty {
             const supportsOptions = isEnu || isStr;
             const nextValue = values.size === 1 ? [...values][0] : null;
             if (!supportsOptions) {
+                continue;
+            }
+            // Preserve user-defined labels and references outside the bundled catalogs.
+            if (prop.value && !prop.options?.value.has(prop.value)) {
                 continue;
             }
             // If property has only one valid option and the current value differs...

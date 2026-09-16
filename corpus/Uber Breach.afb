@@ -1,6 +1,5 @@
 {
     "schema": "attack_flow_v2",
-    "theme": "dark_theme",
     "objects": [
         {
             "id": "flow",

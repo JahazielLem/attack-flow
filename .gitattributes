@@ -1,0 +1,5 @@
+# Keep source files compatible with the project's Unix line-ending lint rule.
+*.ts text eol=lf
+*.vue text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf

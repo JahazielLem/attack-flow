@@ -1,1 +1,6 @@
 *.json
+
+# Local API runtime data
+/artifacts/
+/uploads/
+/attack-flow.db

@@ -282,6 +282,59 @@ export class LineView extends Line implements ViewObject {
         return this.face.getObjectAt(x, y);
     }
 
+    /**
+     * Get the cardinal direction a line is pointing, or null if direction cannot be determined.
+     * @returns cardinal direction or null
+     */
+    public getPointingDirection() : "n" | "s" | "e" | "w" | null {
+        // Find angle between x axis and line.
+        const x_vec = {
+            x: 1,
+            y: 0
+        };
+
+        const line_vec = {
+            x: this.target.x - this.source.x,
+            y: this.target.y - this.source.y
+        };
+
+        if (line_vec.x == 0 && line_vec.y == 0) {
+            return null; // There is no direction for a point.
+        }
+
+        const sign = this.source.y >= this.target.y ? 1 : -1;
+
+        // theta = acos( (a dot b) / length_a * length_b )
+        // dot product = x1*x2 + y1*y2
+        const dot = (x_vec.x * line_vec.x) + (x_vec.y * line_vec.y);
+        const length_a =  Math.sqrt(Math.pow(line_vec.x, 2) + Math.pow(line_vec.y, 2));
+        const length_b = Math.sqrt(Math.pow(x_vec.x, 2) + Math.pow(x_vec.y, 2));
+
+        let theta = Math.acos(dot / (length_a * length_b));
+        if (sign < 0) {
+            theta = Math.PI + (Math.PI - theta);
+        }
+        const degrees = theta * (180 / Math.PI);
+
+        if (degrees >= 45 && degrees < 135) {
+            return "n";
+        }
+
+        if (degrees >= 135 && degrees < 225) {
+            return "w";
+        }
+
+        if (degrees >= 225 && degrees < 315) {
+            return "s";
+        }
+
+        if (degrees >= 315 || degrees < 45) {
+            return "e";
+        }
+
+        return null;
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     //  5. Movement  //////////////////////////////////////////////////////////

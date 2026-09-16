@@ -175,7 +175,7 @@ export default defineComponent({
 .number-field-control {
   display: flex; 
   align-items: center;
-  color: #cccccc;
+  color: var(--af-text-color-primary);
   cursor: text;
   overflow: hidden;
 }
@@ -197,7 +197,7 @@ input {
 }
 
 input::placeholder {
-  color: #999;
+  color: var(--af-text-color-disabled);
   opacity: 1;
 }
 

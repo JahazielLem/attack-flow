@@ -25,8 +25,8 @@ front-line worker to the C-suite. Attack Flow provides a common language and too
 describing complex, adversarial behavior.
 
 This documentation set is published from a maintained fork that keeps the upstream
-Attack Flow project current while extending the builder with SPARTA support and a small
-set of operational customizations used by PWNSAT workflows.
+Attack Flow project current while extending the builder with SPARTA and ESA Space Shield support and a small
+set of operational customizations used by Kevin Leon workflows.
 
 Who is Attack Flow For?
 -----------------------
@@ -105,11 +105,11 @@ toolsets, as well as prioritizing those detections.
 
 **Malaware Analysis**
 
-Malware analysts typically use Attack Flow after they have analyzed samples to document behaviors they observed. 
+Malware analysts typically use Attack Flow after they have analyzed samples to document behaviors they observed.
 They start with static analysis to examine the file's structure and potential obfuscation.
-Next, they execute the sample in a controlled environment for dynamic analysis, observing its behavior and identifying 
-potential indicators of compromise. They then disassemble the code to understand its low-level operations and decode any 
-encrypted components. Finally, through detailed code reversing and behavioral analysis, analysts document their findings and 
+Next, they execute the sample in a controlled environment for dynamic analysis, observing its behavior and identifying
+potential indicators of compromise. They then disassemble the code to understand its low-level operations and decode any
+encrypted components. Finally, through detailed code reversing and behavioral analysis, analysts document their findings and
 could generate reports with recommendations for enhancing defenses against similar cyber threats.
 
 Get Started
@@ -120,14 +120,15 @@ Here are a few ways for you to learn more and get started with Attack Flow:
 1. :newsgroup:`Look at the corpus of example flows.` The :doc:`corpus <example_flows>`
    is a great place to start learning about Attack Flow. If you're new to the industry,
    it's also a great way to familiarize yourself with some high-profile breaches!
-2. :newsgroup:`Build your own flow.` The :doc:`Attack Flow Builder <builder>` is a
+2.  :newsgroup:`Generate a flow.` Grab a cybersecurity incident report and :doc:`generate a flow <generation>` from it.
+3. :newsgroup:`Build your own flow.` The :doc:`Attack Flow Builder <builder>` is a
    user-friendly tool that runs in your browser (no download required!) and will let
    start creating flows in just minutes.
-3. :newsgroup:`Tell us what you think.` Find us `on LinkedIn
+4. :newsgroup:`Tell us what you think.` Find us `on LinkedIn
    <https://www.linkedin.com/showcase/center-for-threat-informed-defense/>`__ or email
    us `ctid@mitre.org <mailto:ctid@mitre.org>`__ and let us know how
    you're using Attack Flow and what ideas you have to improve it.
-4. :newsgroup:`Spread the word!` Our goals is to get members of the community excited
+5. :newsgroup:`Spread the word!` Our goals is to get members of the community excited
    about Attack Flow and adopt it in their own work. Attack Flow is open source and
    royalty-free, so go ahead and share it to your professional network!
 

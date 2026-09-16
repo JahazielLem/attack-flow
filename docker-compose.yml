@@ -1,11 +1,11 @@
 services:
   attack-flow:
-    image: ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+    image: ghcr.io/jahaziellem/attack-flow:v4.0.0-space-frameworks
     build:
       context: .
       dockerfile: ./Dockerfile
       args:
-        APP_VERSION: v3.2.1-sparta
+        APP_VERSION: v4.0.0-space-frameworks
     pull_policy: build
     ports:
       - 8080:80

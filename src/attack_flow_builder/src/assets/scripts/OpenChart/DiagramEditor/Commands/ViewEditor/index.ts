@@ -1,9 +1,17 @@
 import { GroupCommand } from "../GroupCommand";
 import { DiagramViewEditor } from "../../DiagramViewEditor";
 import { SelectionAnimation } from "./Animations";
-import { SemanticAnalyzer, traverse } from "@OpenChart/DiagramModel";
+import {
+    DictionaryProperty,
+    ListProperty,
+    MultiSelectProperty,
+    SemanticAnalyzer,
+    StringProperty,
+    traverse
+} from "@OpenChart/DiagramModel";
 import {
     MoveCameraToObjects,
+    SpawnAction,
     SpawnObject
 } from "../ViewFile/index.commands";
 import {
@@ -14,6 +22,90 @@ import {
 } from "../View/index.commands";
 import type { SynchronousEditorCommand } from "../SynchronousEditorCommand";
 import type { BlockView, DiagramObjectView } from "@OpenChart/DiagramView";
+import { useTagStore } from "@/stores/TagStore";
+
+import { createSubproperty, ApplyTagDataCommand, setMultiSelectProperty } from "../Property";
+import { EditorDirective } from "../../EditorDirectives";
+import { SynchronousEditorCommand as BaseSynchronousEditorCommand } from "../SynchronousEditorCommand";
+import type { DirectiveIssuer } from "../../EditorDirectives";
+
+class SelectLastCreatedTagCommand extends BaseSynchronousEditorCommand {
+
+    /**
+     * The selected object's tag property.
+     */
+    private readonly property: MultiSelectProperty;
+
+    /**
+     * The canvas-level tag registry.
+     */
+    private readonly tagRegistry: ListProperty;
+
+    /**
+     * The property's previous selected tag ids.
+     */
+    private readonly prevValues: string[];
+
+    /**
+     * Creates a command that selects the most recently created shared tag.
+     * @param property
+     *  The selected object's tag property.
+     * @param tagRegistry
+     *  The canvas-level tag registry.
+     */
+    constructor(property: MultiSelectProperty, tagRegistry: ListProperty) {
+        super();
+        this.property = property;
+        this.tagRegistry = tagRegistry;
+        this.prevValues = [...property.values];
+    }
+
+    /**
+     * Executes the editor command.
+     * @param issueDirective
+     *  A function that can issue one or more editor directives.
+     */
+    public execute(issueDirective: DirectiveIssuer = () => {}): void {
+        const createdTagId = this.getLastCreatedTagId();
+        if (!createdTagId) {
+            return;
+        }
+
+        this.property.setSelections([...this.prevValues, createdTagId]);
+        issueDirective(EditorDirective.Record | EditorDirective.Autosave);
+    }
+
+    /**
+     * Undoes the editor command.
+     * @param issueDirective
+     *  A function that can issue one or more editor directives.
+     */
+    public undo(issueDirective: DirectiveIssuer = () => {}): void {
+        this.property.setSelections(this.prevValues);
+        issueDirective(EditorDirective.Autosave);
+    }
+
+    /**
+     * Returns the id of the last created tag in the shared registry.
+     * @returns
+     *  The tag id, or undefined if it cannot be resolved.
+     */
+    private getLastCreatedTagId(): string | undefined {
+        const entries = Array.from(this.tagRegistry.value.values());
+        const tag = entries[entries.length - 1];
+        if (!(tag instanceof DictionaryProperty)) {
+            return undefined;
+        }
+
+        const idProperty = tag.value.get("id");
+        if (!(idProperty instanceof StringProperty)) {
+            return tag.id;
+        }
+
+        return idProperty.value ?? tag.id;
+    }
+
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -50,7 +142,12 @@ export function unselectAllObjects(
 ): SynchronousEditorCommand {
     const canvas = editor.file.canvas;
     const cmd = new GroupCommand();
-    cmd.do(new SelectObjects([...canvas.objects], false));
+
+    // Reset the tag highlight state whenever we unselect everything
+    const tagStore = useTagStore();
+    tagStore.setActiveTag(null, null);
+
+    cmd.do(new SelectObjects([...traverse<DiagramObjectView>(canvas)], false));
     cmd.do(new StopContinuousAnimation(editor.interface, SelectionAnimation));
     return cmd;
 }
@@ -154,6 +251,65 @@ export function spawnObjectAtPointer(
     editor: DiagramViewEditor, id: string
 ): GroupCommand {
     return spawnObject(editor, id, ...editor.pointer, true);
+}
+
+/**
+ * Spawns an Attack Flow action in a diagram editor.
+ * @param editor
+ *  The editor.
+ * @param techniqueId
+ *  The action's technique id.
+ * @param x
+ *  The action's x-coordinate.
+ * @param y
+ *  The action's y-coordinate.
+ * @param fromCorner
+ *  Whether to position the action from its top-left corner or its center.
+ *  (Default: `false`)
+ * @returns
+ *  A command that represents the action.
+ */
+export function spawnAction(
+    editor: DiagramViewEditor, techniqueId: string, x: number, y: number, fromCorner: boolean = false
+): GroupCommand {
+    // Create spawn command
+    const spawn = new SpawnAction(editor.file, techniqueId, x, y, fromCorner);
+    // Format command with selection
+    const cmd = new GroupCommand();
+    cmd.do(spawn);
+    cmd.do(selectObject(editor, spawn.object));
+    return cmd;
+}
+
+/**
+ * Spawns an Attack Flow action in an editor at the interface's center.
+ * @param editor
+ *  The editor.
+ * @param techniqueId
+ *  The action's technique id.
+ * @returns
+ *  A command that represents the action.
+ */
+export function spawnActionAtInterfaceCenter(
+    editor: DiagramViewEditor, techniqueId: string
+): GroupCommand {
+    const { x, y } = editor.file.camera;
+    return spawnAction(editor, techniqueId, x, y);
+}
+
+/**
+ * Spawns an Attack Flow action in an editor at the pointer's position.
+ * @param editor
+ *  The editor.
+ * @param techniqueId
+ *  The action's technique id.
+ * @returns
+ *  A command that represents the action.
+ */
+export function spawnActionAtPointer(
+    editor: DiagramViewEditor, techniqueId: string
+): GroupCommand {
+    return spawnAction(editor, techniqueId, ...editor.pointer, true);
 }
 
 
@@ -281,5 +437,110 @@ export function moveCameraToChildren(
         const ui = editor.interface;
         cmd.do(new MoveCameraToObjects(ui, [...children.values()]));
     }
+    return cmd;
+}
+
+/**
+ * Selects all objects that have a specific tag and moves the camera to them.
+ * @param editor The editor instance.
+ * @param tagId The id of the tag to search for.
+ */
+export function moveCameraToObjectsWithTags(
+    editor: DiagramViewEditor,
+    tagId: string
+): SynchronousEditorCommand {
+    const cmd = new GroupCommand();
+    const canvas = editor.file.canvas;
+
+    // 1. Find all objects that contain the specified tag
+    const matchingObjects = [...traverse<DiagramObjectView>(canvas, (obj) => {
+        const tagsProperty = obj.properties.value.get("tags");
+        return tagsProperty instanceof MultiSelectProperty && tagsProperty.values.has(tagId);
+    })];
+
+    if (matchingObjects.length > 0) {
+        // 2. Clear current selection
+        cmd.do(unselectAllObjects(editor));
+
+        // 3. Select all matching objects
+        for (const obj of matchingObjects) {
+            cmd.do(selectObject(editor, obj));
+        }
+
+        // 4. Move camera to encapsulate all matching objects
+        cmd.do(new MoveCameraToObjects(editor.interface, matchingObjects));
+    }
+
+    return cmd;
+}
+
+/**
+ * Applies an existing shared tag to every selected taggable object.
+ * @param editor
+ *  The editor whose selection should be updated.
+ * @param tagId
+ *  The shared tag id to add.
+ * @returns
+ *  A command that represents the action.
+ */
+export function applyExistingTagToSelection(
+    editor: DiagramViewEditor,
+    tagId: string
+): SynchronousEditorCommand {
+    const cmd = new GroupCommand();
+
+    for (const object of editor.selection.values()) {
+        const tagsProperty = object.properties.value.get("tags");
+        if (!(tagsProperty instanceof MultiSelectProperty) || tagsProperty.values.has(tagId)) {
+            continue;
+        }
+
+        cmd.do(setMultiSelectProperty(tagsProperty, [...tagsProperty.values, tagId]));
+    }
+
+    return cmd;
+}
+
+/**
+ * Creates a new tag sub-property and populates it with existing data.
+ * @param property The list property (tags) to add to.
+ * @param tag The tag data (text and color) to apply.
+ */
+export function addExistingTag(
+    property: ListProperty,
+    tag: { text: string, color: string }
+): SynchronousEditorCommand {
+    const cmd = new GroupCommand();
+
+    // 1. Schedule the creation of the empty DictionaryProperty
+    cmd.do(createSubproperty(property));
+
+    // 2. Schedule the population of that dictionary
+    // This will run immediately AFTER the property is created in the Editor queue
+    cmd.do(new ApplyTagDataCommand(property, tag));
+
+    return cmd;
+}
+
+/**
+ * Creates a new shared tag and assigns it to the selected object.
+ * @param tagRegistry
+ *  The canvas-level tag registry.
+ * @param property
+ *  The selected object's tag property.
+ * @param tag
+ *  The initial tag data to apply.
+ * @returns
+ *  A command that represents the action.
+ */
+export function createAndAssignTag(
+    tagRegistry: ListProperty,
+    property: MultiSelectProperty,
+    tag: { text: string, color: string }
+): SynchronousEditorCommand {
+    const cmd = new GroupCommand();
+    cmd.do(createSubproperty(tagRegistry));
+    cmd.do(new ApplyTagDataCommand(tagRegistry, tag));
+    cmd.do(new SelectLastCreatedTagCommand(property, tagRegistry));
     return cmd;
 }

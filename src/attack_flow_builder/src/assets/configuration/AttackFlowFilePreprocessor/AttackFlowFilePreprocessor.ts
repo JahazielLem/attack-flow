@@ -25,7 +25,6 @@ export class AttackFlowFilePreprocessor implements FilePreprocessor {
      *  The processed {@link DiagramViewExport}.
      */
     public process(file: LegacyV2PageExport | DiagramViewExport): DiagramViewExport {
-        // Migrate file format
         return this.migrate(file);
     }
 

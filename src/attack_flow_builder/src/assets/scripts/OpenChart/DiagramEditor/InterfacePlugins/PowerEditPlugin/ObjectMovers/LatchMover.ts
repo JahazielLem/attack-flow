@@ -96,7 +96,7 @@ export class LatchMover extends ObjectMover {
     public releaseSubject(): void {
         const l = this.latches;
         if (l.length === 1 && !l[0].isLinked()) {
-            // this.plugin.requestSuggestions(l[0]);
+            this.plugin.requestSuggestions(l[0]);
         }
     }
 

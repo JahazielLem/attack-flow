@@ -257,13 +257,13 @@ export default defineComponent({
   flex-direction: column;
   width: max-content;
   min-width: 130px;
-  color: #d1d1d1;
+  color: var(--af-text-color-tertiary);
   font-size: 10pt;
   padding: 6px 4px;
-  border: solid 1px #242424;
+  border: solid 1px var(--af-bg-color-primary);
   border-radius: 3px;
   box-sizing: border-box;
-  background: #181825;
+  background: var(--af-bg-color-tertiary);
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.22);
 }
 
@@ -271,7 +271,7 @@ export default defineComponent({
 
 .section .section-divider {
   padding: 0px;
-  border-bottom: solid 1px #545454;
+  border-bottom: solid 1px var(--af-border-color-tertiary);
   margin: 4px 4px;
   cursor: default;
 }
@@ -294,8 +294,8 @@ li {
   user-select: none;
 }
 li:not(.disabled):hover {
-  color: #fff;
-  background: #89b4fa;
+  color: var(--af-text-color-hover-action);
+  background: var(--af-bg-color-hover-action);
 }
 
 a {

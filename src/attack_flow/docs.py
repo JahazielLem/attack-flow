@@ -20,10 +20,10 @@ EXTRACT_ONE_TYPE_FROM_RE = re.compile(r"\^([-a-z]+)--")
 EXTRACT_MULTIPLE_TYPES_FROM_RE = re.compile(r"\^\(([-a-z-\|]+)\)--")
 
 EXAMPLE_FLOW_OVERRIDES = {
-    "Pwnsat - SPARTA TTPs (1)": {
+    "Kevin Leon - SPARTA TTPs (1)": {
         "author": "Kevin Leon",
         "description": (
-            "Default vulnerable Pwnsat card. This file contains the identified "
+            "Default vulnerable Kevin Leon card. This file contains the identified "
             "vulnerabilities and test scenarios that can be used during analysis."
         ),
     }

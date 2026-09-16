@@ -8,8 +8,18 @@ import { defineStore } from "pinia";
 import { PhantomEditor } from "./PhantomEditor";
 import { useApplicationStore } from "./ApplicationStore";
 import type { CommandEmitter } from "@/assets/scripts/Application";
-import type { DiagramObjectTemplate } from "@OpenChart/DiagramModel";
+import {
+    DictionaryProperty,
+    ListProperty,
+    MultiSelectProperty,
+    StringProperty,
+    type DiagramObjectTemplate
+} from "@OpenChart/DiagramModel";
 import type { ContextMenu, ContextMenuItem, ContextMenuSection, ContextMenuSubmenu } from "@/assets/scripts/Browser";
+import type { DiagramViewEditor } from "@OpenChart/DiagramEditor";
+import LocalStorageManager from "@/LocalStorageManager";
+
+const displayVersion = version.split(".").slice(0, 2).join(".");
 
 export const useContextMenuStore = defineStore("contextMenuStore", {
     getters: {
@@ -66,6 +76,11 @@ export const useContextMenuStore = defineStore("contextMenuStore", {
                         type: MenuType.Action,
                         data: () => AppCommands.prepareEditorFromStixFileSystem(app),
                         shortcut: file.open_stix_file
+                    },
+                    {
+                        text: "Generate Flow",
+                        type: MenuType.Action,
+                        data: () => AppCommands.showSplashMenu(app, "ai-generation")
                     }
                 ]
             };
@@ -332,6 +347,46 @@ export const useContextMenuStore = defineStore("contextMenuStore", {
         },
 
         /**
+         * Returns the apply-tag menu section.
+         * @returns
+         *  The apply-tag menu section, or null when it is not relevant.
+         */
+        applyTagMenu(): ContextMenuSection<CommandEmitter> | null {
+            const app = useApplicationStore();
+            const editor = app.activeEditor;
+            const selection = getSelectedTagProperties(editor);
+            const tags = getCanvasTags(editor);
+
+            if (!selection.length || !tags.length) {
+                return null;
+            }
+
+            const items: ContextMenuItem<CommandEmitter>[] = tags.map(tag => ({
+                text: tag.name,
+                type: MenuType.Action,
+                data: () => EditorCommands.applyExistingTagToSelection(editor, tag.id),
+                disabled: selection.every(property => property.values.has(tag.id))
+            }));
+
+            return {
+                id: "tag_options",
+                items: [
+                    {
+                        text: "Apply Tag",
+                        type: MenuType.Submenu,
+                        disabled: items.every(item => item.disabled),
+                        sections: [
+                            {
+                                id: "apply_tag_options",
+                                items
+                            }
+                        ]
+                    }
+                ]
+            };
+        },
+
+        /**
          * Returns the delete menu section.
          * @returns
          *  The delete menu section.
@@ -520,7 +575,8 @@ export const useContextMenuStore = defineStore("contextMenuStore", {
                     this.jumpMenu,
                     this.themeMenu,
                     this.fullscreenMenu,
-                    this.developerViewMenu
+                    this.developerViewMenu,
+                    this.visualizationsMenu
                 ]
             };
         },
@@ -670,7 +726,10 @@ export const useContextMenuStore = defineStore("contextMenuStore", {
                     text: theme.name,
                     type: MenuType.Toggle,
                     value: active.id === theme.id,
-                    data: () => AppCommands.setTheme(app, theme.id)
+                    data: () => {
+                        LocalStorageManager.setThemeId(theme.id);
+                        return AppCommands.setTheme(app, theme.id);
+                    }
                 });
             }
             // Return menu
@@ -737,6 +796,33 @@ export const useContextMenuStore = defineStore("contextMenuStore", {
             };
         },
 
+        visualizationsMenu(): ContextMenuSection<CommandEmitter> {
+            const app = useApplicationStore();
+            const editor = app.activeEditor;
+            const visualizations = app.activeVisualizationModal.visualizations;
+            return {
+                id: "visualizations",
+                items: [{
+                    text: "Visualizations",
+                    type: MenuType.Submenu,
+                    sections: [
+                        {
+                            id: "visualizations_options",
+                            items: visualizations.map(visualization => ({
+                                text: visualization.title,
+                                type: MenuType.Action,
+                                data: () => AppCommands.showVisualizationModal(
+                                    app,
+                                    visualization.id
+                                )
+                            }))
+                        }
+                    ],
+                    disabled: editor.id === PhantomEditor.id || !visualizations.length
+                }]
+            };
+        },
+
 
         ///////////////////////////////////////////////////////////////////////
         //  4. Help Menu  /////////////////////////////////////////////////////
@@ -767,7 +853,7 @@ export const useContextMenuStore = defineStore("contextMenuStore", {
                         id: "version",
                         items: [
                             {
-                                text: `${name} v${version}`,
+                                text: `${name} v${displayVersion}`,
                                 type: MenuType.Action,
                                 data: () => AppCommands.doNothing(),
                                 disabled: true
@@ -869,4 +955,64 @@ function prepareCreateMenu(
         });
     }
     return main.menu;
+}
+
+type ExistingTag = {
+    id: string;
+    name: string;
+};
+
+/**
+ * Returns the selected objects' tag multiselect properties.
+ * @param editor
+ *  The active editor.
+ * @returns
+ *  The selected tag properties.
+ */
+function getSelectedTagProperties(editor: DiagramViewEditor): MultiSelectProperty[] {
+    const properties: MultiSelectProperty[] = [];
+
+    for (const object of editor.selection.values()) {
+        const tagsProperty = object.properties.value.get("tags");
+        if (tagsProperty instanceof MultiSelectProperty) {
+            properties.push(tagsProperty);
+        }
+    }
+
+    return properties;
+}
+
+/**
+ * Returns the existing shared canvas tags available for assignment.
+ * @param editor
+ *  The active editor.
+ * @returns
+ *  The normalized canvas tags.
+ */
+function getCanvasTags(editor: DiagramViewEditor): ExistingTag[] {
+    const tagsProperty = editor.file.canvas.properties.value.get("tags");
+    if (!(tagsProperty instanceof ListProperty)) {
+        return [];
+    }
+
+    const tags: ExistingTag[] = [];
+
+    for (const [fallbackId, tagProperty] of tagsProperty.value) {
+        if (!(tagProperty instanceof DictionaryProperty)) {
+            continue;
+        }
+
+        const idProperty = tagProperty.value.get("id");
+        const nameProperty = tagProperty.value.get("name") ?? tagProperty.value.get("text");
+        const id = idProperty instanceof StringProperty ? (idProperty.value ?? fallbackId) : fallbackId;
+        const name = nameProperty?.toString().trim() ?? "";
+
+        if (!name) {
+            continue;
+        }
+
+        tags.push({ id, name });
+    }
+
+    return tags.sort((left, right) => left.name.localeCompare(right.name));
 }

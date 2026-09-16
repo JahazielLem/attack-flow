@@ -9,7 +9,7 @@
           class="options"
           v-if="hasOptions"
         >
-          <li 
+          <li
             ref="items"
             v-for="opt in options"
             :key="opt.value ?? 0"
@@ -28,7 +28,7 @@
         >
           No matches
         </div>
-      </div> 
+      </div>
     </div>
   </div>
 </template>
@@ -87,12 +87,12 @@ export default defineComponent({
   methods: {
 
     /**
-     * Returns an option's classes. 
+     * Returns an option's classes.
      * @param option
      *  The option.
      */
     classes(option: OptionItem<string | null>) {
-      return { 
+      return {
         active : option.value === this.option,
         null   : option.value === null,
         dim    : !option.feature
@@ -124,7 +124,7 @@ export default defineComponent({
 
     /**
      * Brings an item into focus at the bottom of the list.
-     * @param value 
+     * @param value
      *  The value to bring into focus.
      */
     focusItemBottom(value: string | null) {
@@ -203,9 +203,9 @@ export default defineComponent({
      * If an <OptionsList> does not extend past the bottom of the document's
      * body or it's parent <ScrollBox>, it's deemed visible. These checks do
      * not account for any other scroll constructs and do not account for
-     * nested <ScrollBox>'s. 
+     * nested <ScrollBox>'s.
      */
-    
+
     // Resolve parent
     const sc = "scroll-content";
     const ele = this.$refs.scrollbox as HTMLElement;
@@ -235,7 +235,7 @@ export default defineComponent({
       } else {
         this.focusItemTop(this.option);
       }
-      
+
     }
   },
   unmounted() {
@@ -251,10 +251,10 @@ export default defineComponent({
 .options-list-field-control {
   position: absolute;
   width: 100%;
-  border: solid 1px #3d3d3d;
+  border: solid 1px var(--af-border-color-primary);
   border-radius: 4px;
   box-sizing: border-box;
-  background: #242424;
+  background: var(--af-bg-color-primary);
   z-index: 1;
 }
 
@@ -304,8 +304,8 @@ export default defineComponent({
 .options li.active span,
 .options li.active.dim span,
 .options li.active.null span {
-  color: #fff;
-  background: #726de2;
+  color: var(--af-text-color-hover-action);
+  background: var(--af-bg-color-hover-action);
 }
 
 .options li.dim span,
@@ -322,7 +322,7 @@ export default defineComponent({
 /** === Scroll Box === */
 
 .options-list-field-control:deep(.scroll-bar) {
-  border-left: dotted 1px #3b3b3b;  
+  border-left: dotted 1px var(--af-border-color-primary);
 }
 
 </style>

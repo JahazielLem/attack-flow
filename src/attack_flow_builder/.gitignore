@@ -29,3 +29,8 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Files downloaded while manually testing the local Attack Flow API
+/ai-trace.json
+/afb
+/*.afb

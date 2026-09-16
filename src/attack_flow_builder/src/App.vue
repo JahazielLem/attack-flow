@@ -2,6 +2,7 @@
   <AppHotkeyBox
     id="main"
     :class="applicationMode"
+    :data-theme="application.activeEditor.file.factory.theme.id"
   >
     <AppTitleBar
       id="app-title-bar"
@@ -48,6 +49,7 @@
         <AppFooterBar id="app-footer-bar" />
       </div>
     </div>
+    <VisualizationModal />
   </AppHotkeyBox>
 </template>
 
@@ -66,6 +68,8 @@ import AppHotkeyBox from "@/components/Elements/AppHotkeyBox.vue";
 import BlockDiagram from "@/components/Elements/BlockDiagram.vue";
 import AppFooterBar from "@/components/Elements/AppFooterBar.vue";
 import EditorSidebar from "@/components/Elements/EditorSidebar.vue";
+import LocalStorageManager from "./LocalStorageManager";
+import VisualizationModal from "./components/Elements/VisualizationModal.vue";
 
 const TtpWikiModal = defineAsyncComponent(
   () => import("@/components/Elements/TtpWikiModal.vue")
@@ -239,6 +243,8 @@ export default defineComponent({
     } else {
       settings = await (await fetch("./settings_win.json")).json();
     }
+
+    settings["view"]["diagram"]["theme"] = LocalStorageManager.getThemeId();
     
     // Load settings
     this.execute(AppCommand.loadSettings(ctx, settings));
@@ -298,7 +304,8 @@ export default defineComponent({
     EditorSidebar,
     FindDialog,
     SplashMenu,
-    TtpWikiModal
+    TtpWikiModal,
+    VisualizationModal
   },
 });
 </script>
@@ -306,6 +313,80 @@ export default defineComponent({
 <style>
 
 /** === Global === */
+
+:root, [data-theme="dark_theme"] * {
+    --af-bg-color-primary: #242424;
+    --af-bg-color-secondary: #2e2e2e;
+    --af-bg-color-tertiary: #3b3b3b;
+    --af-bg-color-hover-action: #726de2;
+
+    --af-border-color-primary: #3d3d3d;
+    --af-border-color-secondary: #303030;
+    --af-border-color-tertiary: #474747;
+
+    --af-text-color-primary: #cccccc;
+    --af-text-color-secondary: #a6a6a6;
+    --af-text-color-tertiary: #d9d9d9;
+    --af-text-color-hover-action: #fff;
+    --af-text-color-disabled: #999;
+    --af-text-color-placeholder: #808080;
+
+    --af-color-valid: #2bd463;
+    --af-color-warning: #e6d846;
+    --af-color-error: #ff4d4d;
+    --af-color-info: #89a0ec;
+}
+
+[data-theme="light_theme"] *, [data-theme="blog_theme"] * {
+    --af-bg-color-primary: #eaeaea;
+    --af-bg-color-secondary: #dbdbdb;
+    --af-bg-color-tertiary: #dcdcdc;
+    --af-bg-color-hover-action: #B8CBE0;
+
+    --af-border-color-primary: #d0d0d0;
+    --af-border-color-secondary: #cccccc;
+    --af-border-color-tertiary: #bbbbbb;
+
+    --af-text-color-primary: #000000;
+    --af-text-color-secondary: #5d5d5d;
+    --af-text-color-tertiary: #2f2f2f;
+    --af-text-color-hover-action: #4A4A4A;
+    --af-text-color-disabled: #555;
+    --af-text-color-placeholder: #757575;
+
+    --af-color-valid: #1D7732;
+    --af-color-warning: #e5ac00;
+    --af-color-error: #dc3545;
+    --af-color-info: #2E5FAD;
+}
+
+[data-theme="catppuccin_theme"] * {
+    --af-bg-color-primary: #181825;
+    --af-bg-color-secondary: #11111b;
+    --af-bg-color-tertiary: #1e1e2e;
+    --af-bg-color-hover-action: #89b4fa;
+
+    --af-border-color-primary: #313244;
+    --af-border-color-secondary: #313244;
+    --af-border-color-tertiary: #45475a;
+
+    --af-text-color-primary: #cdd6f4;
+    --af-text-color-secondary: #a6adc8;
+    --af-text-color-tertiary: #bac2de;
+    --af-text-color-hover-action: #11111b;
+    --af-text-color-disabled: #7f849c;
+    --af-text-color-placeholder: #9399b2;
+
+    --af-color-valid: #a6e3a1;
+    --af-color-warning: #f9e2af;
+    --af-color-error: #f38ba8;
+    --af-color-info: #89b4fa;
+}
+
+/* Show enabled native buttons as clickable controls across the app. */
+button:not(:disabled) {
+    cursor: pointer;
+}
 
 html,
 body {
@@ -351,8 +432,8 @@ ul {
 #app-title-bar {
   flex-shrink: 0;
   height: 31px;
-  color: #cdd6f4;
-  background: #181825;
+  color: var(--af-text-color-secondary);
+  background: var(--af-bg-color-primary);
 }
 
 #app-body {
@@ -365,7 +446,7 @@ ul {
 #block-diagram {
   width: 100%;
   height: 100%;
-  border-top: solid 1px #333333;
+  border-top: solid 1px var(--af-border-color-secondary);
   box-sizing: border-box;
 }
 
@@ -379,11 +460,11 @@ ul {
 }
 
 #app-footer-bar {
-  color: #a6adc8;
+  color: var(--af-text-color-primary);
   width: 100%;
   height: 100%;
-  border-top: solid 1px #313244;
-  background: #181825;
+  border-top: solid 1px var(--af-border-color-secondary);
+  background: var(--af-bg-color-primary);
 }
 
 .readonly #block-diagram {
@@ -411,7 +492,7 @@ ul {
 .resize-handle {
   position: absolute;
   display: block;
-  background: #89b4fa;
+  background: var(--af-bg-color-hover-action);
   transition: 0.15s opacity;
   opacity: 0;
   z-index: 1;

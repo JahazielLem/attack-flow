@@ -1,13 +1,27 @@
 import { DiagramObjectType } from "@OpenChart/DiagramModel";
 import { DiagramViewEditor } from "@OpenChart/DiagramEditor";
-import { DarkStyle, ThemeLoader } from "@OpenChart/ThemeLoader";
+import { DarkStyle, LightStyle, BlogStyle, ThemeLoader, StyleGenerator } from "@OpenChart/ThemeLoader";
 import { Alignment, DiagramObjectViewFactory, DiagramViewFile, FaceType } from "@OpenChart/DiagramView";
+import LocalStorageManager from "../LocalStorageManager.ts";
+
+const themeIdsToStyles : { [key: string] : StyleGenerator } = {
+    dark_theme: DarkStyle,
+    light_theme: LightStyle,
+    blog_theme: BlogStyle
+};
+
+const storedThemeId : string = LocalStorageManager.getThemeId();
+let themeIdToUse = "dark_theme";
+if (Object.prototype.hasOwnProperty.call(themeIdsToStyles, storedThemeId)) {
+    themeIdToUse = storedThemeId;
+}
+const styleToUse = themeIdsToStyles[themeIdToUse];
 
 /**
  * Phantom theme.
  */
 const PhantomTheme = ThemeLoader.unsafeLoad({
-    id: "__phantom_theme",
+    id: themeIdToUse,
     name: "Phantom Theme",
     grid: [5, 5],
     scale: 2,
@@ -15,7 +29,7 @@ const PhantomTheme = ThemeLoader.unsafeLoad({
         __phantom_canvas: {
             type: FaceType.DotGridCanvas,
             attributes: Alignment.Grid,
-            style: DarkStyle.Canvas()
+            style: styleToUse.Canvas()
         }
     }
 });

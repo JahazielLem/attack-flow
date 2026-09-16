@@ -49,8 +49,13 @@ export class SaveSelectionImageToDevice extends AppCommand {
     public async execute(): Promise<void> {
         const d = this.context.settings.view.diagram;
         const e = this.context.settings.file.image_export;
+
+        // Create virtual file
+        const virtualFile = this.editor.file.clone(o => o.focused);
+        const virtualCanvas = virtualFile.canvas;
+
         const image = new DiagramImage(
-            this.editor.file.canvas,
+            virtualCanvas,
             e.padding,
             d.display_shadows,
             d.display_debug_info,

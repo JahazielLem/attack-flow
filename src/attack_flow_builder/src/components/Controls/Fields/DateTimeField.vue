@@ -251,7 +251,7 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   align-items: center;
-  color: #cccccc;
+  color: var(--af-text-color-primary);
   cursor: text;
   min-height: 30px;
   padding-left: 6px;
@@ -280,7 +280,7 @@ export default defineComponent({
 }
 
 .separator {
-  border-color: #242424;
+  border-color: var(--af-bg-color-primary);
 }
 .separator.horizontal {
   border-bottom-width: 1px;
@@ -318,7 +318,7 @@ input {
 }
 
 input::placeholder {
-  color: #999;
+  color: var(--af-text-color-disabled);
   opacity: 1;
 }
 
@@ -327,7 +327,7 @@ input:focus {
 }
 
 .editor span {
-  color: #999;
+  color: var(--af-text-color-disabled);
   font-size: 10pt;
   margin: 0px 3px;
 }
@@ -365,11 +365,11 @@ input:focus {
 }
 
 .null-value {
-  color: #999;
+  color: var(--af-text-color-disabled);
 }
 
 .date-value {
-  color: #89a0ec;
+  color: var(--af-color-info);
   font-weight: 500;
 }
 

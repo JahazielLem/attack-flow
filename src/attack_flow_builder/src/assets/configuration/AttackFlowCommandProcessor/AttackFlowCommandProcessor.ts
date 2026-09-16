@@ -3,6 +3,7 @@ import { SetStringProperty, SetTupleSubproperty } from "@OpenChart/DiagramEditor
 import { SynchronousEditorCommand } from "@OpenChart/DiagramEditor";
 import { RootProperty, StringProperty, TupleProperty } from "@OpenChart/DiagramModel";
 import type { SynchronousCommandProcessor } from "@OpenChart/DiagramEditor";
+import { getTacticNameFromLabel, getTechniqueNameFromLabel } from "../AttackFlowTemplates/TTPFrameworkConstants";
 
 export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
 
@@ -14,7 +15,7 @@ export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
      *  The command to execute in its place.
      */
     public process(cmd: SynchronousEditorCommand): SynchronousEditorCommand | undefined {
-        if (!this.isSettingTtp(cmd)) {
+        if (!this.isSettingTTP(cmd)) {
             return undefined;
         }
         // Get root property
@@ -108,10 +109,9 @@ export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
         if (displayText === undefined) {
             return null;
         }
-        return displayText
-            .replace(/^\[[^\]]+\]\s+/, "")
-            .replace(/^\S+\s+/, "")
-            .trim();
+        return key === "tactic"
+            ? getTacticNameFromLabel(displayText)
+            : getTechniqueNameFromLabel(displayText);
     }
 
     /**
@@ -121,7 +121,7 @@ export class AttackFlowCommandProcessor implements SynchronousCommandProcessor {
      * @returns
      *  True if the command is setting a TTP, false otherwise.
      */
-    private isSettingTtp(cmd: SynchronousEditorCommand): cmd is SetTupleSubproperty {
+    private isSettingTTP(cmd: SynchronousEditorCommand): cmd is SetTupleSubproperty {
         return cmd instanceof SetTupleSubproperty
             && cmd.property.id === "ttp";
     }

@@ -15,7 +15,7 @@ jobs:
   test_python:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v4
         with:
           python-version: "3.12"
@@ -24,7 +24,7 @@ jobs:
       - name: Add Poetry to PATH
         run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       - name: Install Python dependencies
-        run: poetry install
+        run: poetry install --with api,docs
       - name: Check code formatting
         run: poetry run black --check src/attack_flow/
       - name: Run unit tests
@@ -39,13 +39,14 @@ jobs:
   test_attack_flow_builder:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24.18.0"
+          registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         working-directory: ./src/attack_flow_builder/
-        run: npm ci
+        run: npm ci --include=dev
       - name: Lint
         working-directory: ./src/attack_flow_builder/
         run: npm run lint
@@ -59,13 +60,14 @@ jobs:
     env:
       AFB_BASE_URL: "${{ format('/{0}/ui/', github.event.repository.name) }}"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24.18.0"
+          registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         working-directory: ./src/attack_flow_builder/
-        run: npm ci
+        run: npm ci --include=dev
       - name: Build
         working-directory: ./src/attack_flow_builder/
         run: npm run build
@@ -81,16 +83,16 @@ jobs:
     env:
       AFB_BASE_URL: "${{ format('/{0}/ui-v2/', github.event.repository.name) }}"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: center-for-threat-informed-defense/attack-flow
           ref: v2.3.3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
           node-version: "19"
       - name: Install dependencies
         working-directory: ./src/attack_flow_builder/
-        run: npm ci
+        run: npm ci --include=dev
       - name: Build
         working-directory: ./src/attack_flow_builder/
         env:
@@ -107,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/github-script@v6
         env:
           PR_NUMBER: ${{ github.event.number }}
@@ -115,10 +117,13 @@ jobs:
           script: |
             const { PR_NUMBER, GITHUB_SHA } = process.env;
             const builderUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/ui/?src=`;
-            const baseRawUrl = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}`;
+            const { owner, repo } = context.repo;
+            const rawRepo = context.payload.pull_request?.head?.repo?.full_name ?? `${owner}/${repo}`;
+            const rawSha = context.payload.pull_request?.head?.sha ?? GITHUB_SHA;
+            const baseRawUrl = `https://raw.githubusercontent.com/${rawRepo}`;
             const response = await github.rest.pulls.listFiles({
-              "owner": context.repo.owner,
-              "repo": context.repo.repo,
+              owner,
+              repo,
               "pull_number": PR_NUMBER,
               "per_page": 50,
               "page": 1,
@@ -127,7 +132,7 @@ jobs:
             for (const file of response.data) {
               if (file.filename.startsWith("corpus/")) {
                 const flowName = file.filename.split("/").pop();
-                const flowArg = `${baseRawUrl}/${GITHUB_SHA}/corpus/${flowName}`;
+                const flowArg = `${baseRawUrl}/${rawSha}/corpus/${flowName}`;
                 console.log(flowArg)
                 const flowUrl = builderUrl + encodeURIComponent(flowArg);
                 bullets.push(`* [${flowName}](${flowUrl})`);
@@ -146,13 +151,14 @@ jobs:
     needs: ["test_python", "attack_flow_builder", "attack_flow_builder_v2"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v4
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24.18.0"
+          registry-url: "https://registry.npmjs.org"
       - name: Update APT
         run: sudo apt update
       - name: Install APT dependencies
@@ -162,10 +168,10 @@ jobs:
       - name: Add Poetry to PATH
         run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       - name: Install Python dependencies
-        run: poetry install
+        run: poetry install --with api,docs
       - name: Install Node dependencies
         working-directory: ./src/attack_flow_builder/
-        run: npm ci
+        run: npm ci --include=dev
       - name: Create client directory
         run: mkdir docs/extra/ui
       - name: Download Attack Flow Builder
@@ -221,3 +227,55 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # deploy_preview:
+  #   if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+  #   needs: render_site
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     AZURE_STORAGE_ACCOUNT: ctidflow
+  #     AZURE_STORAGE_SAS_TOKEN: ${{ secrets.AZURE_SAS_TOKEN }}
+  #     BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  #     STATICRYPT_PASS: ${{ secrets.STATICRYPT_PASS }}
+  #     NODE_OPTIONS: --max-old-space-size=8192
+  #   steps:
+  #     - uses: actions/setup-node@v6
+  #       with:
+  #         node-version: "22"
+  #     - run: npm install -g staticrypt
+  #     - name: Download HTML
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: attack-flow-docs-html
+  #         path: docs
+  #     - run: >
+  #         staticrypt --remember 30 --salt 64c02ee360e9a7eb90b1c28e89be65ac \
+  #           --password $STATICRYPT_PASS --short \
+  #           --template-title "CTID Attack Flow Preview (branch: $BRANCH_NAME)" \
+  #           --template-instructions "The contents of this site are marked TLP:AMBER. Do not share with unauthorized individuals." \
+  #           --template-color-primary "#005b94" \
+  #           --template-color-secondary "#b2b2b2" \
+  #           --template-button "Log In" \
+  #           -r docs/
+  #     - name: Ensure StatiCrypt ran # StatiCrypt will fail without warning; verify it created a directory
+  #       run: test -d encrypted
+  #     - name: Copy encrypted HTML files
+  #       run: rsync -Ir -v --include='*.html' --exclude='*.*' encrypted/docs .
+  #     - name: Set the branch name
+  #       run: mv docs "$BRANCH_NAME"
+  #     - name: Install Azure CLI
+  #       run: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  #     - name: Delete old blobs
+  #       run: az storage blob delete-batch -s '$web' --pattern "$BRANCH_NAME/*"
+  #     - name: Upload to blob storage
+  #       run: az storage blob upload-batch -s . --pattern "$BRANCH_NAME/*" -d '$web'
+  #     - uses: actions/github-script@v6
+  #       if: github.event_name == 'pull_request'
+  #       with:
+  #         script: |
+  #           github.rest.issues.createComment({
+  #             issue_number: context.issue.number,
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             body: `This PR has been published to https://${process.env['AZURE_STORAGE_ACCOUNT']}.z13.web.core.windows.net/${process.env['BRANCH_NAME']}/ui/`,
+  #           })

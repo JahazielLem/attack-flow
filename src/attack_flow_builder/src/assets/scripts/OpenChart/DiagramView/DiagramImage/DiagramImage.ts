@@ -1,3 +1,8 @@
+import {
+    drawClassificationMarking,
+    formatClassificationText,
+    getClassificationTextColor
+} from "@/assets/scripts/Application/Classification";
 import { traverse, TupleProperty, EnumProperty, StringProperty } from "../../DiagramModel";
 import { Focus, Hover, ViewportRegion } from "../DiagramObjectView";
 import type { CanvasView } from "@OpenChart/DiagramView";
@@ -155,44 +160,11 @@ export class DiagramImage {
         if (marking?.value) {
             const markingText = marking?.toString() ?? null;
             const groupText = group?.value ?? null;
-            const fullText = groupText ? `${markingText} - ${groupText}` : markingText;
+            const fullText = formatClassificationText(markingText, groupText);
 
-            // Reset transform to draw in image space
-            ctx.save();
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-            // Styling similar to classification markings in AppTitleBar.vue. Change both together.
-            ctx.textBaseline = "top";
-            const paddingX = 5;
-            const paddingY = 2;
-            const metrics = ctx.measureText(fullText);
-            const textWidth = metrics.width;
-            const textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-            const rectWidth = Math.ceil(textWidth + paddingX * 2);
-            const rectHeight = Math.ceil(textHeight + paddingY * 2);
-            const rectX = Math.round((can.width - rectWidth) / 2);
-            const rectY = 0;
-            // Background
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
-            // Text color based on marking key
-            let textColor = "#FFFFFF";
-            switch (markingText) {
-                case "TLP:RED":
-                    textColor = "#FF2B2B";
-                    break;
-                case "TLP:AMBER":
-                case "TLP:AMBER+STRICT":
-                    textColor = "#FFC000";
-                    break;
-                case "TLP:GREEN":
-                case "UNCLASSIFIED":
-                    textColor = "#33FF00";
-                    break;
-            }
-            ctx.fillStyle = textColor;
-            ctx.fillText(fullText, rectX + paddingX, rectY + paddingY);
-            ctx.restore();
+            drawClassificationMarking(ctx, fullText, {
+                textColor: getClassificationTextColor(markingText)
+            });
         }
 
         // Restore visual attributes

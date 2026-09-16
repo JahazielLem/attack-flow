@@ -12,10 +12,23 @@ globally. The project is funded by our `research participants
 
 .. note::
 
-   This documentation site also publishes the PWNSAT-maintained fork of Attack Flow.
-   The fork tracks upstream changes while adding SPARTA framework support, SPARTA
+   This documentation site also publishes the Kevin Leon-maintained fork of Attack Flow.
+   The fork tracks upstream changes while adding SPARTA and ESA Space Shield support,
    sub-technique-aware autocompletion, custom observables for RF capture workflows,
    and UI customizations for the builder experience.
+
+Space security frameworks
+-------------------------
+
+* **SPARTA 4.0.1**: `User guide <https://sparta.aerospace.org/resources/user-guide>`__,
+  `release history <https://sparta.aerospace.org/resources/versions>`__, and
+  `official STIX bundle <https://sparta.aerospace.org/download/STIX?f=latest>`__.
+* **ESA Space Shield 0.3** (STIX collection, updated 2025-06-24):
+  `documentation and matrix <https://spaceshield.esa.int/>`__ and
+  `official STIX bundle <https://spaceshield.esa.int/stix/space-attack.json>`__.
+
+Both frameworks are available in the builder's TTP selectors and wiki. Their
+versions and documentation links are also displayed on the builder home screen.
 
 .. toctree::
     :maxdepth: 1
@@ -23,6 +36,7 @@ globally. The project is funded by our `research participants
 
     overview
     introduction
+    generation
     example_flows
     builder
     training
@@ -30,11 +44,12 @@ globally. The project is funded by our `research participants
     visualization
     language
     developers
+    changelog
 
 Notice
 ------
 
-© 2025 MITRE. Approved for public release. Document number(s): CT0040.
+Â© 2025 MITRE. Approved for public release. Document number(s): CT0040.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
 file except in compliance with the License. You may obtain a copy of the License at

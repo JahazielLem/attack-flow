@@ -9,6 +9,7 @@ import type { ViewportRegion } from "../ViewportRegion";
 import type { RenderSettings } from "../RenderSettings";
 import type { DiagramObjectView } from "./DiagramObjectView";
 import type { BoundingBox, LatchFace } from "../Faces";
+import { LineView } from "./LineView";
 
 export class LatchView extends Latch implements ViewObject {
 
@@ -52,6 +53,30 @@ export class LatchView extends Latch implements ViewObject {
      */
     public get anchor(): AnchorView | null {
         return this._anchor;
+    }
+
+    /**
+     * Determine if the latch is a source latch, i.e. the latch at the beginning of a line.
+     * @returns true if this latch is a source latch, false otherwise. Will be false if
+     * parent is not a line.
+     */
+    public isSource() : boolean {
+        if (this._parent instanceof LineView) {
+            return this._parent.rawSourceLatch?.instance === this.instance;
+        }
+        return false;
+    }
+
+    /**
+     * Determine if this latch is a target latch, i.e. the latch at the end of a line.
+     * @returns true if this latch is a target latch, false otherwise. Will be false if
+     * parent is not a line.
+     */
+    public isTarget() : boolean {
+        if (this._parent instanceof LineView) {
+            return this._parent.rawTargetLatch?.instance === this.instance;
+        }
+        return false;
     }
 
 

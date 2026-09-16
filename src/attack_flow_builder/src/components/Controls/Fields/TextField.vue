@@ -22,10 +22,17 @@
         v-model="value"
         ref="field"
         placeholder="None"
+        :maxlength="maxLength"
         @input="onInput"
         @keyup.stop=""
         @keydown.stop="onKeyDown"
       />
+      <div
+        v-if="hasCharacterLimit"
+        class="character-counter"
+      >
+        {{ charactersLeft }} {{ charactersLeft === 1 ? 'character' : 'characters' }} left
+      </div>
     </div>
   </FocusBox>
 </template>
@@ -41,6 +48,7 @@ import type { SynchronousEditorCommand } from "@OpenChart/DiagramEditor";
 // Components
 import FocusBox from "@/components/Containers/FocusBox.vue";
 import OptionsList from "./OptionsList.vue";
+import { TAG_NAME_CHARACTER_LIMIT } from "./TagFieldLimits";
 
 export default defineComponent({
   name: "TextField",
@@ -61,7 +69,15 @@ export default defineComponent({
     },
     featuredOptions: {
       type: Set as PropType<Set<string>>,
-      default: undefined
+      required: false
+    },
+    visibleOptions: {
+      type: Set as PropType<Set<string>>,
+      required: false
+    },
+    characterLimit: {
+      type: Number,
+      required: false
     }
   },
   data() {
@@ -86,9 +102,11 @@ export default defineComponent({
       const options: OptionItem<string>[] = [];
       // Create suggestions
       const fo = this.featuredOptions;
+      const vo = this.visibleOptions;
       const v = this.value.toLocaleLowerCase();
       for(const [value, prop] of optionsProp.value) {
         const text = prop.toString();
+        if (vo && !vo.has(value)) { continue; }
         const feat = fo ? fo.has(value) : true;
         if(text.toLocaleLowerCase().includes(v)) {
           options.push({ value, text, feature: feat });
@@ -105,6 +123,36 @@ export default defineComponent({
         }
       });
       return options;
+    },
+
+    /**
+     * Checks if this field is specifically for 'tags'.
+     */
+    isTagField(): boolean {
+        // Optional chaining to safely check the nested parent structure
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (this.property as any)._parent?._parent?.id === 'tags';
+    },
+
+    /**
+     * Returns the character limit for the textarea.
+     */
+    maxLength(): number | undefined {
+      return this.characterLimit ?? (this.isTagField ? TAG_NAME_CHARACTER_LIMIT : undefined);
+    },
+
+    /**
+     * Checks if this field has a character limit.
+     */
+    hasCharacterLimit(): boolean {
+      return this.maxLength !== undefined;
+    },
+
+    /**
+     * Calculates remaining characters for tag fields.
+     */
+    charactersLeft(): number {
+      return (this.maxLength ?? 0) - this.value.length;
     },
 
   },
@@ -137,6 +185,11 @@ export default defineComponent({
      * Field input behavior.
      */
     onInput() {
+      // Safety truncation (useful for paste events)
+      if (this.maxLength && this.value.length > this.maxLength) {
+        this.value = this.value.substring(0, this.maxLength);
+      }
+
       this.updateProperty(this.value);
       this.promptSuggestions();
     },
@@ -147,6 +200,15 @@ export default defineComponent({
      *  The keydown event.
      */
     onKeyDown(event: KeyboardEvent) {
+      // If at limit, prevent new characters unless text is selected or it's a control key
+      const isControlKey = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Escape", "Enter"].includes(event.key);
+      if (this.maxLength && this.value.length >= this.maxLength && !isControlKey) {
+        const field = event.target as HTMLTextAreaElement;
+        if (field.selectionStart === field.selectionEnd) {
+          event.preventDefault();
+          return;
+        }
+      }
       const field = event.target as HTMLInputElement;
       if(field.selectionStart !== field.selectionEnd) {
         return;
@@ -322,8 +384,7 @@ export default defineComponent({
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
-  color: #cccccc;
-  background-color: #11111b;
+  color: var(--af-text-color-primary);
   box-sizing: border-box;
 }
 
@@ -354,7 +415,7 @@ textarea {
 }
 
 textarea::placeholder {
-  color: #999;
+  color: var(--af-text-color-disabled);
   opacity: 1;
 }
 
@@ -376,4 +437,21 @@ textarea:focus {
   margin: 3px 6px;
 }
 
+.value {
+  position: relative;
+  display: flex;
+  flex-direction: column; /* Stack textarea and counter */
+  grid-area: 1 / 1;
+  cursor: text;
+}
+
+.character-counter {
+  position: absolute;
+  bottom: -18px;
+  right: 12px;
+  font-size: 10px;
+  color: var(--af-text-color-disabled);
+  pointer-events: none; /* Ensure it doesn't block clicks to the textarea */
+  user-select: none;
+}
 </style>

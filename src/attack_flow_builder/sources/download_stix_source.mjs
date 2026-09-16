@@ -29,6 +29,7 @@ const STIX_TO_ATTACK = {
     "malware": "software",
     "tool": "software",
     "x-mitre-data-source": "data_source",
+    "x-mitre-detection-strategy": "detection",
     "x-mitre-tactic": "tactic",
     "attack-pattern": "technique",
     "attack-subpattern": "subtechnique"
@@ -53,12 +54,11 @@ const MITRE_SOURCES = new Set([
  */
 const SPARTA_SOURCES = new Set([
     "sparta",
-    "mitre-sparta-attack",
-    "space-attack"
+    "mitre-sparta-attack"
 ]);
 
 /**
- * Stable synthetic tactic metadata for SPARTA 3.x, which encodes tactics only
+ * Stable synthetic tactic metadata for SPARTA 3.x/4.x, which encodes tactics only
  * in kill chain phases instead of as standalone STIX objects.
  */
 const SPARTA_TACTICS = new Map([
@@ -90,6 +90,97 @@ function getSourceType(obj) {
         return "subtechnique";
     }
     return STIX_TO_ATTACK[obj.type];
+}
+
+
+/**
+ * Extracts a detection strategy id from an analytic STIX object.
+ * @remarks
+ *  MITRE links analytics to detection strategies through the analytic's
+ *  external reference URL (e.g. .../detectionstrategies/DET0516#AN1429), not
+ *  through a STIX relationship object.
+ * @param {Object} analytic
+ *  The analytic STIX object.
+ * @returns {string | undefined}
+ *  The detection strategy id, if present.
+ */
+function getDetectionIdFromAnalytic(analytic) {
+    for (const ref of analytic.external_references ?? []) {
+        const match = ref.url?.match(/\/detectionstrategies\/(DET\d+)/);
+        if (match) {
+            return match[1];
+        }
+    }
+}
+
+/**
+ * Parses log source references from an analytic STIX object.
+ * @remarks
+ *  Log sources use MITRE's PRE:POST naming (e.g. wineventlog:security) with a
+ *  channel field for event IDs, operations, or match strings.
+ * @param {Object} analytic
+ *  The analytic STIX object.
+ * @returns {{name: string, channel: string}[]}
+ *  The parsed log sources.
+ */
+function parseAnalyticLogSources(analytic) {
+    return (analytic.x_mitre_log_source_references ?? [])
+        .map(reference => ({
+            name: reference.name ?? "",
+            channel: reference.channel ?? ""
+        }))
+        .filter(reference => reference.name.length > 0);
+}
+
+/**
+ * Aggregates log sources from analytics onto detection strategy objects.
+ * @remarks
+ *  x-mitre-analytic objects are not added to STIX_TO_ATTACK because they are
+ *  not standalone catalog entries. Instead, each analytic contributes zero or
+ *  more entries to detection.log_sources (deduplicated union).
+ * @param {Object} data
+ *  The STIX manifest.
+ * @param {Map<string, SourceObject>} objects
+ *  The parsed source objects.
+ */
+function attachDetectionLogSources(data, objects) {
+    const logSourcesByDetectionId = new Map();
+    const seenLogSourcesByDetectionId = new Map();
+
+    for (const obj of data.objects) {
+        if (obj.type !== "x-mitre-analytic" || obj.x_mitre_deprecated || obj.revoked) {
+            continue;
+        }
+
+        const detectionId = getDetectionIdFromAnalytic(obj);
+        if (!detectionId) {
+            continue;
+        }
+
+        if (!logSourcesByDetectionId.has(detectionId)) {
+            logSourcesByDetectionId.set(detectionId, []);
+            seenLogSourcesByDetectionId.set(detectionId, new Set());
+        }
+
+        // Deduplicate log sources that appear across multiple analytics.
+        const seen = seenLogSourcesByDetectionId.get(detectionId);
+        const logSources = logSourcesByDetectionId.get(detectionId);
+        for (const logSource of parseAnalyticLogSources(obj)) {
+            const key = `${logSource.name}\0${logSource.channel}`;
+            if (seen.has(key)) {
+                continue;
+            }
+            seen.add(key);
+            logSources.push(logSource);
+        }
+    }
+
+    for (const obj of objects.values()) {
+        if (obj.type !== "detection") {
+            continue;
+        }
+        obj.log_sources = logSourcesByDetectionId.get(obj.id) ?? [];
+    }
 }
 
 
@@ -133,7 +224,8 @@ function parseStixToSourceObject(obj) {
         description: obj.description,
         external_references: externalReferences,
         platforms: obj.x_mitre_platforms,
-        domains: inferredDomains
+        domains: inferredDomains,
+        stixRelationships: []
     }
 
     // Parse MITRE reference information
@@ -207,13 +299,16 @@ function synthesizeSpartaTactics(objects) {
  * @returns {SourceObject[]}
  *  The parsed source objects.
  */
-function parseSourceObjectsFromManifest(data) {
+export function parseSourceObjectsFromManifest(data) {
 
     // Parse objects and relationships
     const relationships = new Map();
+    const stixRelationships = [];
     let objects = new Map();
     for (let obj of data.objects) {
         if (obj.type === "relationship") {
+            if (obj.x_mitre_deprecated || obj.revoked) continue;
+            stixRelationships.push(obj);
             if (!relationships.has(obj.source_ref)) {
                 relationships.set(obj.source_ref, new Set());
             }
@@ -237,6 +332,20 @@ function parseSourceObjectsFromManifest(data) {
         for (const tactic of synthesizeSpartaTactics(objects)) {
             objects.set(tactic.stixId, tactic);
         }
+    }
+
+    // Preserve directed relationship semantics for upstream defensive enrichment.
+    for (const relation of stixRelationships) {
+        const source = objects.get(relation.source_ref);
+        const target = objects.get(relation.target_ref);
+        if (!source || !target) continue;
+        // SPARTA models countermeasures as related-to instead of mitigates.
+        const relationshipType = relation.relationship_type === "related-to"
+            && source.type === "mitigation"
+            && ["technique", "subtechnique"].includes(target.type)
+            && source.domains?.includes("sparta-attack")
+            ? "mitigates" : relation.relationship_type;
+        source.stixRelationships.push({ relationshipType, targetRef: target.stixId });
     }
 
     // Construct relationships
@@ -291,6 +400,8 @@ function parseSourceObjectsFromManifest(data) {
         }
         attackPattern.tactics = tactics;
     }
+
+    attachDetectionLogSources(data, objects);
 
     // Return catalog
     return [...objects.values()];

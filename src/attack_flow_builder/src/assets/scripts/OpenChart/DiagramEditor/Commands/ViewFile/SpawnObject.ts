@@ -29,10 +29,29 @@ export class SpawnObject extends GroupCommand {
     constructor(file: DiagramViewFile, id: string, x: number, y: number, fromCorner: boolean = false) {
         super();
         // Create object
-        this.object = file.factory.createNewDiagramObject(id);
+        this.object = this.createObject(file, id);
+        // Configure object
+        this.configureObject(this.object, id);
         // Calculate object size
         this.object.calculateLayout();
-        // Calculate coordinate
+        // Position object
+        this.positionObject(file, x, y, fromCorner);
+        // Add object to group
+        this.do(addObjectToGroup(this.object, file.canvas));
+    }
+
+    /**
+     * Positions the object.
+     * @param file
+     *  The diagram file.
+     * @param x
+     *  The object's x-coordinate.
+     * @param y
+     *  The object's y-coordinate.
+     * @param fromCorner
+     *  Whether to position the object from its top-left corner or its center.
+     */
+    protected positionObject(file: DiagramViewFile, x: number, y: number, fromCorner: boolean = false): void {
         if (fromCorner) {
             x += this.object.face.boundingBox.width / 2;
             y += this.object.face.boundingBox.height / 2;
@@ -47,8 +66,28 @@ export class SpawnObject extends GroupCommand {
         }
         // Position object
         this.object.moveTo(x, y);
-        // Add object to group
-        this.do(addObjectToGroup(this.object, file.canvas));
     }
+
+    /**
+     * Creates the object to spawn.
+     * @param file
+     *  The diagram file.
+     * @param id
+     *  The object's id.
+     * @returns
+     *  The object to spawn.
+     */
+    protected createObject(file: DiagramViewFile, id: string): DiagramObjectView {
+        return file.factory.createNewDiagramObject(id);
+    }
+
+    /**
+     * Configures the object before layout and placement.
+     * @param object
+     *  The object to spawn.
+     * @param id
+     *  The object's id.
+     */
+    protected configureObject(_object: DiagramObjectView, _id: string): void {}
 
 }

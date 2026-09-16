@@ -7,7 +7,8 @@ import type { ViewObject } from "../ViewObject";
 import type { ViewportRegion } from "../ViewportRegion";
 import type { RenderSettings } from "../RenderSettings";
 import type { DiagramObjectView } from "./DiagramObjectView";
-import type { AnchorFace, BoundingBox } from "../Faces";
+import { AnchorPosition, type AnchorFace, type BoundingBox } from "../Faces";
+import type { BlockView } from "./BlockView";
 
 export class AnchorView extends Anchor implements ViewObject {
 
@@ -32,7 +33,7 @@ export class AnchorView extends Anchor implements ViewObject {
     /**
      * The object's (internal) parent.
      */
-    declare protected _parent: DiagramObjectView | null;
+    declare protected _parent: BlockView | null;
 
     /**
      * The anchor's (internal) linked latches.
@@ -42,8 +43,29 @@ export class AnchorView extends Anchor implements ViewObject {
     /**
      * The object's parent.
      */
-    public get parent(): DiagramObjectView | null {
+    public get parent(): BlockView | null {
         return this._parent;
+    }
+
+    /**
+     * Get the position of this anchor based on its parent block.
+     */
+    public get anchorPosition(): AnchorPosition | null {
+        let result = null;
+
+        if (this.parent) {
+            for (const anchorKey of this.parent.anchors.keys()) {
+                if (this.parent.anchors.get(anchorKey) === this) {
+                    if ((Object.values(AnchorPosition) as string[]).includes(anchorKey)) {
+                        result = anchorKey as AnchorPosition;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     /**

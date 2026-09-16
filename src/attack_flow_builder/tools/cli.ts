@@ -19,7 +19,7 @@ const program = new Command();
 program
   .name('Attack Flow Builder CLI')
   .description('Command line tool for working with Attack Flow Builder (.afb) files.')
-  .version(version);
+  .version(version.split(".").slice(0, 2).join("."));
 
 program
     .command("export-stix <paths...>")

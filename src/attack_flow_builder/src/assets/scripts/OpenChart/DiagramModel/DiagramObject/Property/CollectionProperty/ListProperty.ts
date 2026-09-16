@@ -6,7 +6,7 @@ export class ListProperty extends CollectionProperty {
     /**
      * The list property's template.
      */
-    private readonly template: Property;
+    public readonly template: Property;
 
     /**
      * The list property's type.

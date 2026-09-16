@@ -1,6 +1,8 @@
 import { AnchorConfiguration } from "./AnchorFormat";
 import { AnchorPosition, Branch } from "@OpenChart/DiagramView";
+import { ConfidenceProperty } from "./ConfidenceProperty";
 import { TacticTechniqueProperty } from "./TacticTechniqueProperty";
+import { TagsProperty } from "./TagsProperty";
 import { DiagramObjectType, PropertyType } from "@OpenChart/DiagramModel";
 import type { DiagramObjectTemplate } from "@OpenChart/DiagramModel";
 
@@ -26,40 +28,80 @@ export const AttackFlowObjects: DiagramObjectTemplate[] = [
             description: {
                 type: PropertyType.String
             },
-            confidence: {
-                type: PropertyType.Enum,
-                options: {
-                    type: PropertyType.List,
-                    form: {
-                        type: PropertyType.Dictionary,
-                        form: {
-                            text: {
-                                type: PropertyType.String,
-                                is_representative: true
-                            },
-                            value: {
-                                type: PropertyType.Int
-                            }
-                        }
-                    },
-                    default: [
-                        ["speculative",   { text: "Speculative", value: 0 }],
-                        ["very-doubtful", { text: "Very Doubtful", value: 10 }],
-                        ["doubtful",      { text: "Doubtful", value: 30 }],
-                        ["even-odds",     { text: "Even Odds", value: 50 }],
-                        ["probable",      { text: "Probable", value: 70 }],
-                        ["very-probable", { text: "Very Probable", value: 90 }],
-                        ["certain",       { text: "Certain", value: 100 }]
-                    ]
-                },
-                default: null
-            },
+            confidence: ConfidenceProperty,
             execution_start: {
                 type: PropertyType.Date
             },
             execution_end: {
                 type: PropertyType.Date
-            }
+            },
+            tags: TagsProperty
+        },
+        anchors: AnchorConfiguration
+    },
+    {
+        name: "mitigation",
+        namespace: ["attack_flow", "mitigation"],
+        type: DiagramObjectType.Block,
+        properties: {
+            name: {
+                type: PropertyType.String,
+                is_representative: true,
+                metadata: {
+                    validator: {
+                        is_required: true
+                    }
+                }
+            },
+            mitigation_id: {
+                name: "ID",
+                type: PropertyType.String
+            },
+            description: {
+                type: PropertyType.String
+            },
+            system: {
+                type: PropertyType.String
+            },
+            tags: TagsProperty
+        },
+        anchors: AnchorConfiguration
+    },
+    {
+        name: "detection",
+        namespace: ["attack_flow", "detection"],
+        type: DiagramObjectType.Block,
+        properties: {
+            name: {
+                type: PropertyType.String,
+                is_representative: true,
+                metadata: {
+                    validator: {
+                        is_required: true
+                    }
+                }
+            },
+            detection_id: {
+                name: "ID",
+                type: PropertyType.String
+            },
+            description: {
+                type: PropertyType.String
+            },
+            system: {
+                type: PropertyType.String
+            },
+            log_sources: {
+                name: "Log Sources",
+                type: PropertyType.MultiSelect,
+                options: {
+                    type: PropertyType.List,
+                    form: { type: PropertyType.String },
+                    default: []
+                },
+                default: {}
+            },
+            tags: TagsProperty
         },
         anchors: AnchorConfiguration
     },
@@ -79,7 +121,8 @@ export const AttackFlowObjects: DiagramObjectTemplate[] = [
             },
             description: {
                 type: PropertyType.String
-            }
+            },
+            tags: TagsProperty
         },
         anchors: AnchorConfiguration
     },
@@ -138,7 +181,8 @@ export const AttackFlowObjects: DiagramObjectTemplate[] = [
             },
             date: {
                 type: PropertyType.Date
-            }
+            },
+            tags: TagsProperty
         },
         anchors: {
             [AnchorPosition.D0]   : "horizontal_anchor",

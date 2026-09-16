@@ -170,8 +170,10 @@ export class DateProperty extends Property {
      */
     public toString(): string {
         if (this._time) {
-            const zone = this._time.toFormat("ZZ");
-            const time = this._time.toLocaleString(DateTime.DATETIME_SHORT);
+            const localTimeZone = DateTime.local().zoneName;
+            const localTime = this._time.setZone(localTimeZone);
+            const time = localTime.toLocaleString(DateTime.DATETIME_SHORT);
+            const zone = localTime.toFormat("ZZ");
             return `${time} ${zone}`;
         } else {
             return "None";

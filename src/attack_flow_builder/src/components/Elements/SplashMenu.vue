@@ -10,7 +10,10 @@
         </p>
       </div>
     </div>
-    <div class="menu-body">
+    <div
+      class="menu-body"
+      v-if="application.splashMenuMode === 'home'"
+    >
       <div
         class="section open-recovered-file"
         v-if="files.size"
@@ -84,6 +87,20 @@
           </div>
           <div
             class="button"
+            @click="onGenerateFlow"
+          >
+            <div class="button-header">
+              <span class="button-icon"><FolderIcon /></span>
+              <p class="button-title">
+                {{ generateFlow.title }}
+              </p>
+            </div>
+            <p class="button-description">
+              {{ generateFlow.description }}
+            </p>
+          </div>
+          <div
+            class="button"
             @click="onImportStix"
           >
             <div class="button-header">
@@ -125,31 +142,69 @@
         </div>
       </div>
       <div
+        class="section framework-resources"
+        v-if="frameworkVersions.length"
+      >
+        <p class="section-title">
+          SPACE FRAMEWORKS
+        </p>
+        <div class="button-grid">
+          <a
+            class="button framework-link"
+            v-for="framework of frameworkVersions"
+            :key="framework.name"
+            :href="framework.documentation_url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div class="framework-header">
+              <p class="button-title">
+                {{ framework.name }}
+              </p>
+              <span
+                class="framework-version"
+                v-if="framework.version"
+              >
+                STIX catalog v{{ framework.version }}
+              </span>
+            </div>
+            <p class="button-description">
+              {{ framework.description }}
+            </p>
+            <span class="framework-documentation">
+              Official documentation ↗
+            </span>
+          </a>
+        </div>
+      </div>
+      <div
         class="section"
         v-if="organization || sparta"
       >
         <p class="section-title">
           THIS PROJECT IS BASED ON:
         </p>
-        <p
-          class="section-subtitle"
-          v-if="spartaVersion"
-        >
-          {{ spartaVersion }}
-        </p>
         <div class="project-footer">
           <img
             class="organization"
             v-if="organization"
             :src="organization"
+            alt="Center for Threat-Informed Defense"
           >
           <img
             class="sparta-logo"
             v-if="sparta"
             :src="sparta"
+            alt="SPARTA"
           >
         </div>
       </div>
+    </div>
+    <div
+      class="menu-body"
+      v-else
+    >
+      <AIGenerationSplashScreen />
     </div>
   </div>
 </template>
@@ -168,6 +223,9 @@ import FolderIcon from "@/components/Icons/FolderIcon.vue";
 import FullPageIcon from "@/components/Icons/FullPageIcon.vue";
 import EmptyPageIcon from "@/components/Icons/EmptyPageIcon.vue";
 import ScrollBox from "../Containers/ScrollBox.vue";
+import AIGenerationSplashScreen from "./AIGenerationSplashScreen.vue";
+
+const displayVersion = version.split(".").slice(0, 2).join(".");
 
 export default defineComponent({
   name: 'SplashMenu',
@@ -175,12 +233,13 @@ export default defineComponent({
     return {
       application: useApplicationStore(),
       applicationName: Configuration.application_name,
-      applicationVersion: version,
+      applicationVersion: displayVersion,
       organization: Configuration.splash.organization,
       sparta: Configuration.splash.sparta,
-      spartaVersion: Configuration.splash.sparta_version,
+      frameworkVersions: Configuration.splash.framework_versions ?? [],
       newFile: Configuration.splash.new_file,
       openFile: Configuration.splash.open_file,
+      generateFlow: Configuration.splash.generate_flow,
       importStix: Configuration.splash.import_stix,
       helpLinks: Configuration.splash.help_links
     }
@@ -231,6 +290,13 @@ export default defineComponent({
     },
 
     /**
+     * Generate Flow behavior.
+     */
+    onGenerateFlow() {
+      this.application.splashMenuMode = "ai-generation";
+    },
+
+    /**
      * Import STIX behavior.
      */
     async onImportStix() {
@@ -271,6 +337,7 @@ export default defineComponent({
 
   },
   components: { 
+    AIGenerationSplashScreen,
     LinkIcon, FolderIcon, 
     FullPageIcon, EmptyPageIcon,
     ScrollBox
@@ -287,9 +354,10 @@ export default defineComponent({
   flex-direction: column;
   min-width: 640px;
   max-width: 740px;
-  border: none;
+  max-height: calc(100dvh - 88px);
+  border: solid 1px var(--af-border-color-primary);
   border-radius: 5px;
-  background: #11111b;
+  background: var(--af-bg-color-primary);
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.35);
   overflow: hidden;
 }
@@ -301,14 +369,20 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   padding: 18px 30px;
-  border-bottom: solid 1px #383838;
-  background: #181825;
+  flex-shrink: 0;
+  border-bottom: solid 1px var(--af-border-color-primary);
+  background: var(--af-bg-color-secondary);
   pointer-events: none;
   user-select: none;
 }
 
 .application-info {
-  color: #cdd6f4;
+  color: var(--af-text-color-primary);
+}
+
+*[data-theme="blog_theme"] .application-info,
+*[data-theme="light_theme"] .application-info {
+    color: #000;
 }
 
 .application-info .application-name {
@@ -329,9 +403,16 @@ export default defineComponent({
   width: 25%;
 }
 
+*[data-theme="blog_theme"] .organization,
+*[data-theme="light_theme"] .organization {
+    filter: invert(1);
+}
+
 /** === Body === */
 
 .menu-body {
+  min-height: 0;
+  overflow-y: auto;
   padding: 30px;
 }
 
@@ -344,19 +425,11 @@ export default defineComponent({
 }
 
 .section-title {
-  color: #bac2de;
+  color: var(--af-text-color-secondary);
   font-size: 9.5pt;
   font-weight: 500;
   margin-left: 2px;
   margin-bottom: 15px;
-}
-
-.section-subtitle {
-  color: #89b4fa;
-  font-size: 8.5pt;
-  font-weight: 600;
-  margin: -8px 0 14px 2px;
-  letter-spacing: 0.04em;
 }
 
 .section-grid {
@@ -383,9 +456,8 @@ export default defineComponent({
 
 .file,
 .button {
-  background-color: #1e1e2e;
-  border: none;
-  border-radius: 8px;
+  border: solid 1px var(--af-border-color-primary);
+  border-radius: 5px;
   box-sizing: border-box;
   user-select: none;
 }
@@ -396,10 +468,12 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   padding: 0px 24px;
+  cursor: pointer;
 }
 
 .button {
   padding: 24px;
+  cursor: pointer;
 }
 
 .file-header,
@@ -415,6 +489,7 @@ export default defineComponent({
 
 .file-icon {
   margin-right: 10px;
+  fill: var(--af-color-info);
 }
 
 .button-icon {
@@ -426,9 +501,13 @@ export default defineComponent({
   margin-right: 10px;
 }
 
+.button-icon svg {
+    fill: var(--af-color-info);
+}
+
 .file-title,
 .button-title {
-  color: #bac2de;
+  color: var(--af-color-info);
   white-space: nowrap;
 }
 
@@ -443,33 +522,33 @@ export default defineComponent({
 }
 
 .file-date {
-  color: #a6adc8;
+  color: var(--af-text-color-secondary);
   font-size: 11pt;
 }
 
 .button-description {
-  color: #a6adc8;
+  color: var(--af-text-color-secondary);
   font-size: 10pt;
 }
 
 .delete-file {
   display: flex;
   align-items: center;
-  color: #89b4fa;
+  color: var(--af-color-info);
   font-size: 9.5pt;
   user-select: none;
   box-sizing: border-box;
   padding: 0px 10px;
-  border: none;
-  border-radius: 8px;
-  background-color: #1e1e2e;
+  border: solid 1px var(--af-border-color-primary);
+  border-radius: 5px;
   margin-left: 8px;
+  cursor: pointer;
 }
 
 .file:hover,
 .button:hover,
 .delete-file:hover {
-  background: #313244;
+  background: var(--af-border-color-primary);
 }
 
 /** === Open File Section === */
@@ -477,8 +556,8 @@ export default defineComponent({
 .section.open-file .button-grid {
   display: grid;
   grid-template-rows: minmax(0, 1fr);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 /** === Recovered File Section === */
@@ -506,7 +585,7 @@ export default defineComponent({
 /** === File Scrollbar === */
 
 .file-scrollbox:deep(.scroll-bar) {
-  border: 1px solid #383838;
+  border: 1px solid var(--af-border-color-primary);
   border-radius: 5px;
 }
 
@@ -515,6 +594,35 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   gap: 2rem;
+}
+
+.framework-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.framework-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 10px;
+}
+
+.framework-version {
+  color: var(--af-text-color-secondary);
+  font-size: 9pt;
+}
+
+.framework-documentation {
+  color: var(--af-color-info);
+  font-size: 9pt;
+  margin-top: auto;
+}
+
+.framework-link:focus-visible {
+  outline: 2px solid var(--af-color-info);
+  outline-offset: 2px;
 }
 
 </style>

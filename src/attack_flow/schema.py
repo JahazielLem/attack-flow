@@ -22,6 +22,8 @@ ATTACK_FLOW_SDOS = (
     "attack-asset",
     "attack-condition",
     "attack-operator",
+    "x-detection",
+    "x-mitigation",
 )
 SDOS = (
     "attack-pattern",

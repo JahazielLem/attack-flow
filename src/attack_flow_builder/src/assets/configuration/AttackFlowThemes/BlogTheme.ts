@@ -63,6 +63,18 @@ const AttackObjects = {
         properties: { include: ["description"] },
         style: BlogStyle.DictionaryBlock({ head: Colors.SimpleRed })
     },
+    mitigation: {
+        type: FaceType.DictionaryBlock,
+        attributes: Alignment.Grid,
+        properties: { include: ["mitigation_id", "description"] },
+        style: BlogStyle.DictionaryBlock({ head: Colors.SimpleGray })
+    },
+    detection: {
+        type: FaceType.DictionaryBlock,
+        attributes: Alignment.Grid,
+        properties: { include: ["detection_id", "description", "log_sources"] },
+        style: BlogStyle.DictionaryBlock({ head: Colors.SimpleGray })
+    },
     asset: {
         type: FaceType.DictionaryBlock,
         attributes: Alignment.Grid,

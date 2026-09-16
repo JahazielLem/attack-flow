@@ -74,8 +74,12 @@ export default defineComponent({
     },
     featuredOptions: {
       type: Set as PropType<Set<string>>,
-      default: undefined
-    }
+      required: false
+    },
+    visibleOptions: {
+      type: Set as PropType<Set<string>>,
+      required: false
+    },
   },
   data() {
     return {
@@ -109,9 +113,11 @@ export default defineComponent({
       }
       // Add remaining options
       const fo = this.featuredOptions;
+      const vo = this.visibleOptions;
       const st = this.searchTerm.toLocaleLowerCase();
       for(const [value, prop] of this.property.options.value) {
         const text = prop.toString();
+        if (vo && !vo.has(value)) { continue; }
         const feat = fo ? fo.has(value) : true;
         if(st === "" || text.toLocaleLowerCase().includes(st)) {
           options.push({ value, text, feature: feat });
@@ -310,7 +316,7 @@ export default defineComponent({
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
-  color: #cccccc;
+  color: var(--af-text-color-primary);
   box-sizing: border-box;
   cursor: pointer;
 }
@@ -334,11 +340,11 @@ export default defineComponent({
 }
 
 .value-text.is-null {
-  color: #999;
+  color: var(--af-text-color-disabled);
 }
 
 .value-text:not(.is-null) {
-  color: #89a0ec;
+  color: var(--af-color-info);
   font-weight: 500;
 }
 
@@ -357,7 +363,7 @@ export default defineComponent({
 }
 
 .value-search::placeholder {
-  color: #999;
+  color: var(--af-text-color-disabled);
   opacity: 1;
 }
 

@@ -129,7 +129,7 @@ export default defineComponent({
 .validation-result {
   display: flex;
   align-items: center;
-  color: #d9d9d9;
+  color: var(--af-text-color-tertiary);
   font-size: 10pt;
   user-select: none;
   min-height: 27px;
@@ -139,7 +139,7 @@ export default defineComponent({
 }
 
 .validation-result:hover {
-  background: #303030;
+  background: var(--af-border-color-secondary);
 }
 
 .validation-result .icon {
@@ -151,11 +151,11 @@ export default defineComponent({
 }
 
 .validation-result.error .icon {
-  color: #ff6969;
+  color: var(--af-color-error);
 }
 
 .validation-result.warning .icon {
-  color: #e6d845;
+  color: var(--af-color-warning);
 }
 
 </style>

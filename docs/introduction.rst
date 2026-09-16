@@ -39,6 +39,9 @@ one action happened before another! This is a more powerful concept that models 
 adversary uses one behavior to create the preconditions they need to execute the next
 behavior.
 
+The lines connecting actions together have a confidence property to allow for minimal
+ambiguity when creating flows.
+
 Condition Objects
 -----------------
 
@@ -192,9 +195,29 @@ point for the adversary: if they obtained a credential then they can move on to 
 in with it. But if the spearphshing fails, then the adversary falls back to a password
 spraying technique in another attempt to obtain a valid credential.
 
+
+Detections and Mitigations Objects
+----------------------------------
+
+Actions may also have defensive measures that may be taken in the form of mitigations
+(steps taken to prevent the action from happening) or detections (steps to alert when
+the action takes place). The mitigation and detection objects themselves are free text
+fields, but there are also suggested `ATT&CK detections <https://attack.mitre.org/detectionstrategies/>`_,
+`ATT&CK mitigations <https://attack.mitre.org/mitigations/enterprise/>`_, and `ATLAS mitigations <https://atlas.mitre.org/mitigations>`_.
+
+Detections and Mitigations may be used in a flow to include pseudocode, ATT&CK/ATLAS referenced analytics, or actual commands to implement alerts or changes within an organization to prevent/detect the activity within the flow.
+
+.. figure:: _static/detection-mitigation-equifax.png
+   :scale: 80%
+   :alt: In this example of the Equifax Breach with included Mitigations, Detections, and CAR Splunk analytics, the adversary exploited a public-facing application and executed a web shell to conduct reconnaissance.
+   :align: center
+
+   A detection or mitigation may showcase defensive measures that may alert or prevent the adversary actions.
+
+In this example of the Equifax Breach with included Mitigations, Detections, and CAR Splunk analytics, the adversary exploited a public-facing application and executed a web shell to conduct reconnaissance.
+
 Additional STIX Objects
 -----------------------
-
 This introduction focuses on the core Attack Flow objects, but Attack Flow is based on
 the STIX industry standard, so you can also use any available STIX object in your flows!
 STIX contains a variety of useful objects to enrich your flow with including IOCs and
@@ -208,6 +231,55 @@ used to provide details about how the file discovery technique was executed.
 
    The process object provides technical details regarding how the action was executed.
 
-Now that you are familiar with the central concepts, continue reading to review the
-corpus of example flows and how to use the Attack Flow Builder to start creating your
-own flows.
+
+Frameworks
+--------------
+At the flow level property, users can select what Frameworks to include in the flow.
+This allows for easier selection of techniques. The included Frameworks are: `MITRE ATT&CK
+Enterprise (ENT) <https://attack.mitre.org/matrices/enterprise/>`__, `MITRE ATT&CK Mobile (MOB) <https://attack.mitre.org/matrices/mobile/>`__,
+`MITRE ATT&CK ICS (ICS) <https://attack.mitre.org/matrices/ics/>`__, `MITRE ATLAS (ATL) <https://atlas.mitre.org/>`__, `MITRE
+D3FEND (D3F) <https://d3fend.mitre.org/>`__, and `MITRE F3 (F3) <https://ctid.mitre.org/fraud#/matrix>`__.
+
+.. figure:: _static/ttp-frameworks.png
+   :scale: 80%
+   :alt: The list of included Frameworks is shown with Enterprise, Mobile, and ICS frameworks selected.
+   :align: center
+
+
+TLP/Banner Markings
+-------------------
+At the flow level property, users can select from standard banner markings or create
+custom labels that apply to the whole flow. This will improve security and enhance
+distribution. The options in the banner marking drop down include: None, TLP:RED,
+TLP:AMBER, TLP:AMBER+STRICT, TLP:GREEN, TLP:CLEAR, UNCLASSIFIED, and CUI.
+
+.. figure:: _static/tlp-markings.png
+   :scale: 80%
+   :alt: The Banner Markings drop down options are shown with: None, TLP:RED, TLP:AMBER, TLP:AMBER+STRICT, TLP:GREEN, TLP:CLEAR, UNCLASSIFIED, and CUI.
+   :align: center
+
+When one of the marking is selected, it will show on the top of the flow and be included in the metadata for the flow.
+
+Tags
+----
+An attack flow supports tag functionality allowing each object to be annotated with free-form
+field tags and color selection.
+
+.. figure:: _static/tag-examples.png
+   :scale: 80%
+   :alt: Tags for "APT #" and "Task for Team" are shown on an Exploit Public-Facing Application Action.
+   :align: center
+
+Additionally, selecting one tag from the flow level property pane highlights all items with that tag within the flow.
+
+Suggestion Pane
+---------------
+When a line is drawn from a node into blank space, a suggestion pane now populates. This
+allows users to create nodes quicker, but it also uses `TIE <https://ctid.mitre.org/projects/technique-inference-engine/>`__
+integration to suggest the top five most likely actions based on the actions already in the
+flow. This is also where the mitigation and detection suggestion functionality resides.
+
+.. figure:: _static/suggestion-pane.png
+   :scale: 80%
+   :alt: A suggestion pane window is shown off of an Exploit Public-Facing Application Action showing 5 additional actions that may show up with that action.
+   :align: center

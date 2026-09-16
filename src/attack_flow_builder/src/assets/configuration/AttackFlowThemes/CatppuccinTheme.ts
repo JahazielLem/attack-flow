@@ -74,6 +74,17 @@ const AttackObjects = {
         attributes: Alignment.Grid,
         style: DarkStyle.DictionaryBlock({ head: Colors.blue })
     },
+    mitigation: {
+        type: FaceType.DictionaryBlock,
+        attributes: Alignment.Grid,
+        style: DarkStyle.DictionaryBlock({ head: Colors.gray })
+    },
+    detection: {
+        type: FaceType.DictionaryBlock,
+        attributes: Alignment.Grid,
+        properties: { include: ["detection_id", "description", "log_sources"] },
+        style: DarkStyle.DictionaryBlock({ head: Colors.gray })
+    },
     condition: {
         type: FaceType.BranchBlock,
         attributes: Alignment.Grid,

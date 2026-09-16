@@ -135,7 +135,7 @@ List of Examples
 
 *Author:* Kevin Lo
 
-*Description:* A documented BumbleBee Malware intrusion by the DFIR Report occurring in May 2022 
+*Description:* A documented BumbleBee Malware intrusion by the DFIR Report occurring in May 2022Â 
 
 .. raw:: html
 
@@ -187,7 +187,7 @@ List of Examples
 
 *Author:* Mia Sanchez
 
-*Description:* Attack flow for the FIN13 campaign targeting a bank in Peru. 
+*Description:* Attack flow for the FIN13 campaign targeting a bank in Peru.Â 
 
 .. raw:: html
 
@@ -252,7 +252,7 @@ List of Examples
 
 *Author:* MITRE Center for Threat-Informed Defense
 
-*Description:* A nation-state actor intrusion starting in Jan 2024. © 2024 The MITRE Corporation. Approved for public release. Document number CT0121.
+*Description:* A nation-state actor intrusion starting in Jan 2024. Â© 2024 The MITRE Corporation. Approved for public release. Document number CT0121.
 
 .. raw:: html
 
@@ -330,7 +330,7 @@ List of Examples
 
 *Author:* Maggie MacAlpine
 
-*Description:* OceanLotus Operations Flow 
+*Description:* OceanLotus Operations Flow
 
 .. raw:: html
 
@@ -343,29 +343,31 @@ List of Examples
 
 *Author:* Ivy Oeltjenbruns
 
-*Description:* Incident Date:  February 3, 2026 
-Actor:  HiddenLayer  | Target:  OpenClaw
-Researchers at HiddenLayer demonstrated how a webpage can embed an indirect prompt injection that causes OpenClaw to silently execute a malicious script. Once executed, the script plants persistent malicious instructions into future system prompts, allowing the attacker to issue new commands, turning OpenClaw into a command and control agent.
+*Incident Date:* February 3, 2026
 
-What makes this attack unique is that, through a simple indirect prompt injection attack into an agentic lifecycle, untrusted content can be used to spoof the model’s control scheme and induce unapproved tool invocation for execution. Through this single inject, an LLM can become a persistent, automated command & control implant.
+*Actor:* HiddenLayer
+
+*Target:* OpenClaw
+
+*Description:* Researchers at HiddenLayer demonstrated how a webpage can embed an indirect prompt injection that causes OpenClaw to silently execute a malicious script. Once executed, the script plants persistent malicious instructions into future system prompts, allowing the attacker to issue new commands, turning OpenClaw into a command and control agent. What makes this attack unique is that, through a simple indirect prompt injection attack into an agentic lifecycle, untrusted content can be used to spoof the model's control scheme and induce unapproved tool invocation for execution. Through this single inject, an LLM can become a persistent, automated command and control implant.
 
 .. raw:: html
 
-    <p><em>Open:</em> <a href="https://jahaziellem.github.io/attack-flow/ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/OpenClaw.afb" target="_blank">Attack Flow Builder</a></p>
+    <p><em>Open:</em> <a href="../ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/OpenClaw.afb" target="_blank">Attack Flow Builder</a></p>
     <p><em>Download:</em> <a href="../corpus/OpenClaw.afb" download>Attack Flow</a> | <a href="../corpus/OpenClaw.json" download>STIX</a> | <a href="../corpus/OpenClaw.dot" download>GraphViz</a> (<a href="../corpus/OpenClaw.dot.png">PNG</a>) | <a href="../corpus/OpenClaw.mmd" download>Mermaid</a></p>
 
 ----
 
-**Pwnsat - SPARTA TTPs**
+**Kevin Leon - SPARTA TTPs**
 
 *Author:* Kevin Leon
 
-*Description:* Default vulnerable Pwnsat card. This file contains the identified vulnerabilities and test scenarios that can be used during analysis.
+*Description:* Default vulnerable Kevin Leon card. This file contains the identified vulnerabilities and test scenarios that can be used during analysis.
 
 .. raw:: html
 
-    <p><em>Open:</em> <a href="https://jahaziellem.github.io/attack-flow/ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.afb" target="_blank">Attack Flow Builder</a></p>
-    <p><em>Download:</em> <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.afb" download>Attack Flow</a> | <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.json" download>STIX</a> | <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.dot" download>GraphViz</a> (<a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.dot.png">PNG</a>) | <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.mmd" download>Mermaid</a></p>
+    <p><em>Open:</em> <a href="https://jahaziellem.github.io/attack-flow/ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.afb" target="_blank">Attack Flow Builder</a></p>
+    <p><em>Download:</em> <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.afb" download>Attack Flow</a> | <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.json" download>STIX</a> | <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.dot" download>GraphViz</a> (<a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.dot.png">PNG</a>) | <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.mmd" download>Mermaid</a></p>
 
 ----
 
@@ -494,7 +496,7 @@ What makes this attack unique is that, through a simple indirect prompt injectio
 
 .. raw:: html
 
-    <p><em>Open:</em> <a href="https://jahaziellem.github.io/attack-flow/ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/ToolShell%20Vulnerability%20in%20Sharepoint.afb" target="_blank">Attack Flow Builder</a></p>
+    <p><em>Open:</em> <a href="../ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/ToolShell%20Vulnerability%20in%20Sharepoint.afb" target="_blank">Attack Flow Builder</a></p>
     <p><em>Download:</em> <a href="../corpus/ToolShell%20Vulnerability%20in%20Sharepoint.afb" download>Attack Flow</a> | <a href="../corpus/ToolShell%20Vulnerability%20in%20Sharepoint.json" download>STIX</a> | <a href="../corpus/ToolShell%20Vulnerability%20in%20Sharepoint.dot" download>GraphViz</a> (<a href="../corpus/ToolShell%20Vulnerability%20in%20Sharepoint.dot.png">PNG</a>) | <a href="../corpus/ToolShell%20Vulnerability%20in%20Sharepoint.mmd" download>Mermaid</a></p>
 
 ----
