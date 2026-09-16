@@ -23,3 +23,8 @@
     box-sizing: border-box;
     background: #333333;
 }
+*[data-theme="blog_theme"] .scroll-handle,
+*[data-theme="light_theme"] .scroll-handle {
+    border-color: #cccccc;
+    background: #dbdbdb;
+}

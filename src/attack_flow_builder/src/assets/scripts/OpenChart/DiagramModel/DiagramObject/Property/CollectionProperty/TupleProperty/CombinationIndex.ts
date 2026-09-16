@@ -65,6 +65,10 @@ export class CombinationIndex {
      *  The valid set of options for each registered property.
      */
     public getValidOptions(values?: Map<string, string>): ReadonlyMap<string, ReadonlySet<string>> {
+        // Free-text values have no catalog constraints. Keep them importable.
+        values = values && new Map([...values].filter(
+            ([prop, value]) => this.values.has(`${prop}.${value}`)
+        ));
         // If no values...
         if (!values || values.size === 0) {
             // ...return all registered values
@@ -75,7 +79,7 @@ export class CombinationIndex {
         // Construct results matrix
         const matrix = new Map<string, Set<string>[]>(
             [...this.props.keys()].map(
-                f => [f, new Array(values.size).fill(new Set())]
+                f => [f, Array.from({ length: values.size }, () => new Set<string>())]
             )
         );
         let i = 0;

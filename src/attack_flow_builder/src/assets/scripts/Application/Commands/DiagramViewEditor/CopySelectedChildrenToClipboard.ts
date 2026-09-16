@@ -45,7 +45,7 @@ export class CopySelectedChildrenToClipboard extends AppCommand {
         const d = this.context.settings.view.diagram;
         const e = this.context.settings.file.image_export;
         const image = new DiagramImage(
-            file.canvas,
+            virtualCanvas,
             e.padding,
             d.display_shadows,
             d.display_debug_info,

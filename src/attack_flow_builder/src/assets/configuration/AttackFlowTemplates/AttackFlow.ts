@@ -1,5 +1,6 @@
 import { DiagramObjectType, PropertyType } from "@OpenChart/DiagramModel";
 import type { CanvasTemplate } from "@OpenChart/DiagramModel";
+import { TTP_FRAMEWORKS } from "./TTPFrameworkConstants";
 
 export const AttackFlow: CanvasTemplate = {
     name: "flow",
@@ -12,6 +13,22 @@ export const AttackFlow: CanvasTemplate = {
         },
         description: {
             type: PropertyType.String
+        },
+        tags: {
+            name: "Tags",
+            type: PropertyType.List,
+            form: {
+                type: PropertyType.Dictionary,
+                form: {
+                    id: {
+                        type: PropertyType.String,
+                        auto_generate: true,
+                        is_editable: false
+                    },
+                    name: { type: PropertyType.String, is_representative: true },
+                    color: { type: PropertyType.Color }
+                }
+            }
         },
         author: {
             type: PropertyType.Dictionary,
@@ -87,6 +104,22 @@ export const AttackFlow: CanvasTemplate = {
                 group: {
                     type: PropertyType.String
                 }
+            }
+        },
+        ttp_frameworks: {
+            name: "Frameworks",
+            type: PropertyType.MultiSelect,
+            options: {
+                type: PropertyType.List,
+                form: { type: PropertyType.String },
+                default: TTP_FRAMEWORKS
+            },
+            default: {
+                ENT: true,
+                MOB: true,
+                ICS: true,
+                SPA: true,
+                SSH: true
             }
         },
         external_references: {

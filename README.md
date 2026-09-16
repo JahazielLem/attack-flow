@@ -1,38 +1,45 @@
 [![build](https://github.com/JahazielLem/attack-flow/actions/workflows/build.yml/badge.svg)](https://github.com/JahazielLem/attack-flow/actions/workflows/build.yml)
 
-# Attack Flow Builder SPARTA by PWNSAT
+# Attack Flow Builder: SPARTA and Space Shield by PWNSAT
 
-This repository is a maintained fork of [center-for-threat-informed-defense/attack-flow](https://github.com/center-for-threat-informed-defense/attack-flow) with a production-ready SPARTA integration layered on top of the latest upstream codebase.
+This repository is a maintained fork of [center-for-threat-informed-defense/attack-flow](https://github.com/center-for-threat-informed-defense/attack-flow) with SPARTA and ESA Space Shield support integrated with upstream Attack Flow 4.0.0.
 
-The goal of this fork is to keep pace with upstream Attack Flow changes while adding SPARTA-specific capabilities that are safe to regenerate during future updates instead of relying on manual patches.
+The goal of this fork is to keep pace with upstream Attack Flow changes while adding space security capabilities that are safe to regenerate during future updates instead of relying on manual patches.
 
 ## Key Features
 
-- Upstream Attack Flow updates rebased into this fork.
-- SPARTA framework integration using the maintained STIX source from [JahazielLem/attack-stix-data](https://github.com/JahazielLem/attack-stix-data).
-- Automatic resolution of the latest `sparta-attack-*.json` bundle during source regeneration.
-- Full SPARTA tactic, technique, and sub-technique support.
+- Upstream Attack Flow 4.0.0 merged into this fork, including visualizations, mitigation/detection nodes and optional AI flow generation.
+- SPARTA integration using the [official STIX download](https://sparta.aerospace.org/download/STIX?f=latest).
+- ESA Space Shield integration using the [official STIX bundle](https://spaceshield.esa.int/stix/space-attack.json).
+- Both frameworks are available in TTP selection, framework filters and the searchable TTP wiki.
+- Full SPARTA and Space Shield tactic, technique, and sub-technique support.
 - Action TTP autocompletion for tactic, technique, and sub-technique combinations.
 - Export and import support for `subtechnique_id` and `subtechnique_ref` in `attack-action`.
-- Splash screen SPARTA version display sourced from the generated SPARTA bundle metadata.
+- Home screen framework versions and documentation links sourced from the generated data.
 - A dedicated blue `countermeasure` card mapped to STIX `course-of-action`.
 - Red `action` cards for easier visual distinction.
 - Catppuccin theme support and Catppuccin-based default styling.
-- Customized splash screen and branding for the SPARTA-enabled builder.
+- Customized splash screen and branding for the space framework builder.
 - Custom STIX observables for:
   - `x-sigmf-capture`
   - `x-raw-iq-capture`
 
-## SPARTA Data Handling
+## Framework Data
 
-SPARTA data is generated from the latest versioned bundle published in the `sparta-attack` directory of the STIX source repository. During regeneration, the builder:
+| Framework | Bundled version | Documentation | STIX source |
+| --- | --- | --- | --- |
+| SPARTA | 4.0.1 | [User guide](https://sparta.aerospace.org/resources/user-guide) · [Versions](https://sparta.aerospace.org/resources/versions) | [Official latest bundle](https://sparta.aerospace.org/download/STIX?f=latest) |
+| ESA Space Shield | 0.3 (STIX collection, 2025-06-24) | [Space Shield documentation and matrix](https://spaceshield.esa.int/) | [Official bundle](https://spaceshield.esa.int/stix/space-attack.json) |
 
-- Detects the newest available SPARTA bundle version.
+Versions above identify the framework datasets, not the STIX specification. Source regeneration retrieves current official datasets, rebuilds enumerations, metadata and wiki entries, and:
+
+- Extracts dataset versions from the source metadata.
 - Synthesizes SPARTA tactics from `kill_chain_phases` when the STIX bundle does not ship standalone tactic objects.
-- Preserves SPARTA sub-techniques and their relationships.
+- Preserves tactics, techniques, sub-techniques and mitigation relationships.
+- Namespaces Space Shield IDs as `SSH.*` internally to avoid collisions with ATT&CK IDs while retaining the original STIX object references.
 - Excludes non-matrix `SV-*` threat reference objects from offensive matrix autocompletion.
 
-To regenerate all source enumerations, including SPARTA:
+To regenerate all source enumerations, including SPARTA and Space Shield:
 
 ```bash
 cd src/attack_flow_builder
@@ -75,14 +82,14 @@ These observables are available in the builder UI and round-trip through STIX ex
 
 - Python 3.12
 - [Poetry](https://python-poetry.org/)
-- Node.js 20
+- Node.js 24.18 or newer in the 24.x series
 - npm
 - [Graphviz](https://graphviz.org/) for `make docs-examples`
 
 ### Install Dependencies
 
 ```bash
-poetry install
+poetry install --with api,docs
 cd src/attack_flow_builder
 npm ci
 ```
@@ -103,14 +110,14 @@ npm run build
 
 ### Run with Docker
 
-The fork publishes a multi-architecture image for `linux/amd64` and `linux/arm64`, so Apple Silicon and other ARM hosts should not need to force an amd64 platform.
+The release workflow builds multi-architecture images for `linux/amd64` and `linux/arm64`. To build and run this checkout locally:
 
 ```bash
-docker pull ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
-docker run --rm --name AttackFlowBuilder -p 8080:80 ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+docker build -t attack-flow-space-frameworks:local .
+docker run --rm --name AttackFlowBuilder -p 8080:80 attack-flow-space-frameworks:local
 ```
 
-For local development, Docker Compose builds this fork from the local checkout and tags it with the same release image name:
+For local development, Docker Compose builds this fork from the local checkout and tags it as `ghcr.io/jahaziellem/attack-flow:v4.0.0-space-frameworks` (a local tag until published):
 
 ```bash
 docker compose up --build
@@ -157,6 +164,13 @@ The workflow in `.github/workflows/build.yml` has been updated to work correctly
 - Building docs with repository-relative Pages URLs.
 
 This makes the fork safer to push, test, and publish with GitHub Actions without re-editing workflow URLs after every upstream sync.
+
+## Upstream 4.0 Resources
+
+- [Self-hosting the optional API and UI](docs/deployment-self-hosting.md)
+- [API runtime and provider configuration](src/attack_flow_api/README.md)
+- [Generation guide](docs/generation.rst)
+- [Synchronization notes](docs/fork-sync-2026-09.md)
 
 ## Upstream Project
 

@@ -16,24 +16,26 @@ export abstract class ObjectRecommender {
 
 
     /**
-     * The recommender's x-coordinate.
+     * The recommender's x-coordinate in DOM pixel space.
      */
     public get x(): number {
         if (this.active) {
             const { x, k } = this.editor!.file.camera;
-            return Math.round((this.object!.x * k) + x);
+            const canvasWidth = this.editor!.interface.canvasWidth;
+            return Math.round((this.object!.x - x) * k) + canvasWidth / 2;
         } else {
             return 0;
         }
     }
 
     /**
-     * The recommender's y-coordinate.
+     * The recommender's y-coordinate in DOM pixel space.
      */
     public get y(): number {
         if (this.active) {
             const { y, k } = this.editor!.file.camera;
-            return Math.round((this.object!.y * k) + y);
+            const canvasHeight = this.editor!.interface.canvasHeight;
+            return Math.round((this.object!.y - y) * k) + canvasHeight / 2;
         } else {
             return 0;
         }
@@ -79,11 +81,9 @@ export abstract class ObjectRecommender {
 
     /**
      * Returns the set of recommendations.
-     * @param search
-     *  The search term.
      * @returns
      *  A Promise that resolves with the recommendations.
      */
-    public abstract getRecommendations(search: string): Promise<ObjectRecommendations>;
+    public abstract getRecommendations(): Promise<ObjectRecommendations>;
 
 }

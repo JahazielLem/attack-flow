@@ -77,4 +77,14 @@ describe("TacticTechniqueProperty", () => {
         expect(getField(ttp, "tactic").value).toBe("ST0001");
         expect(getField(ttp, "technique").value).toBe("REC-0001");
     });
+
+    it("autocompletes Space Shield without mixing in ATT&CK or SPARTA", () => {
+        const ttp = createTtp();
+        getField(ttp, "subtechnique").setValue("SSH.T2001.001");
+
+        expect(getField(ttp, "tactic").value).toBe("SSH.TA0043");
+        expect(getField(ttp, "technique").value).toBe("SSH.T2001");
+        expect(ttp.validPropValues?.get("technique")?.has("REC-0001")).toBe(false);
+        expect(ttp.validPropValues?.get("tactic")?.has("TA0043")).toBe(false);
+    });
 });

@@ -206,9 +206,9 @@ export default defineComponent({
   overflow: hidden;
   display: flex;
   align-items: center;
-  background-color: #242424;
-  border: solid 1px #303030;
-  color: #d9d9d9;
+  background-color: var(--af-bg-color-primary);
+  border: solid 1px var(--af-border-color-secondary);
+  color: var(--af-text-color-tertiary);
   padding: 2px 5px;
 }
 
@@ -218,9 +218,9 @@ export default defineComponent({
 }
 
 .query {
-  color: #d9d9d9;
-  background-color: #2e2e2e;
-  border: 1px solid #3d3d3d;
+  color: var(--af-text-color-tertiary);
+  background-color: var(--af-bg-color-secondary);
+  border: 1px solid var(--af-border-color-primary);
   border-radius: 2px;
   height: 20px;
   width: 180px;
@@ -259,7 +259,7 @@ export default defineComponent({
 }
 
 .control:hover {
-  background-color: #383838;
+  background-color: var(--af-border-color-primary);
 }
 
 .control * {

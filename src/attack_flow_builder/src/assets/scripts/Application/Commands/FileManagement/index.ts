@@ -4,7 +4,8 @@ import { DoNothing } from "../index.commands";
 import { AppCommand } from "../index.commands";
 import { stripExtension } from "@OpenChart/Utilities";
 import { StixToAttackFlowConverter } from "@/assets/scripts/StixToAttackFlow";
-import { DiagramObjectViewFactory, DiagramViewFile } from "@OpenChart/DiagramView";
+import { TreeContourLayoutEngine, DiagramObjectViewFactory, DiagramViewFile } from "@OpenChart/DiagramView";
+import { buildDirectProviderDiagramFile } from "@/assets/scripts/Application/DirectProviderFlow";
 import {
     ClearFileRecoveryBank,
     ImportFile,
@@ -18,14 +19,16 @@ import {
 } from "./index.commands";
 import type { StixBundle } from "@/assets/scripts/StixToAttackFlow";
 import type { ApplicationStore } from "@/stores/ApplicationStore";
-import type { DiagramViewExport } from "@OpenChart/DiagramView";
+import type { DiagramLayoutEngine, DiagramViewExport } from "@OpenChart/DiagramView";
 import type { DiagramViewEditor } from "@/assets/scripts/OpenChart/DiagramEditor";
+import type { StructuredExtractionResult } from "@/assets/scripts/Application/StructuredExtraction";
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //  1. Open Files  ////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+const autoLayoutEngine : DiagramLayoutEngine = new TreeContourLayoutEngine();
 
 /**
  * Loads an empty diagram file into the application.
@@ -43,6 +46,21 @@ export async function loadNewFile(
     return new LoadFile(context, file);
 }
 
+function isValidLayout(layoutObject: unknown): boolean {
+    return typeof layoutObject === "object" && layoutObject !== null &&
+        !Array.isArray(layoutObject) && Object.keys(layoutObject).length > 0;
+}
+
+function isValidCamera(cameraObject: unknown): boolean {
+    const isObject = typeof cameraObject === "object" && cameraObject !== null && !Array.isArray(cameraObject);
+    let validFields = false;
+    if (isObject) {
+        const fields = ["x", "y", "k"];
+        validFields = fields.every((f) => Object.prototype.hasOwnProperty.call(cameraObject, f));
+    }
+    return isObject && validFields;
+}
+
 /**
  * Loads a diagram file export into the application.
  * @param context
@@ -57,6 +75,10 @@ export async function loadNewFile(
 export async function loadExistingFile(
     context: ApplicationStore, file: string, name?: string
 ): Promise<LoadFile> {
+    if (isStixBundleText(file)) {
+        return loadExistingStixFile(context, file, name);
+    }
+
     let jsonFile = JSON.parse(file) as DiagramViewExport;
     // Preprocess file
     if (context.activeFilePreprocessor) {
@@ -64,11 +86,22 @@ export async function loadExistingFile(
     }
     // Construct factory
     const factory = await getObjectFactory(context, jsonFile.schema);
+
+    const generatedAutoLayout = (jsonFile as { generated_layout?: unknown }).generated_layout === "auto";
+    if (generatedAutoLayout) {
+        // Explicitly clear generated layout to let auto layout engine take over.
+        jsonFile.layout = undefined;
+    }
+
     // Construct file
     const viewFile = new DiagramViewFile(factory, jsonFile);
     // Run layout
-    if (!jsonFile.layout) {
-        // TODO: Run automated layout
+    if (generatedAutoLayout || !isValidLayout(jsonFile.layout)) {
+        viewFile.runLayout(autoLayoutEngine);
+    }
+    viewFile.compactActionAssetStacks();
+    if (generatedAutoLayout || !isValidCamera(jsonFile.camera)) {
+        viewFile.centerAndZoomCamera();
     }
     // Return command
     return new LoadFile(context, viewFile, name);
@@ -113,7 +146,10 @@ export async function loadFileFromUrl(
     } else {
         filename = "Untitled File";
     }
-    return loadExistingFile(context, await (await fetch(url)).text(), filename);
+    const file = await (await fetch(url)).text();
+    return isStixBundleText(file)
+        ? loadExistingStixFile(context, file, filename)
+        : loadExistingFile(context, file, filename);
 }
 
 /**
@@ -137,6 +173,7 @@ export async function loadExistingStixFile(
     const jsonFile = new StixToAttackFlowConverter(factory).convert(stixBundle);
     // Construct file
     const viewFile = new DiagramViewFile(factory, jsonFile);
+    viewFile.runLayout(autoLayoutEngine);
     // Return command
     return new LoadFile(context, viewFile, name);
 }
@@ -204,6 +241,10 @@ async function getObjectFactory(
 export async function importExistingFile(
     context: ApplicationStore, editor: DiagramViewEditor, file: string
 ): Promise<AppCommand> {
+    if (isStixBundleText(file)) {
+        return importExistingStixFile(context, editor, file);
+    }
+
     // Parse file
     let jsonFile = JSON.parse(file) as DiagramViewExport;
     // Preprocess file
@@ -215,8 +256,11 @@ export async function importExistingFile(
     // Construct file
     const viewFile = new DiagramViewFile(factory, jsonFile);
     // Run layout
-    if (!jsonFile.layout) {
-        // TODO: Run automated layout
+    if (!isValidLayout(jsonFile.layout)) {
+        viewFile.runLayout(autoLayoutEngine);
+    }
+    if (!isValidCamera(jsonFile.camera)) {
+        viewFile.centerAndZoomCamera();
     }
     // Import file
     return new ImportFile(context, editor, viewFile);
@@ -257,10 +301,12 @@ export async function importExistingStixFile(
     const stixBundle = JSON.parse(file) as StixBundle;
     // Construct factory
     const factory = await getObjectFactory(context);
+    factory.theme = editor.file.factory.theme;
     // Translate STIX
     const jsonFile = new StixToAttackFlowConverter(factory).convert(stixBundle);
     // Construct file
     const viewFile = new DiagramViewFile(factory, jsonFile);
+    viewFile.runLayout(autoLayoutEngine);
     // Return command
     return new ImportFile(context, editor, viewFile);
 }
@@ -282,6 +328,16 @@ export async function importStixFileFromFilesystem(
         return importExistingStixFile(context, editor, file.contents as string);
     } else {
         return new DoNothing();
+    }
+}
+
+
+function isStixBundleText(file: string): boolean {
+    try {
+        const parsed = JSON.parse(file) as { type?: unknown };
+        return parsed.type === "bundle";
+    } catch {
+        return false;
     }
 }
 
@@ -385,6 +441,29 @@ export async function prepareEditorFromUrl(
     context: ApplicationStore, url: string
 ): Promise<PrepareEditorWithFile> {
     return new PrepareEditorWithFile(context, await loadFileFromUrl(context, url));
+}
+
+/**
+ * Prepares the editor with a validated direct-provider generated flow.
+ * @param context
+ *  The application context.
+ * @param extraction
+ *  The validated structured extraction payload.
+ * @returns
+ *  A command that represents the action.
+ */
+export async function prepareEditorFromValidatedStructuredExtraction(
+    context: ApplicationStore,
+    extraction: StructuredExtractionResult
+): Promise<PrepareEditorWithFile> {
+    const file = await buildDirectProviderDiagramFile(context, extraction);
+    const name = extraction.attack_flow.name.trim() || "Generated Attack Flow";
+    const exportFile = {
+        ...file.toExport(),
+        layout: {},
+        camera: undefined
+    };
+    return new PrepareEditorWithFile(context, await loadExistingFile(context, JSON.stringify(exportFile), name));
 }
 
 

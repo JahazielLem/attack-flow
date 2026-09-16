@@ -6,7 +6,7 @@ import {
     EnumProperty, ListProperty, Property, SemanticAnalyzer,
     SemanticGraphNode, StringProperty
 } from "@OpenChart/DiagramModel";
-import type { GraphExport, JsonValue } from "@OpenChart/DiagramModel";
+import type { GraphExport, JsonValue, SemanticGraphEdge } from "@OpenChart/DiagramModel";
 import type { FilePublisher } from "@/assets/scripts/Application";
 import Enums from "../AttackFlowTemplates/SourceEnumeration";
 
@@ -57,6 +57,12 @@ const AttackFlowSdos
         "attack-operator"
     ]);
 
+const CustomSdos
+    = new Set<string>([
+        "x-detection",
+        "x-mitigation"
+    ]);
+
 const AttackFlowTemplatesMap: Map<string, string>
     = new Map([
         ["flow", "attack-flow"],
@@ -68,7 +74,9 @@ const AttackFlowTemplatesMap: Map<string, string>
         ["AND_operator", "attack-operator"],
         ["email_address", "email-addr"],
         ["sigmf_capture", "x-sigmf-capture"],
-        ["raw_iq_capture", "x-raw-iq-capture"]
+        ["raw_iq_capture", "x-raw-iq-capture"],
+        ["detection", "x-detection"],
+        ["mitigation", "x-mitigation"]
     ]);
 
 
@@ -138,7 +146,8 @@ class AttackFlowPublisher implements FilePublisher {
             if (srcNode && trgNode) {
                 stixChildren.get(srcNode)!.push({
                     obj: trgNode,
-                    via: edge.sourceVia!
+                    via: edge.sourceVia!,
+                    edge
                 });
             } else {
                 throw new Error(`Edge '${edge}' is missing one or more nodes.`);
@@ -177,8 +186,18 @@ class AttackFlowPublisher implements FilePublisher {
             case "attack-action":
                 this.mergeActionProperty(obj, node.props);
                 break;
+            case "x-detection":
+            case "x-mitigation":
+                this.mergeCustomObjectProperty(obj, node.props);
+                break;
             default:
-                this.mergeBasicDictProperty(obj, node.props);
+                // Check if this is a custom SDO based on the original template type
+                const templateType = AttackFlowTemplatesMap.get(node.id);
+                if (templateType === "x-detection" || templateType === "x-mitigation") {
+                    this.mergeCustomObjectProperty(obj, node.props);
+                } else {
+                    this.mergeBasicDictProperty(obj, node.props);
+                }
                 break;
         }
         return obj;
@@ -287,6 +306,26 @@ class AttackFlowPublisher implements FilePublisher {
     }
 
     /**
+     * Merges a custom object's properties into a STIX custom object node.
+     *
+     * Custom STIX properties are emitted with an x_ prefix to improve compatibility
+     * with consumers using allow_custom=True.
+     *
+     * @param node
+     *  The STIX custom object node.
+     * @param property
+     *  The object's properties.
+     */
+    private mergeCustomObjectProperty(node: Sdo, property: DictionaryProperty) {
+        for (const [key, prop] of property.value) {
+            if (!prop.isDefined()) {
+                continue;
+            }
+            node[this.toCustomPropertyName(key)] = this.toCustomStixValue(prop);
+        }
+    }
+
+    /**
      * Merges a basic list into a STIX node.
      * @param node
      *  The STIX node.
@@ -375,6 +414,12 @@ class AttackFlowPublisher implements FilePublisher {
         const SROs = [];
         // Attempt to embed children in parent
         for (const c of children) {
+            const lineSro = this.createSroFromLineProperties(parent, c.obj, c.edge.props);
+            if (lineSro) {
+                SROs.push(lineSro);
+                continue;
+            }
+
             let sro = null;
             switch (parent.type) {
                 case "attack-action":
@@ -527,13 +572,13 @@ class AttackFlowPublisher implements FilePublisher {
                 // Falls through
             case "attack-condition":
                 switch (via) {
-                    case "true_anchor":
+                    case "branch:True":
                         if (!parent.on_true_refs) {
                             parent.on_true_refs = [];
                         }
                         parent.on_true_refs.push(child.id);
                         break;
-                    case "false_anchor":
+                    case "branch:False":
                         if (!parent.on_false_refs) {
                             parent.on_false_refs = [];
                         }
@@ -622,9 +667,9 @@ class AttackFlowPublisher implements FilePublisher {
      * Embed a reference to the child in the malware analysis. If the child cannot be
      * embedded, return a new SRO.
      * @param parent
-     *  A STIX malware analysis node.
+     *  The parent STIX node.
      * @param child
-     *  A STIX child node.
+     *  The child STIX node.
      * @returns
      *  An SRO, if one was created.
      */
@@ -647,6 +692,34 @@ class AttackFlowPublisher implements FilePublisher {
      */
     private tryEmbedInDefault(parent: Sdo, child: Sdo): Sro {
         return this.createSro(parent, child);
+    }
+
+    /**
+     * Creates a Relationship Object if a line has properties that cannot be
+     * represented by an embedded reference.
+     * @param parent
+     *  The parent STIX node.
+     * @param child
+     *  The child STIX node.
+     * @param property
+     *  The line's properties.
+     * @returns
+     *  A STIX Relationship Object, if one is required.
+     */
+    private createSroFromLineProperties(parent: Sdo, child: Sdo, property: DictionaryProperty): Sro | null {
+        const confidence = this.toConfidenceValue(property);
+        const relationshipTypeProperty = property.get("relationship_type", StringProperty);
+        const relationshipType = relationshipTypeProperty?.isDefined()
+            ? relationshipTypeProperty.value ?? undefined
+            : undefined;
+        if (confidence === null && !relationshipType) {
+            return null;
+        }
+        const sro = this.createSro(parent, child, relationshipType);
+        if (confidence !== null) {
+            sro.confidence = confidence;
+        }
+        return sro;
     }
 
 
@@ -950,6 +1023,17 @@ class AttackFlowPublisher implements FilePublisher {
             };
         }
 
+        // Custom SDOs are emitted as x-* objects and rely on custom-object support
+        // in the downstream STIX parser/validator (e.g. allow_custom=True).
+        if (CustomSdos.has(type)) {
+            sdo.extensions = {
+                [`extension-definition--${AttackFlowExtensionId}`] : {
+                    extension_type: "new-sdo"
+                }
+            };
+            sdo.labels = [type];
+        }
+
         // Return SDO
         return sdo;
     }
@@ -979,6 +1063,32 @@ class AttackFlowPublisher implements FilePublisher {
             source_ref          : parent.id,
             target_ref          : child.id
         };
+    }
+
+    /**
+     * Converts a confidence enum property to the STIX numeric confidence value.
+     * @param property
+     *  The object or line properties.
+     * @returns
+     *  The STIX confidence value, or null if none is set.
+     */
+    private toConfidenceValue(property: DictionaryProperty): JsonValue {
+        let prop: Property | undefined = property.value.get("confidence");
+        if (!prop) {
+            return null;
+        }
+        if (!(prop instanceof EnumProperty)) {
+            throw new Error("'confidence' is improperly defined.");
+        }
+        if (!prop.isDefined()) {
+            return null;
+        }
+        prop = prop.toReferenceValue()!;
+        if (!(prop instanceof DictionaryProperty)) {
+            throw new Error("'confidence' is improperly defined.");
+        }
+        [prop] = this.getSubproperties(prop, "value");
+        return this.toStixValue(prop);
     }
 
 
@@ -1023,6 +1133,84 @@ class AttackFlowPublisher implements FilePublisher {
         }
     }
 
+    /**
+     * Converts a property key into a valid STIX custom property name.
+     * STIX custom property names should begin with x_.
+     * @param key
+     * @returns
+     *  A normalized custom property name.
+     */
+    private toCustomPropertyName(key: string): string {
+        const normalized = key
+            .replace(/-/g, "_")
+            .replace(/\s+/g, "_")
+            .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+            .toLowerCase();
+
+        // Special handling for mitigation_id, detection_id, and name - don't add x_ prefix
+        if (normalized === "mitigation_id" || normalized === "detection_id" || normalized === "name") {
+            return normalized;
+        }
+        return normalized.startsWith("x_") ? normalized : `x_${normalized}`;
+    }
+
+    /**
+     * Converts a property into a STIX custom-property-safe JSON value.
+     * Nested dictionary keys are also converted to x_-prefixed names.
+     * @param prop
+     * @returns
+     *  A JSON value suitable for a custom STIX object.
+     */
+    private toCustomStixValue(prop: Property): JsonValue {
+        if (prop instanceof DateProperty) {
+            return prop.toUtcIso();
+        }
+
+        if (prop instanceof StringProperty) {
+            return prop.toString().trim();
+        }
+
+        if (prop instanceof EnumProperty) {
+            const value = prop.toJson();
+            if (value === "true") {
+                return true;
+            }
+            if (value === "false") {
+                return false;
+            }
+            return value;
+        }
+
+        if (prop instanceof ListProperty) {
+            const values: JsonValue[] = [];
+            for (const item of prop.value.values()) {
+                if (!item.isDefined()) {
+                    continue;
+                }
+                values.push(this.toCustomStixValue(item));
+            }
+            return values as unknown as JsonValue;
+        }
+
+        if (prop instanceof DictionaryProperty || prop instanceof CollectionProperty) {
+            const obj: { [key: string]: JsonValue } = {};
+            for (const [key, value] of prop.value) {
+                if (!value.isDefined()) {
+                    continue;
+                }
+                const customValue = this.toCustomStixValue(value);
+                if (Array.isArray(customValue)) {
+                    // For arrays, we need to return them directly
+                    return customValue;
+                }
+                obj[this.toCustomPropertyName(key)] = customValue;
+            }
+            return obj;
+        }
+
+        return prop.toJson();
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     //  6. File Extension  ////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
@@ -1053,7 +1241,7 @@ type Sdo = {
     spec_version : string;
     created      : string;
     modified     : string;
-    extensions?   : {
+    extensions?  : {
         [key: string] : {
             extension_type: string;
         };
@@ -1070,7 +1258,10 @@ type Sro = {
     relationship_type : string;
     source_ref        : string;
     target_ref        : string;
+    confidence?       : JsonValue;
 };
+
+type StixObject = Sdo | Sro;
 
 type ExtensionSdo = Sdo & {
     name                : string;
@@ -1097,10 +1288,11 @@ type ExtensionAuthorSdo = Sdo & {
 };
 
 type BundleSdo = Sdo & {
-    objects : [ExtensionSdo, ExtensionAuthorSdo, ...Sdo[]];
+    objects : [ExtensionSdo, ExtensionAuthorSdo, ...StixObject[]];
 };
 
 type Link = {
     obj: Sdo;
     via: string;
+    edge: SemanticGraphEdge;
 };

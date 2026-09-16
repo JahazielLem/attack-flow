@@ -132,4 +132,7 @@ dmypy.json
 # MacOS
 .DS_Store
 
+# Locally downloaded Attack Flow Builder artifacts
+/*-afb.afb
+
 TODO.*

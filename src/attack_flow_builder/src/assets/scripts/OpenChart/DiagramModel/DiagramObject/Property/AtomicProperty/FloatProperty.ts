@@ -72,7 +72,7 @@ export class FloatProperty extends Property {
             } else if (typeof value !== "number") {
                 value = Number.NaN;
             }
-            this._value = Math.round(clamp(value, this.min, this.max));
+            this._value = clamp(value, this.min, this.max);
         }
         if (update) {
             this.updateParentProperty();

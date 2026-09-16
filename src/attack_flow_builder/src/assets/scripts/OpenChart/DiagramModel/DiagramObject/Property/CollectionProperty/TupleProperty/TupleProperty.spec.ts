@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DiagramObjectFactory } from "@/assets/scripts/OpenChart/DiagramModel";
+import { DiagramObjectFactory, StringProperty, TTPTupleProperty } from "@/assets/scripts/OpenChart/DiagramModel";
 import {
     DiagramObjectType,
     PropertyType
@@ -64,6 +64,26 @@ const tupleDescriptor: TuplePropertyDescriptor = {
 };
 
 describe("TupleProperty", () => {
+    it("preserves the framework-aware TTP type and constraints when cloned", () => {
+        const factory = new DiagramObjectFactory(schema);
+        const tuple = factory.createTTPTupleProperty("ttp", {
+            ...tupleDescriptor,
+            type: PropertyType.TTPTuple
+        }, [
+            ["tactic", "TA1"],
+            ["technique", "T1001"],
+            ["subtechnique", "T1001.001"]
+        ]);
+
+        const clone = tuple.clone();
+
+        expect(clone).toBeInstanceOf(TTPTupleProperty);
+        expect(clone.toOrderedJson()).toEqual(tuple.toOrderedJson());
+        clone.get("technique", StringProperty)!.setValue("T1002");
+        expect(clone.get("subtechnique", StringProperty)!.value).toBeNull();
+        expect(tuple.get("subtechnique", StringProperty)!.value).toBe("T1001.001");
+    });
+
     it("aligns singleton valid combinations without recursive updates", () => {
         const factory = new DiagramObjectFactory(schema);
         const tuple = factory.createTupleProperty("ttp", tupleDescriptor, [

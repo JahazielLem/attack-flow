@@ -63,7 +63,6 @@ const sampleTheme: DiagramThemeConfiguration = {
 
 export const sampleViewExport: DiagramViewExport = {
     ...sampleExport,
-    theme: "dark_theme",
     layout: {
         "9aee95bb-6c28-48ad-9ad1-1042ff3e0aaf": [7.5, 7.5],
         "6722ba7c-df56-4588-97e1-212c78f50b3e": [10, 10],

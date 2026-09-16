@@ -1,7 +1,8 @@
 import { FileValidator } from "@/assets/scripts/Application";
 import {
     DiagramModelFile, DictionaryProperty,
-    ListProperty, Property, SemanticAnalyzer
+    ListProperty, Property, SemanticAnalyzer,
+    StringProperty, TupleProperty, MultiSelectProperty
 } from "@OpenChart/DiagramModel";
 import {
     EmailRegex, HashRegexes, IPv4Regex, IPv6Regex,
@@ -11,6 +12,7 @@ import {
 import type {
     GraphExport, SemanticGraphNode, SemanticGraphEdge
 } from "@OpenChart/DiagramModel";
+import { TTP_FRAMEWORK_REGEX, frameworkFullName } from "../AttackFlowTemplates/TTPFrameworkConstants";
 
 class AttackFlowValidator extends FileValidator {
 
@@ -18,7 +20,7 @@ class AttackFlowValidator extends FileValidator {
      * The validator's parsed graph.
      */
     protected graph?: GraphExport;
-
+    protected selectedFrameworks: ReadonlySet<string> = new Set();
 
     /**
      * Validates a {@link DiagramModelFile}.
@@ -27,6 +29,12 @@ class AttackFlowValidator extends FileValidator {
      */
     protected validate(file: DiagramModelFile) {
         this.graph = SemanticAnalyzer.toGraph(file.canvas);
+        try {
+            const ttp = file.canvas.properties.get("ttp_frameworks") as MultiSelectProperty | undefined;
+            this.selectedFrameworks = ttp ? new Set<string>(Array.from(ttp.values)) : new Set<string>();
+        } catch {
+            this.selectedFrameworks = new Set<string>();
+        }
         // Validate nodes
         let actionNodeCount = 0;
         let flowId;
@@ -132,7 +140,37 @@ class AttackFlowValidator extends FileValidator {
                 if (!scope?.isDefined()) {
                     this.addError(instance, "The flow properties must have a selected scope.");
                 }
+                const frameworks = node.props.value.get("ttp_frameworks") as MultiSelectProperty | undefined;
+                if (!frameworks?.isDefined()) {
+                    this.addWarning(instance, "No TTP frameworks selected. Select at least one.");
+                }
                 break;
+
+            case "action": {
+                if (this.selectedFrameworks.size > 0) {
+                    const ttpVal = node.props.value.get("ttp") as TupleProperty | undefined;
+                    const tactic = ttpVal?.value.get("tactic") as StringProperty | undefined;
+                    const technique = ttpVal?.value.get("technique") as StringProperty | undefined;
+
+                    const prefixOf = (label: string | undefined) => {
+                        if (!label) { return undefined; }
+                        const m = label.match(TTP_FRAMEWORK_REGEX);
+                        return m?.[1];
+                    };
+                    const tacticPrefix = prefixOf(tactic?.toString());
+                    const techniquePrefix = prefixOf(technique?.toString());
+
+                    const tacticLabel = frameworkFullName(tacticPrefix);
+                    if (tacticPrefix && !this.selectedFrameworks.has(tacticPrefix)) {
+                        this.addWarning(instance, `The flow has actions with tactics from disabled framework: ${tacticLabel}`);
+                    }
+                    const techniqueLabel = frameworkFullName(techniquePrefix);
+                    if (techniquePrefix && !this.selectedFrameworks.has(techniquePrefix)) {
+                        this.addWarning(instance, `The flow has actions with techniques from disabled framework: ${techniqueLabel}`);
+                    }
+                }
+                break;
+            }
 
             case "grouping":
                 if (node.next.size === 0) {

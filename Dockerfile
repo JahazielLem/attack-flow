@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-ARG NODE_VERSION=20
+ARG NODE_VERSION=24.18.0
 ARG NGINX_VERSION=1.27-alpine
-ARG APP_VERSION=v3.2.1-sparta
+ARG APP_VERSION=v4.0.0-space-frameworks
 
 FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-alpine AS builder
 
@@ -13,8 +13,8 @@ RUN npm run build
 
 FROM nginx:${NGINX_VERSION}
 ARG APP_VERSION
-LABEL org.opencontainers.image.title="Attack Flow SPARTA Builder" \
-      org.opencontainers.image.description="Attack Flow Builder fork with SPARTA support and custom SPARTA/RF workflow features." \
+LABEL org.opencontainers.image.title="Attack Flow Space Frameworks Builder" \
+      org.opencontainers.image.description="Attack Flow Builder fork with SPARTA and Space Shield support and custom RF workflow features." \
       org.opencontainers.image.version="${APP_VERSION}" \
       org.opencontainers.image.source="https://github.com/JahazielLem/attack-flow" \
       org.opencontainers.image.url="https://jahaziellem.github.io/attack-flow/"

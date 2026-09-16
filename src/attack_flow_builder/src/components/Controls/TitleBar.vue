@@ -1,5 +1,5 @@
 <template>
-  <div class="title-bar-control">
+  <ul class="title-bar-control">
     <li class="icon">
       <slot name="icon" />
     </li>
@@ -18,7 +18,7 @@
         v-if="isActive(menu)"
       />
     </li>
-  </div>
+  </ul>
 </template>
 
 <script lang="ts">
@@ -135,15 +135,16 @@ li:not(.icon) {
   position: relative;
   height: 100%;
   padding: 0px 7px;
+  cursor: pointer;
 }
 li:not(.icon):hover,
 li:not(.icon).focused {
-  color: #d1d1d1;
-  background: #383838;
+  color: var(--af-text-color-tertiary);
+  background: var(--af-bg-color-tertiary);
 }
 li.active {
-  color: #d1d1d1;
-  background: #383838;
+  color: var(--af-text-color-tertiary);
+  background: var(--af-bg-color-tertiary);
 }
 
 /** === Menu Dropdown Listings === */

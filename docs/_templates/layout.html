@@ -89,6 +89,11 @@ map('int') | list -%}
         <div class="row">
           <div class="col-12 col-lg-9 order-last order-lg-first rst-content">
             <main role="main" id="main">
+              {% if pagename == "index" %}
+              <div class="whats-new-banner">
+                <a href="{{ pathto('changelog') }}">What's new with Attack Flow 4.0</a>
+              </div>
+              {% endif %}
               {%- block body %} {% endblock -%}
             </main>
             {% include "pager.html" %}

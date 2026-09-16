@@ -1,36 +1,62 @@
-import { BlockView, LineView, type DiagramObjectView } from "../../DiagramObjectView";
+/**
+ * This file implements a layout engine based on edge directions and utilizes D3 for collision forces.
+ */
+import { BlockView, CanvasView, LineView, type DiagramObjectView } from "../../DiagramObjectView";
 import type { DiagramLayoutEngine } from "../DiagramLayoutEngine";
-import type { LatchView } from "../../DiagramObjectView/Views/LatchView";
-import type { NodeLayoutInfo } from "./NodeLayoutInfo";
+import * as d3 from "d3";
+import {
+    buildGraph,
+    type CardinalDirection,
+    findRootNodes,
+    getBoundingBox,
+    getIncomingDirectionsWithParents,
+    getSiblingsOnSameSide,
+    identifyComponents,
+    topologicalSort
+} from "../LayoutHelpers";
 
+const COMPONENT_MARGIN = 250;
+const BLOCK_SPACING_HORIZONTAL = 500;
+const VERTICAL_LEVEL_PADDING = 120;
+const SIDE_CHILD_VERTICAL_PADDING = 40;
+const COLLISION_RADIUS = 200;
+const COLLISION_STRENGTH = 0.07;
+
+// The source and target should be block instance strings.
+interface GraphLink extends d3.SimulationLinkDatum<d3.SimulationNodeDatum> {
+    source: string; target: string;
+}
+
+interface MyD3Node extends d3.SimulationNodeDatum {
+    id: string;
+    width: number;
+    height: number;
+}
+
+interface xyPair {
+    x: number; y: number;
+}
+
+interface SideChildGroup {
+    parent: BlockView;
+    children: BlockView[];
+}
 
 export class AutomaticLayoutEngine implements DiagramLayoutEngine {
-    private static readonly HORIZONTAL_SPACING = 400;
-    private static readonly VERTICAL_SPACING = 500;
-    private static readonly COMPONENT_SPACING = 700;
-    private static readonly MIN_NODE_WIDTH = 200;
-    private static readonly MIN_NODE_HEIGHT = 100;
-
-    /**
-     * Runs the layout engine on a set of objects.
-     * @param objects
-     *  The objects to layout.
-     */
     public run(objects: DiagramObjectView[]): void {
-        if (!objects.length || !objects[0]) { return; }
-
-        const nodes = new Set<DiagramObjectView>();
+        const nodes = new Set<BlockView>();
         const lines = new Set<LineView>();
 
-        // @ts-expect-error: this is a work in progress
-        for (const block of objects[0]._blocks) {
+        const firstObject : CanvasView = objects[0] as CanvasView;
+
+        for (const block of firstObject.blocks) {
             if (block instanceof BlockView) {
+                block.calculateLayout();
                 nodes.add(block);
             }
         }
 
-        // @ts-expect-error: this is a work in progress
-        for (const line of objects[0]._lines) {
+        for (const line of firstObject.lines) {
             if (line instanceof LineView) {
                 lines.add(line);
                 if (line.source) { line.source.calculateLayout(); }
@@ -38,14 +64,30 @@ export class AutomaticLayoutEngine implements DiagramLayoutEngine {
             }
         }
 
-        if (nodes.size === 0) { return; }
+        const { graph } = buildGraph(nodes, lines);
 
-        const { graph, incomingEdges } = this.buildGraph(nodes, lines);
-        const rootNodes = this.findRootNodes(graph, incomingEdges);
-        const components = this.identifyComponents(graph, nodes);
-        const rankedNodes = this.topologicalSort(graph, incomingEdges, rootNodes);
-        const nodeInfo = this.calculateNodeLayout(rankedNodes, graph, incomingEdges, components);
-        this.positionNodes(nodeInfo, components);
+        const components = identifyComponents(graph, nodes);
+
+        let componentNum = 0;
+        let componentOffset = 0;
+        // Calculate positions for each component. Then offset the component as to not overlap with other components.
+        for (const c of components) {
+            this.positionNodes(c, lines);
+
+            const bb = getBoundingBox(c);
+            const width = (bb.maxX - bb.minX) + (COMPONENT_MARGIN * 2);
+            componentOffset += width / 2;
+
+            if (componentNum > 0) {
+                for (const block of c) {
+                    block.moveBy(componentOffset, 0);
+                }
+                componentOffset += width / 2;
+            }
+
+            componentNum += 1;
+        }
+
 
         for (const block of nodes) {
             block.calculateLayout();
@@ -56,416 +98,446 @@ export class AutomaticLayoutEngine implements DiagramLayoutEngine {
     }
 
     /**
-     * Builds a graph representation from nodes and lines.
-     * @param nodes The set of nodes.
-     * @param lines The set of lines.
-     * @returns The graph as adjacency lists for outgoing and incoming edges.
-     */
-    private buildGraph(
-        nodes: Set<DiagramObjectView>,
-        lines: Set<LineView>
-    ): {
-            graph: Map<DiagramObjectView, Set<DiagramObjectView>>;
-            incomingEdges: Map<DiagramObjectView, Set<DiagramObjectView>>;
-        } {
-        const graph = new Map<DiagramObjectView, Set<DiagramObjectView>>();
-        const incomingEdges = new Map<DiagramObjectView, Set<DiagramObjectView>>();
-
-        nodes.forEach(node => {
-            graph.set(node, new Set());
-            incomingEdges.set(node, new Set());
-        });
-
-        lines.forEach(line => {
-            if (!line.source || !line.target) { return; }
-
-            const source = line.source as LatchView;
-            const target = line.target as LatchView;
-
-            if (source && target && source.anchor?.parent && target.anchor?.parent) {
-                const sourceNode = source.anchor.parent;
-                const targetNode = target.anchor.parent;
-
-                if (nodes.has(sourceNode) && nodes.has(targetNode) && sourceNode !== targetNode) {
-                    const outgoing = graph.get(sourceNode)!;
-                    outgoing.add(targetNode);
-
-                    const incoming = incomingEdges.get(targetNode)!;
-                    incoming.add(sourceNode);
-                }
-            }
-        });
-
-        return { graph, incomingEdges };
-    }
-
-    /**
-     * Finds root nodes in the graph (nodes with no incoming connections).
+     * Find root nodes which are not action nodes and flip their relationship so they are treated as children instead of parents
+     * where applicable.
      * @param graph The graph as an adjacency list of outgoing edges.
      * @param incomingEdges The graph as an adjacency list of incoming edges.
-     * @returns The set of root nodes.
      */
-    private findRootNodes(
-        graph: Map<DiagramObjectView, Set<DiagramObjectView>>,
-        incomingEdges: Map<DiagramObjectView, Set<DiagramObjectView>>
-    ): Set<DiagramObjectView> {
-        const rootNodes = new Set<DiagramObjectView>();
+    private flipNonActionRoots(
+        graph: Map<BlockView, Set<BlockView>>,
+        incomingEdges: Map<BlockView, Set<BlockView>>
+    ): void {
+        // Treat only Attack Flow action nodes as true roots. Non-action roots
+        // (e.g., conditions or any other block type) should be flipped so that
+        // they become children of their current children.
+        const isActionNode = (node: BlockView) => node.id === "action";
 
-        // Root nodes are those without incoming connections
-        graph.forEach((_, node) => {
-            const incoming = incomingEdges.get(node);
-            if (incoming && incoming.size === 0) {
-                rootNodes.add(node);
+        // Iteratively flip non-allowed roots with children until convergence
+        const maxIterations = Math.max(1, graph.size * 2);
+        let iterations = 0;
+        while (iterations < maxIterations) {
+            let flippedThisPass = 0;
+
+            const roots = findRootNodes(graph, incomingEdges);
+            const rootsToFlip: BlockView[] = [];
+
+            for (const r of roots) {
+                const children = graph.get(r) ?? new Set<BlockView>();
+                if (!isActionNode(r) && children.size > 0) {
+                    rootsToFlip.push(r);
+                }
             }
-        });
 
-        return rootNodes;
+            if (rootsToFlip.length === 0) { break; }
+
+            for (const root of rootsToFlip) {
+                const children = new Set<BlockView>(graph.get(root) ?? []);
+                if (children.size === 0) { continue; } // isolated non-action root: leave as-is
+
+                // Remove existing edges root -> child and child's incoming from root
+                for (const child of children) {
+                    graph.get(root)?.delete(child);
+                    incomingEdges.get(child)?.delete(root);
+                }
+
+                // Add flipped edges child -> root and root's incoming from child
+                for (const child of children) {
+                    let outgoingFromChild = graph.get(child);
+                    if (!outgoingFromChild) {
+                        outgoingFromChild = new Set<BlockView>();
+                        graph.set(child, outgoingFromChild);
+                    }
+                    outgoingFromChild.add(root);
+
+                    let incomingToRoot = incomingEdges.get(root);
+                    if (!incomingToRoot) {
+                        incomingToRoot = new Set<BlockView>();
+                        incomingEdges.set(root, incomingToRoot);
+                    }
+                    incomingToRoot.add(child);
+                }
+
+                flippedThisPass += 1;
+            }
+
+            iterations += 1;
+            if (flippedThisPass === 0) { break; }
+        }
     }
 
     /**
-     * Identifies disconnected components in the graph.
-     * @param graph The graph as an adjacency list.
-     * @param nodes All nodes in the graph.
-     * @returns Array of components, where each component is a set of nodes.
+     * Assign xy positions to nodes.
+     * @param nodes set of blocks
+     * @param lines set of lines
      */
-    private identifyComponents(
-        graph: Map<DiagramObjectView, Set<DiagramObjectView>>,
-        nodes: Set<DiagramObjectView>
-    ): Set<DiagramObjectView>[] {
-        const components: Set<DiagramObjectView>[] = [];
-        const visited = new Set<DiagramObjectView>();
+    private positionNodes(nodes: Set<BlockView>, lines: Set<LineView>): void {
+        const { graph, incomingEdges } = buildGraph(nodes, lines);
 
-        // For each unvisited node, perform BFS to find its connected component
-        nodes.forEach(node => {
-            if (visited.has(node)) { return; }
+        this.flipNonActionRoots(graph, incomingEdges);
 
-            const component = new Set<DiagramObjectView>();
-            const queue: DiagramObjectView[] = [node];
-            visited.add(node);
-            component.add(node);
+        const rootNodes = findRootNodes(graph, incomingEdges);
+        const sortedNodes = topologicalSort(graph, incomingEdges, rootNodes);
+        const instancesToNodes : { [key: string] : BlockView } = {};
 
-            while (queue.length > 0) {
-                const current = queue.shift()!;
-                const neighbors = this.getAllNeighbors(current, graph);
-                neighbors.forEach(neighbor => {
-                    if (!visited.has(neighbor)) {
-                        visited.add(neighbor);
-                        component.add(neighbor);
-                        queue.push(neighbor);
-                    }
+        const d3Links : GraphLink[] = [];
+        for (const [parent, children] of graph) {
+            for (const c of children) {
+                d3Links.push({
+                    source: parent.instance,
+                    target: c.instance
                 });
             }
-
-            components.push(component);
-        });
-
-        return components;
-    }
-
-    /**
-     * Gets all neighbors (both incoming and outgoing) of a node.
-     * @param node The node to get neighbors for.
-     * @param graph The graph as an adjacency list.
-     * @returns Set of all neighbors.
-     */
-    private getAllNeighbors(
-        node: DiagramObjectView,
-        graph: Map<DiagramObjectView, Set<DiagramObjectView>>
-    ): Set<DiagramObjectView> {
-        const neighbors = new Set<DiagramObjectView>();
-        const outgoing = graph.get(node);
-        if (outgoing) {
-            outgoing.forEach(neighbor => neighbors.add(neighbor));
-        }
-        graph.forEach((targets, source) => {
-            if (targets.has(node)) {
-                neighbors.add(source);
-            }
-        });
-
-        return neighbors;
-    }
-
-    /**
-     * Performs a topological sort of the graph to assign ranks to nodes.
-     * @param graph The graph as an adjacency list of outgoing edges.
-     * @param incomingEdges The graph as an adjacency list of incoming edges.
-     * @param rootNodes The set of root nodes.
-     * @returns Array of nodes sorted by rank.
-     */
-    private topologicalSort(
-        graph: Map<DiagramObjectView, Set<DiagramObjectView>>,
-        incomingEdges: Map<DiagramObjectView, Set<DiagramObjectView>>,
-        rootNodes: Set<DiagramObjectView>
-    ): DiagramObjectView[] {
-        const result: DiagramObjectView[] = [];
-        const queue: DiagramObjectView[] = Array.from(rootNodes);
-        const inDegree = new Map<DiagramObjectView, number>();
-
-        graph.forEach((_, node) => {
-            const incoming = incomingEdges.get(node);
-            inDegree.set(node, incoming ? incoming.size : 0);
-        });
-
-        while (queue.length > 0) {
-            const node = queue.shift()!;
-            result.push(node);
-
-            const neighbors = graph.get(node) || new Set<DiagramObjectView>();
-            neighbors.forEach(neighbor => {
-                const degree = inDegree.get(neighbor)! - 1;
-                inDegree.set(neighbor, degree);
-
-                if (degree === 0) {
-                    queue.push(neighbor);
-                }
-            });
         }
 
-        // Handle cycles by adding remaining nodes
-        if (result.length < graph.size) {
-            graph.forEach((_, node) => {
-                if (!result.includes(node)) {
-                    result.push(node);
-                }
-            });
-        }
+        const initialPositions = new Map<BlockView, xyPair>();
+        const rootPositions = new Set<string>();
+        const sideChildren = new Set<BlockView>();
+        const lockedCenterNodes = new Set<BlockView>();
+        for (const s of sortedNodes) {
+            const parentsAndDirections = getIncomingDirectionsWithParents(s, incomingEdges);
 
-        return result;
-    }
-
-    /**
-     * Calculates the layout information for each node in the graph.
-     * @param rankedNodes Array of nodes sorted by rank.
-     * @param graph The graph as an adjacency list of outgoing edges.
-     * @param incomingEdges The graph as an adjacency list of incoming edges.
-     * @param components Array of disconnected components.
-     * @returns Map of nodes to their layout information.
-     */
-    private calculateNodeLayout(
-        rankedNodes: DiagramObjectView[],
-        graph: Map<DiagramObjectView, Set<DiagramObjectView>>,
-        incomingEdges: Map<DiagramObjectView, Set<DiagramObjectView>>,
-        components: Set<DiagramObjectView>[]
-    ): Map<DiagramObjectView, NodeLayoutInfo> {
-        const nodeInfo = new Map<DiagramObjectView, NodeLayoutInfo>();
-
-        const componentMap = new Map<DiagramObjectView, number>();
-        components.forEach((component, index) => {
-            component.forEach(node => {
-                componentMap.set(node, index);
-            });
-        });
-
-        for (let i = 0; i < rankedNodes.length; i++) {
-            const node = rankedNodes[i];
-            const children = Array.from(graph.get(node) || []);
-            const parents = Array.from(incomingEdges.get(node) || []);
-            const componentId = componentMap.get(node) || 0;
-
-            nodeInfo.set(node, {
-                node,
-                level: 0,
-                column: 0,
-                width: AutomaticLayoutEngine.MIN_NODE_WIDTH,
-                height: AutomaticLayoutEngine.MIN_NODE_HEIGHT,
-                children,
-                parents,
-                rank: i,
-                componentId
-            });
-        }
-
-        components.forEach((component, _componentId) => {
-            const componentRoots: DiagramObjectView[] = [];
-            component.forEach(node => {
-                const info = nodeInfo.get(node)!;
-                if (info.parents.length === 0 || !info.parents.some(p => component.has(p))) {
-                    componentRoots.push(node);
-                }
-            });
-
-            if (componentRoots.length === 0 && component.size > 0) {
-                componentRoots.push(component.values().next().value!);
+            if (parentsAndDirections.size < 1 && s.id === "action") {
+                lockedCenterNodes.add(s);
             }
 
-            this.assignLevelsForComponent(nodeInfo, componentRoots, component);
-        });
+            const totalParentPos = { x: 0, y: 0 };
+            const offset = { x: 0, y: 0 };
+            const offsetDirections = new Set<CardinalDirection>();
+            for (const [key, dir] of parentsAndDirections) {
+                const parentPos = initialPositions.get(key);
 
-        components.forEach(component => {
-            this.assignColumnsForComponent(nodeInfo, component);
-        });
+                if (parentPos) {
+                    totalParentPos.x += parentPos.x;
+                    totalParentPos.y += parentPos.y;
+                }
 
-        return nodeInfo;
-    }
+                switch (dir) {
+                    case "n":
+                    case "nnw":
+                    case "nne":
+                        offsetDirections.add("n");
+                        break;
+                    case "s":
+                    case "ssw":
+                    case "sse":
+                        offsetDirections.add("s");
+                        break;
+                    case "e":
+                    case "ese":
+                    case "ene":
+                        offsetDirections.add("e");
+                        break;
+                    case "w":
+                    case "wsw":
+                    case "wnw":
+                        offsetDirections.add("w");
+                        break;
+                    default:
+                        console.warn("Something wrong with parent direction.");
+                        break;
+                }
+            }
 
-    /**
-     * Assigns levels to nodes within a component based on the longest path from any root.
-     * @param nodeInfo Map of nodes to their layout information.
-     * @param roots Root nodes within the component.
-     * @param component Set of nodes in the component.
-     */
-    private assignLevelsForComponent(
-        nodeInfo: Map<DiagramObjectView, NodeLayoutInfo>,
-        roots: DiagramObjectView[],
-        component: Set<DiagramObjectView>
-    ): void {
-        component.forEach(node => {
-            const info = nodeInfo.get(node)!;
-            info.level = 0;
-        });
+            for (const dir of offsetDirections) {
+                switch (dir) {
+                    case "n":
+                        offset.y -= 1;
+                        break;
+                    case "s":
+                        offset.y += 1;
+                        break;
+                    case "e":
+                        offset.x += 1;
+                        sideChildren.add(s);
+                        break;
+                    case "w":
+                        offset.x -= 1;
+                        sideChildren.add(s);
+                        break;
+                    default:
+                        console.warn("Something wrong with parent direction.");
+                        break;
+                }
+            }
 
-        const visited = new Set<DiagramObjectView>();
-        const queue: DiagramObjectView[] = [...roots];
+            let avgParentPos = {
+                x: 0,
+                y: 0
+            };
+            if (parentsAndDirections.size) {
+                avgParentPos = {
+                    x: totalParentPos.x / parentsAndDirections.size,
+                    y: totalParentPos.y / parentsAndDirections.size
+                };
+            }
 
-        while (queue.length > 0) {
-            const node = queue.shift()!;
-            const info = nodeInfo.get(node)!;
-            visited.add(node);
+            const position = {
+                x: avgParentPos.x + offset.x,
+                y: avgParentPos.y + offset.y
+            };
 
-            for (const child of info.children) {
-                if (!component.has(child)) { continue; }
+            // If node has only one parent, offset the node based on the parent anchor it connects to.
+            // to make room for other siblings.
+            if (parentsAndDirections.size === 1) {
+                const [parent] = parentsAndDirections.keys();
+                const dir = parentsAndDirections.get(parent) as CardinalDirection;
 
-                const childInfo = nodeInfo.get(child)!;
-
-                childInfo.level = Math.max(childInfo.level, info.level + 1);
-
-                if (!visited.has(child) && !queue.includes(child)) {
-                    const allParentsInComponentVisited = childInfo.parents
-                        .filter(p => component.has(p))
-                        .every(p => visited.has(p) || queue.includes(p));
-
-                    if (allParentsInComponentVisited) {
-                        queue.push(child);
+                const siblingsOnSameSide = getSiblingsOnSameSide(graph, incomingEdges, parent, s);
+                // If there is only one node on a side, keep it centered.
+                if (siblingsOnSameSide.size < 1) {
+                    if (["ssw", "s", "sse"].includes(dir)) {
+                        lockedCenterNodes.add(s);
+                    }
+                } else {
+                    if (dir === "nnw" || dir === "ssw") {
+                        position.x -= 1;
+                    } else if (dir === "nne" || dir === "sse") {
+                        position.x += 1;
+                    } else if (dir === "wnw" || dir === "ene") {
+                        position.y -= 1;
+                    } else if (dir === "wsw" || dir === "ese") {
+                        position.y += 1;
                     }
                 }
             }
-        }
 
-        component.forEach(node => {
-            if (!visited.has(node)) {
-                const nodeQueue = [node];
-                visited.add(node);
 
-                while (nodeQueue.length > 0) {
-                    const current = nodeQueue.shift()!;
-                    const currentInfo = nodeInfo.get(current)!;
-
-                    for (const child of currentInfo.children) {
-                        if (!component.has(child)) { continue; }
-
-                        const childInfo = nodeInfo.get(child)!;
-                        childInfo.level = Math.max(childInfo.level, currentInfo.level + 1);
-
-                        if (!visited.has(child)) {
-                            nodeQueue.push(child);
-                            visited.add(child);
-                        }
+            // Offset the node if it conflicts with sibling positions.
+            for (const [key, dir] of parentsAndDirections) {
+                const siblingsOnSameSide = getSiblingsOnSameSide(graph, incomingEdges, key, s);
+                const knownPositions = new Set<string>();
+                for (const sib of siblingsOnSameSide) {
+                    const sibPos = initialPositions.get(sib);
+                    if (sibPos) {
+                        knownPositions.add(`${sibPos.x} ${sibPos.y}`);
                     }
                 }
+
+                let loopNumber = 0;
+                while (true) {
+                    if (!knownPositions.has(`${position.x} ${position.y}`)) {
+                        break;
+                    }
+
+                    const even = loopNumber % 2 == 0;
+                    // Alternate between incrementing and decrementing to achieve centering.
+                    const increment = (even ? 1 : -1) * (loopNumber + 1);
+                    if (dir === "n" || dir === "s") {
+                        position.x += increment;
+                    } else if (dir === "e" || dir === "w") {
+                        position.y += increment;
+                    } else if (dir === "nnw" || dir === "ssw") {
+                        position.x -= 1;
+                    } else if (dir === "nne" || dir === "sse") {
+                        position.x += 1;
+                    } else if (dir === "wnw" || dir === "ene") {
+                        position.y -= 1;
+                    } else if (dir === "wsw" || dir === "ese") {
+                        position.y += 1;
+                    }
+                    loopNumber += 1;
+                }
+
             }
-        });
-    }
 
-    /**
-     * Assigns column positions to nodes within a component to minimize edge crossings.
-     * @param nodeInfo Map of nodes to their layout information.
-     * @param component Set of nodes in the component.
-     */
-    private assignColumnsForComponent(
-        nodeInfo: Map<DiagramObjectView, NodeLayoutInfo>,
-        component: Set<DiagramObjectView>
-    ): void {
-        const nodesByLevel = new Map<number, DiagramObjectView[]>();
-
-        component.forEach(node => {
-            const info = nodeInfo.get(node)!;
-            if (!nodesByLevel.has(info.level)) {
-                nodesByLevel.set(info.level, []);
+            // Push other roots to the right.
+            if (parentsAndDirections.size == 0) {
+                let positionKey = `${position.x} ${position.y}`;
+                while (rootPositions.has(positionKey)) {
+                    position.x += 1;
+                    positionKey = `${position.x} ${position.y}`;
+                }
+                rootPositions.add(positionKey);
             }
-            nodesByLevel.get(info.level)!.push(node);
-        });
 
-        const levels = Array.from(nodesByLevel.keys()).sort((a, b) => a - b);
+            initialPositions.set(s, position);
+        }
 
-        for (const level of levels) {
-            const nodesAtLevel = nodesByLevel.get(level)!;
+        const d3Nodes : MyD3Node[] = [];
 
-            if (level === 0) {
-                nodesAtLevel.sort((a, b) => {
-                    return nodeInfo.get(a)!.rank - nodeInfo.get(b)!.rank;
+        // Pull side children toward parent before applying collision force.
+        for (const sideChild of sideChildren) {
+            const parents : Set<BlockView> | undefined = incomingEdges.get(sideChild);
+            // Only pull if there is one parent.
+            if (!parents || parents.size < 1 || parents.size > 1) { continue; }
+            const firstParent = [...parents][0];
+            const firstParentPos = initialPositions.get(firstParent) as xyPair;
+            const childPos = initialPositions.get(sideChild) as xyPair;
+            const diff = {
+                x: childPos.x - firstParentPos.x,
+                y: childPos.y - firstParentPos.y
+            };
+            const childNewPos = {
+                x: firstParentPos.x + diff.x / 4,
+                y: firstParentPos.y + diff.y / 4
+            };
+            initialPositions.set(sideChild, childNewPos);
+        }
+
+        const yPositions = this.computeVerticalPositions(initialPositions);
+        const sideChildYOverrides = this.computeSideChildYPositions(
+            sideChildren,
+            incomingEdges,
+            initialPositions,
+            yPositions
+        );
+
+        // Initialize d3 nodes from calculated positions.
+        for (const [key, value] of initialPositions) {
+            instancesToNodes[key.instance] = key;
+            const y = sideChildYOverrides.get(key) ?? yPositions.get(value.y) ?? 0;
+            if (lockedCenterNodes.has(key)) {
+                d3Nodes.push({
+                    id: key.instance,
+                    fx: value.x * BLOCK_SPACING_HORIZONTAL,
+                    fy: y,
+                    width: key.face.boundingBox.width,
+                    height: key.face.boundingBox.height
                 });
             } else {
-                nodesAtLevel.sort((a, b) => {
-                    const aInfo = nodeInfo.get(a)!;
-                    const bInfo = nodeInfo.get(b)!;
-
-                    const aParentsInComponent = aInfo.parents.filter(p => component.has(p));
-                    const bParentsInComponent = bInfo.parents.filter(p => component.has(p));
-
-                    const aAvgColumn = aParentsInComponent.length > 0
-                        ? aParentsInComponent.reduce((sum, p) => sum + nodeInfo.get(p)!.column, 0) / aParentsInComponent.length
-                        : 0;
-                    const bAvgColumn = bParentsInComponent.length > 0
-                        ? bParentsInComponent.reduce((sum, p) => sum + nodeInfo.get(p)!.column, 0) / bParentsInComponent.length
-                        : 0;
-
-                    return aAvgColumn - bAvgColumn;
+                d3Nodes.push({
+                    id: key.instance,
+                    x: value.x * BLOCK_SPACING_HORIZONTAL,
+                    fy: y,
+                    width: key.face.boundingBox.width,
+                    height: key.face.boundingBox.height
                 });
             }
 
-            // Assign columns
-            for (let i = 0; i < nodesAtLevel.length; i++) {
-                const info = nodeInfo.get(nodesAtLevel[i])!;
-                info.column = i;
-            }
         }
+
+        // Apply collision force with d3 simulation.
+        const simulation = d3.forceSimulation(d3Nodes)
+            .force("collide", d3.forceCollide(COLLISION_RADIUS).strength(COLLISION_STRENGTH).iterations(2))
+            .stop();
+
+        for (let i = 0; i < 200; i++) {
+            simulation.tick();
+        }
+
+        // Use simulation results to position actual blocks on the canvas.
+        for (const d3_node of d3Nodes) {
+            const node = instancesToNodes[d3_node.id];
+            node.moveTo(d3_node.x ?? 0, d3_node.y ?? 0);
+        }
+
     }
 
     /**
-     * Positions nodes based on calculated layout information, with disconnected components separated.
-     * @param nodeInfo Map of nodes to their layout information.
-     * @param components Array of disconnected components.
+     * Convert logical y-levels into concrete pixel positions using the maximum
+     * measured height at each level instead of a fixed vertical step.
      */
-    private positionNodes(
-        nodeInfo: Map<DiagramObjectView, NodeLayoutInfo>,
-        components: Set<DiagramObjectView>[]
-    ): void {
-        const componentWidths = new Map<number, number>();
-        const componentEdges = new Map<number, number>();
+    private computeVerticalPositions(
+        initialPositions: Map<BlockView, xyPair>
+    ): Map<number, number> {
+        const levelHeights = new Map<number, number>();
+        for (const [node, position] of initialPositions) {
+            const height = node.face.boundingBox.height;
+            const current = levelHeights.get(position.y) ?? 0;
+            levelHeights.set(position.y, Math.max(current, height));
+        }
 
-        components.forEach((component, componentId) => {
-            let maxColumn = 0;
-            let edgeCount = 0;
+        const levels = [...levelHeights.keys()].sort((a, b) => a - b);
+        const yPositions = new Map<number, number>();
 
-            component.forEach(node => {
-                const info = nodeInfo.get(node)!;
-                maxColumn = Math.max(maxColumn, info.column);
-                edgeCount += info.children.length;
+        let previousLevel: number | undefined;
+        let previousY = 0;
+        for (const level of levels) {
+            if (previousLevel === undefined) {
+                yPositions.set(level, 0);
+                previousLevel = level;
+                continue;
+            }
+
+            const previousHeight = levelHeights.get(previousLevel) ?? 0;
+            const currentHeight = levelHeights.get(level) ?? 0;
+            const separation = (previousHeight / 2) + (currentHeight / 2) + VERTICAL_LEVEL_PADDING;
+            previousY += separation;
+
+            yPositions.set(level, previousY);
+            previousLevel = level;
+        }
+
+        return yPositions;
+    }
+
+    /**
+     * Stack children attached on the left/right of a parent around the parent's
+     * center line so they stay visually associated with that node instead of
+     * being spread across global vertical ranks.
+     */
+    private computeSideChildYPositions(
+        sideChildren: Set<BlockView>,
+        incomingEdges: Map<BlockView, Set<BlockView>>,
+        initialPositions: Map<BlockView, xyPair>,
+        yPositions: Map<number, number>
+    ): Map<BlockView, number> {
+        const groups = new Map<string, SideChildGroup>();
+
+        for (const child of sideChildren) {
+            const parents = incomingEdges.get(child);
+            if (!parents || parents.size !== 1) {
+                continue;
+            }
+
+            const parent = [...parents][0];
+            const dir = getIncomingDirectionsWithParents(child, incomingEdges).get(parent);
+            if (!dir || !this.isSideDirection(dir)) {
+                continue;
+            }
+
+            const key = `${parent.instance}:${this.sideDirectionKey(dir)}`;
+            let group = groups.get(key);
+            if (!group) {
+                group = { parent, children: [] };
+                groups.set(key, group);
+            }
+            group.children.push(child);
+        }
+
+        const overrides = new Map<BlockView, number>();
+
+        for (const group of groups.values()) {
+            group.children.sort((a, b) => {
+                const posA = initialPositions.get(a);
+                const posB = initialPositions.get(b);
+                if (posA && posB && posA.y !== posB.y) {
+                    return posA.y - posB.y;
+                }
+                return a.instance.localeCompare(b.instance);
             });
 
-            componentWidths.set(componentId, (maxColumn + 1) * AutomaticLayoutEngine.HORIZONTAL_SPACING);
-            componentEdges.set(componentId, edgeCount);
-        });
+            const parentPos = initialPositions.get(group.parent);
+            if (!parentPos) {
+                continue;
+            }
 
-        const sortedComponentIds = Array.from(componentEdges.keys()).sort((a, b) => {
-            return componentEdges.get(b)! - componentEdges.get(a)!;
-        });
+            const parentY = yPositions.get(parentPos.y) ?? 0;
+            const totalHeight = group.children.reduce((sum, child) => {
+                return sum + child.face.boundingBox.height;
+            }, 0);
+            const totalPadding = SIDE_CHILD_VERTICAL_PADDING * Math.max(0, group.children.length - 1);
 
-        const componentOffsets = new Map<number, number>();
-        let currentOffset = 0;
+            let cursorY = parentY - ((totalHeight + totalPadding) / 2);
+            for (const child of group.children) {
+                const childHeight = child.face.boundingBox.height;
+                const centerY = cursorY + (childHeight / 2);
+                overrides.set(child, centerY);
+                cursorY += childHeight + SIDE_CHILD_VERTICAL_PADDING;
+            }
+        }
 
-        sortedComponentIds.forEach(componentId => {
-            componentOffsets.set(componentId, currentOffset);
-            currentOffset += componentWidths.get(componentId)! + AutomaticLayoutEngine.COMPONENT_SPACING;
-        });
+        return overrides;
+    }
 
-        nodeInfo.forEach(info => {
-            const componentOffset = componentOffsets.get(info.componentId) || 0;
-            const x = componentOffset + (info.column * AutomaticLayoutEngine.HORIZONTAL_SPACING);
-            const y = info.level * AutomaticLayoutEngine.VERTICAL_SPACING;
+    private isSideDirection(dir: CardinalDirection): boolean {
+        return ["e", "ene", "ese", "w", "wnw", "wsw"].includes(dir);
+    }
 
-            info.node.moveTo(x, y);
-        });
+    private sideDirectionKey(dir: CardinalDirection): "e" | "w" {
+        if (["w", "wnw", "wsw"].includes(dir)) {
+            return "w";
+        }
+        return "e";
     }
 }

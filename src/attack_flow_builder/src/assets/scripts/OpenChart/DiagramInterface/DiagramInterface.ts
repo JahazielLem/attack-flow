@@ -191,6 +191,14 @@ export class DiagramInterface extends EventEmitter<DiagramInterfaceEvents> {
 
     }
 
+    public get canvasWidth(): number {
+        return this.elWidth;
+    }
+
+    public get canvasHeight(): number {
+        return this.elHeight;
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     //  5. Inject and Destroy  ////////////////////////////////////////////////

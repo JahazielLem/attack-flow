@@ -61,7 +61,9 @@ type AtomicType
     | PropertyType.Float
     | PropertyType.String
     | PropertyType.Date
-    | PropertyType.Enum;
+    | PropertyType.Enum
+    | PropertyType.Color
+    | PropertyType.MultiSelect;
 
 /**
  * Resolves the JSON type of an {@link AtomicType}.
@@ -72,6 +74,8 @@ type AtomicTypeToJsonType = {
     [PropertyType.String]: string | null;
     [PropertyType.Date]: Date | null;
     [PropertyType.Enum]: string | null;
+    [PropertyType.Color]: string | null;
+    [PropertyType.MultiSelect]: { [id: string]: boolean } | null;
 };
 
 /**
@@ -90,6 +94,21 @@ type AtomicPropertyDescriptor<K extends AtomicType> = BasePropertyDescriptor<K> 
  * String Property Descriptor.
  */
 export type StringPropertyDescriptor = AtomicPropertyDescriptor<PropertyType.String> & {
+
+    /**
+     * The property's suggested options.
+     */
+    options?: ListPropertyDescriptor;
+
+    /**
+     * If true, the editor will generate a unique value for this
+     * property when a new item is created in a list.
+     */
+    auto_generate?: boolean;
+
+};
+
+export type ColorPropertyDescriptor = AtomicPropertyDescriptor<PropertyType.Color> & {
 
     /**
      * The property's suggested options.
@@ -145,6 +164,18 @@ export type EnumPropertyDescriptor = AtomicPropertyDescriptor<PropertyType.Enum>
 };
 
 /**
+ * MultiSelect Property Descriptor.
+ */
+export type MultiSelectPropertyDescriptor = AtomicPropertyDescriptor<PropertyType.MultiSelect> & {
+
+    /**
+     * The property's list of permitted options.
+     */
+    options: ListPropertyDescriptor;
+
+};
+
+/**
  * Date Property Descriptor.
  */
 export type DatePropertyDescriptor = AtomicPropertyDescriptor<PropertyType.Date>;
@@ -157,7 +188,9 @@ export type AtomicPropertyDescriptors
     | IntPropertyDescriptor
     | FloatPropertyDescriptor
     | DatePropertyDescriptor
-    | EnumPropertyDescriptor;
+    | EnumPropertyDescriptor
+    | ColorPropertyDescriptor
+    | MultiSelectPropertyDescriptor;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -286,11 +319,27 @@ type SimpleDictionaryListPropertyDescriptor = BasePropertyDescriptor<PropertyTyp
  * Standard Property Descriptor:
  * Allows recursive definitions of both arrays and dictionaries.
  */
+export type TTPTuplePropertyDescriptor = BasePropertyDescriptor<PropertyType.TTPTuple> & {
+
+    /**
+     * The tuple property's form.
+     */
+    form: {
+        [key: string]: AtomicPropertyDescriptors;
+    };
+
+    /**
+     * The tuple's valid value combinations.
+     */
+    validValueCombinations?: ValueCombinations;
+};
+
 export type PropertyDescriptor
     = AtomicPropertyDescriptors
     | ListPropertyDescriptor
     | DictionaryPropertyDescriptor
-    | TuplePropertyDescriptor;
+    | TuplePropertyDescriptor
+    | TTPTuplePropertyDescriptor;
 
 
 /**
@@ -302,7 +351,8 @@ export type SimplePropertyDescriptor
     | SimpleListPropertyDescriptor
     | SimpleDictionaryPropertyDescriptor
     | SimpleDictionaryListPropertyDescriptor
-    | TuplePropertyDescriptor;
+    | TuplePropertyDescriptor
+    | TTPTuplePropertyDescriptor;
 
 
 ///////////////////////////////////////////////////////////////////////////////

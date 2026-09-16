@@ -4,7 +4,8 @@ import type { FilePublisher } from "../FilePublisher";
 import type { FilePreprocessor } from "../FilePreprocessor";
 import type { DiagramThemeConfiguration } from "@OpenChart/ThemeLoader";
 import type { DiagramSchemaConfiguration } from "@OpenChart/DiagramModel";
-import type { SynchronousCommandProcessor } from "@OpenChart/DiagramEditor";
+import type { ObjectRecommender, SynchronousCommandProcessor } from "@OpenChart/DiagramEditor";
+import type { VisualizationModalController, VisualizationRegistration } from "../Visualization";
 
 export interface AppConfiguration {
 
@@ -44,9 +45,14 @@ export interface AppConfiguration {
         sparta?: string;
 
         /**
-         * The secondary framework version label.
+         * Framework versions and their official documentation.
          */
-        sparta_version?: string;
+        framework_versions?: {
+            name: string;
+            version?: string;
+            description: string;
+            documentation_url: string;
+        }[];
 
         /**
          * New file splash button.
@@ -57,6 +63,11 @@ export interface AppConfiguration {
          * Open file splash button.
          */
         open_file: SplashButton;
+
+        /**
+         * Generate flow splash button.
+         */
+        generate_flow: SplashButton;
 
         /**
          * Import STIX file button.
@@ -144,5 +155,30 @@ export interface AppConfiguration {
         create: () => SynchronousCommandProcessor;
 
     };
+
+    /**
+     * The application's object recommender.
+     */
+    recommender?: {
+
+        create: () => ObjectRecommender;
+
+    };
+
+    /**
+     * The application's visualization modal controller.
+     */
+    visualizationModal?: {
+
+        create: (
+            visualizations: readonly VisualizationRegistration[]
+        ) => VisualizationModalController;
+
+    };
+
+    /**
+     * The application's visualization registry.
+     */
+    visualizations?: VisualizationRegistration[];
 
 }

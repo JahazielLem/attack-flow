@@ -155,8 +155,8 @@ actions, and can be referenced from other STIX objects.
      - ``enum``
      - Indicates what type of behavior the Attack Flow describes: a specific incident,
        a campaign, etc.
-       
-       The value of this property **MUST** be one of: "incident", "campaign", "threat-actor", "malware", "emulation-plan", "attack-tree", "other".
+
+       The value of this property **MUST** be one of: "incident", "campaign", "threat-actor", "malware", "other".
    * - **start_refs** *(required)*
      - ``list`` of type ``identifier`` (of type ``attack-action`` or ``attack-condition``)
      - A list of objects that start the flow.
@@ -445,8 +445,8 @@ logic.
    * - **operator** *(required)*
      - ``enum``
      - The logical operator to apply to the input effects.
-       
-       The value of this property **MUST** be one of: "AND", "OR".
+
+        The value of this property **MUST** be one of: "AND", "OR".
    * - **effect_refs** *(optional)*
      - ``list`` of type ``identifier`` (of type ``attack-action`` or ``attack-operator`` or ``attack-condition``)
      - The effects, outcomes, or states that result when this operator evaluates to
@@ -472,6 +472,106 @@ logic.
           "extension_type": "new-sdo"
         }
       }
+    }
+
+.. _schema_detection:
+
+Detection
+~~~~~~~~~
+
+A ``x-detection`` object represents an ATT&CK Detection Strategy and are custom STIX objects. An ATT&CK Detection Strategy can be defined as a method or technique that can be used
+to identify adversary activity.
+
+.. list-table::
+   :widths: 20 30 50
+   :header-rows: 1
+
+   * - Property Name
+     - Type
+     - Description
+   * - **type** *(required)*
+     - ``string``
+     - The type **MUST** be ``x-detection``.
+   * - **spec_version** *(required)*
+     - ``string``
+     - The version **MUST** be ``2.1``.
+   * - **detection_id** *(optional)*
+     - ``string``
+     - A unique identifier for the detection (e.g., "DET0516").
+   * - **name** *(optional)*
+     - ``string``
+     - A human-readable name for the detection.
+   * - **description** *(optional)*
+     - ``string``
+     - A description of the detection method.
+   * - **labels** *(required)*
+     - ``list`` of type ``string``
+     - A list containing the string ``x-detection``.
+
+*Example:*
+
+.. code:: json
+
+    {
+      "type": "x-detection",
+      "spec_version": "2.1",
+      "id": "x-detection--a1b2c3d4-5678-90ef-ghij-klmnopqrstuv",
+      "created": "2022-08-02T19:34:35.143Z",
+      "modified": "2022-08-02T19:34:35.143Z",
+      "detection_id": "DET0516",
+      "name": "Suspicious PowerShell Command",
+      "description": "Detects suspicious PowerShell commands that may indicate lateral movement.",
+      "labels": ["x-detection"]
+    }
+
+.. _schema_mitigation:
+
+Mitigation
+~~~~~~~~~~
+
+A ``x-mitigation`` object represents an ATT&CK mitigation and is a custom STIX object. An ATT&CK mitigation can be defined as a strategy or control that can be used
+to prevent or reduce the impact of adversary activity.
+
+.. list-table::
+   :widths: 20 30 50
+   :header-rows: 1
+
+   * - Property Name
+     - Type
+     - Description
+   * - **type** *(required)*
+     - ``string``
+     - The type **MUST** be ``x-mitigation``.
+   * - **spec_version** *(required)*
+     - ``string``
+     - The version **MUST** be ``2.1``.
+   * - **mitigation_id** *(optional)*
+     - ``string``
+     - A unique identifier for the mitigation (e.g., "M1021").
+   * - **name** *(optional)*
+     - ``string``
+     - A human-readable name for the mitigation.
+   * - **description** *(optional)*
+     - ``string``
+     - A description of the mitigation strategy.
+   * - **labels** *(required)*
+     - ``list`` of type ``string``
+     - A list containing the string ``x-mitigation``.
+
+*Example:*
+
+.. code:: json
+
+    {
+      "type": "x-mitigation",
+      "spec_version": "2.1",
+      "id": "x-mitigation--a1b2c3d4-5678-90ef-ghij-klmnopqrstuv",
+      "created": "2022-08-02T19:34:35.143Z",
+      "modified": "2022-08-02T19:34:35.143Z",
+      "mitigation_id": "M1021",
+      "name": "Restrict File and Directory Permissions",
+      "description": "Restrict file and directory permissions to the least-privilege needed.",
+      "labels": ["x-mitigation"]
     }
 
 .. /ATTACK_FLOW_SCHEMA

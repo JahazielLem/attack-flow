@@ -177,7 +177,7 @@ export default defineComponent({
 .metric {
   display: flex;
   align-items: center;
-  color: #cccccc;
+  color: var(--af-text-color-primary);
   font-size: 9.5pt;
   margin: 0px 10px;
 }
@@ -195,28 +195,34 @@ export default defineComponent({
 }
 
 .valid {
-  color: #2bd463;
+  color: var(--af-color-valid);
 }
 
 .valid .icon {
-  fill: #2bd463;
+  fill: var(--af-color-valid);
 }
 
 .warning {
-  color: #e6d846;
+  color: var(--af-color-warning);
+}
+
+*[data-theme="blog_theme"] .warning,
+*[data-theme="light_theme"] .warning {
+    color: var(--af-text-color-primary); /* Warning color lacks contrast on light background. */
 }
 
 .warning .icon {
-  fill: #e6d846;
+  color: var(--af-color-warning);
+  fill: var(--af-color-warning);
 }
 
 .error {
-  color: #ff4d4d;
+  color: var(--af-color-error);
   font-weight: 800;
 }
 
 .error .icon {
-  fill: #ff4d4d;
+  fill: var(--af-color-error);
 }
 
 .fade-enter-active,
@@ -251,7 +257,7 @@ export default defineComponent({
   margin-right: 7px;
 }
 .page-check.invalid {
-  color: #cccccc;
+  color: var(--af-text-color-primary);
   background: #c94040;
 }
 .page-check.invalid span {

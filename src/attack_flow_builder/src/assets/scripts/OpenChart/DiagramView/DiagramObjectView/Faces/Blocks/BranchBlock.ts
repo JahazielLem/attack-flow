@@ -8,13 +8,29 @@ import {
     calculateAnchorPositions,
     calculateBranchAnchorPositions,
     DrawTextInstructionSet,
-    type LineDescriptor
+    type LineDescriptor,
+    type DrawTextInstruction
 } from "./Layout";
 import type { Enumeration } from "../Enumeration";
 import type { ViewportRegion } from "../../ViewportRegion";
 import type { RenderSettings } from "../../RenderSettings";
 import type { BranchBlockStyle } from "../Styles";
 import type { BranchDescriptor } from "./BranchDescriptor";
+import { useTagStore } from "@/stores/TagStore";
+import { getResolvedTagsHash, getTagTextColor, resolveSelectedTags, type ResolvedTag } from "./TagRendering";
+
+/**
+ * Global configuration for tag pill styling.
+ * These constants are used both for layout calculations (positioning)
+ * and for the final Canvas rendering.
+ */
+const TAG_CONFIG = {
+    paddingX: 8,          // Internal horizontal space from the pill edge to the text
+    paddingY: 4,          // Internal vertical space from the pill edge to the text
+    horizontalSpacing: 4, // The gap between two tags sitting side-by-side
+    verticalSpacing: 10,  // Extra vertical buffer added to each row's height
+    borderRadius: 6       // The corner roundness of the pill
+};
 
 export class BranchBlock extends BlockFace {
 
@@ -27,6 +43,11 @@ export class BranchBlock extends BlockFace {
      * The block's text render instructions.
      */
     private readonly text: DrawTextInstructionSet;
+
+    /**
+     * The block's stroke color.
+     */
+    private strokeColor: string;
 
     /**
      * The block's enumerated properties.
@@ -80,6 +101,7 @@ export class BranchBlock extends BlockFace {
         this.style = style;
         this.properties = properties;
         this.text = new DrawTextInstructionSet();
+        this.strokeColor = this.style.body.strokeColor;
         this.lines = [];
         this.headHeight = 0;
     }
@@ -104,10 +126,13 @@ export class BranchBlock extends BlockFace {
         const branch = this.style.branch;
         const props = this.view.properties;
         const branchAnchors = this.branches;
+        const resolvedTags: ResolvedTag[] = resolveSelectedTags(this.view);
 
         // Recalculate content hash
         const lastContentHash = this.contentHash;
-        const nextContentHash = props.toHashValue();
+        // Combine the base property hash with resolved tag content so layout
+        // reruns when either field values or rendered tag labels/colors change.
+        const nextContentHash = props.toHashValue() ^ getResolvedTagsHash(resolvedTags);
         this.contentHash = nextContentHash;
 
         // If content hasn't changed, bail.
@@ -127,6 +152,9 @@ export class BranchBlock extends BlockFace {
         const yFieldPadding = blockGrid[1] * body.fieldVerticalPaddingUnits;
         const xPadding = blockGrid[0] * this.style.horizontalPaddingUnits;
 
+        // Collect tags
+        const hasTags = resolvedTags.length > 0;
+
         // Collect visible fields
         const fields: [string, string][] = [];
         const properties = this.properties?.include ?? props.value.keys();
@@ -136,6 +164,10 @@ export class BranchBlock extends BlockFace {
             }
             const property = props.value.get(id)!;
             if (!property.isDefined() || id === props.representativeKey) {
+                continue;
+            }
+            // Skip tags field because they are handled separately
+            if (id === "tags") {
                 continue;
             }
             if (property instanceof TupleProperty) {
@@ -171,6 +203,11 @@ export class BranchBlock extends BlockFace {
         const fieldName = body.fieldNameText;
         const fieldValue = body.fieldValueText;
 
+        const computeTotalTagWidth = (tagName: string): number => {
+            const textWidth = fieldValue.font.measureWidth(tagName);
+            return TAG_CONFIG.paddingX + textWidth + TAG_CONFIG.paddingX;
+        };
+
         // Calculate max content width from titles
         let maxWidth = blockGrid[0] * this.style.maxUnitWidth;
         this.width = title.font.measureWidth(titleText);
@@ -185,6 +222,14 @@ export class BranchBlock extends BlockFace {
         const branchLength = branch.minWidth * blockGrid[0];
         this.width = Math.max(this.width, branchLength * branchCount);
         maxWidth = Math.max(this.width, maxWidth);
+        if (hasTags) {
+            this.width = Math.max(this.width, fieldName.font.measureWidth("TAGS"));
+            maxWidth = Math.max(this.width, maxWidth);
+            for (const tag of resolvedTags) {
+                this.width = Math.max(this.width, computeTotalTagWidth(tag.name));
+                maxWidth = Math.max(this.width, maxWidth);
+            }
+        }
 
         // Calculate title and subtitle positions
         let x = xPadding + markerOffset;
@@ -228,7 +273,7 @@ export class BranchBlock extends BlockFace {
         this.headHeight = y;
 
         // Calculate body layout
-        if (fields.length) {
+        if (fields.length || hasTags) {
             // Calculate body layout
             y += yBodyPadding - yFieldPadding;
             for (const [key, value] of fields) {
@@ -266,11 +311,79 @@ export class BranchBlock extends BlockFace {
 
         // Calculate block width and height
         this.width += 2 * (markerOffset + xPadding);
+
+        // Handle tags if they are set
+        if (hasTags) {
+            // This is the actual horizontal space tags are allowed to occupy
+            const innerContentWidth = this.width - (2 * (markerOffset + xPadding));
+
+            // Draw tag property header
+            y = addTextCell(
+                this.text,
+                x, y,
+                "TAGS",
+                fieldName.font,
+                fieldName.color,
+                fieldName.units * blockGrid[1],
+                fieldName.alignTop
+            );
+            y += 4;
+
+            let currentLineX = 0;                // Our "virtual cursor"
+            const rowHeight = yBodyPadding + TAG_CONFIG.verticalSpacing; // Approximate height of one row of tags
+            let drawX = x;                       // Start at the block's left padding
+            let drawY = y;                       // Start at the current vertical position
+
+            for (const { name: tagName, color: tagColor } of resolvedTags) {
+                const totalTagWidth = computeTotalTagWidth(tagName);
+
+                // Determine if we need a spacer before this tag
+                const horizontalSpaceBeforeTag = (currentLineX === 0) ? 0 : TAG_CONFIG.horizontalSpacing;
+
+                // CHECK: Does current width + spacer + this tag exceed the limit?
+                if (currentLineX !== 0 && currentLineX + horizontalSpaceBeforeTag + totalTagWidth > innerContentWidth) {
+                    // WRAP: Move to next line
+                    drawX = x;
+                    drawY += rowHeight;
+                    currentLineX = totalTagWidth; // Reset line width to just this tag
+                } else {
+                    // STAY: Add spacer if not at start
+                    if (currentLineX !== 0) {
+                        drawX += TAG_CONFIG.horizontalSpacing;
+                    }
+                    currentLineX += (horizontalSpaceBeforeTag + totalTagWidth);
+                }
+
+                // Place the tag at the calculated drawX
+                addStackedTextCells(
+                    this.text,
+                    drawX,
+                    drawY,
+                    [tagName],
+                    fieldValue.font,
+                    fieldValue.color,
+                    fieldValue.units * blockGrid[1],
+                    tagColor
+                );
+
+                // Advance drawX for the NEXT tag calculation
+                drawX += totalTagWidth;
+            }
+
+            drawY += 4; // Add a small gap after the last row of tags
+
+            const finalY = drawY + rowHeight;
+
+            // Assign this back to the main 'y' so the block height
+            // calculation at the bottom of the function uses it.
+            y = finalY;
+        }
+
         this.height = y + markerOffset;
 
         // Calculate fields/branch separator
         const halfOffset = markerOffset / 2;
-        if (fields.length) {
+        if (fields.length || hasTags) {
             this.lines.push({
                 y0: y + halfOffset, x0: 0,
                 y1: y + halfOffset, x1: this.width
@@ -338,6 +451,58 @@ export class BranchBlock extends BlockFace {
 
     }
 
+    private renderTag(ctx: CanvasRenderingContext2D, instruction: DrawTextInstruction, x: number, y: number) {
+        const { paddingX, paddingY } = TAG_CONFIG;
+
+        // Measure text
+        const textMetrics = ctx.measureText(instruction.text);
+
+        // Calculate the actual height of the glyphs
+        const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
+        const boxHeight = textHeight + (paddingY * 2);
+        const boxWidth = paddingX + textMetrics.width + paddingX;
+        const boxX = x;
+        const boxY = instruction.y + y - textMetrics.actualBoundingBoxAscent - paddingY;
+        const tagColor = instruction.tagColor ?? "#000000";
+
+        function renderTagPill(borderColor?: string | CanvasGradient | CanvasPattern) {
+            const originalFillStyle = ctx.fillStyle;
+            const originalStrokeStyle = ctx.strokeStyle;
+
+            ctx.beginPath();
+            drawRect(ctx, boxX, boxY, boxWidth, boxHeight, TAG_CONFIG.borderRadius);
+            ctx.fillStyle = tagColor;
+            ctx.fill();
+            if (borderColor) {
+                ctx.strokeStyle = borderColor;
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = originalFillStyle;
+            ctx.strokeStyle = originalStrokeStyle;
+        }
+
+        function renderTagText() {
+            const textX = boxX + paddingX;
+            const textY = instruction.y + y;
+            const originalFillStyle = ctx.fillStyle;
+
+            ctx.fillStyle = getTagTextColor(tagColor);
+            ctx.fillText(instruction.text, textX, textY);
+            ctx.fillStyle = originalFillStyle;
+        }
+
+        // CHECK: Is this the specific tag we are looking for?
+        const tagStore = useTagStore();
+        const isHighlighted =
+            tagStore.activeTagName?.toLowerCase() === instruction.text.toLowerCase() &&
+            tagStore.activeTagColor === instruction.tagColor;
+
+        const borderColor = isHighlighted ? this.style.selectOutline.color : undefined;
+        renderTagPill(borderColor);
+        renderTagText();
+    }
+
     /**
      * Renders the face to a context.
      * @param ctx
@@ -397,11 +562,15 @@ export class BranchBlock extends BlockFace {
             ctx.font = font;
             ctx.fillStyle = color;
             for (const instruction of instructions) {
-                ctx.fillText(
-                    instruction.text,
-                    instruction.x + x,
-                    instruction.y + y
-                );
+                if (instruction.tagColor) {
+                    this.renderTag(ctx, instruction, instruction.x + x, y);
+                } else {
+                    ctx.fillText(
+                        instruction.text,
+                        instruction.x + x,
+                        instruction.y + y
+                    );
+                }
             }
         }
 

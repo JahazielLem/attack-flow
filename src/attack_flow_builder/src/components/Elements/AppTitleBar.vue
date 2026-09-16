@@ -27,14 +27,7 @@
         @keydown.stop
       >
     </div>
-    <div
-      v-if="classificationMarking && classificationMarking.value"
-      class="classification-marking"
-      :data-value="classificationMarking.value"
-    >
-      {{ classificationMarking?.toString() }}
-      <span v-if="classificationGroup?.value">:{{ classificationGroup.value }}</span>
-    </div>
+    <ClassificationMarking />
   </div>
 </template>
 
@@ -48,7 +41,7 @@ import type { CommandEmitter } from "@/assets/scripts/Application";
 import type { ContextMenuSubmenu } from "@/assets/scripts/Browser";
 // Components
 import TitleBar from "@/components/Controls/TitleBar.vue";
-import { EnumProperty, StringProperty, TupleProperty } from "@/assets/scripts/OpenChart/DiagramModel";
+import ClassificationMarking from "./ClassificationMarking.vue";
 
 export default defineComponent({
   name: "AppTitleBar",
@@ -77,24 +70,6 @@ export default defineComponent({
         this.contextMenus.viewMenu,
         this.contextMenus.helpMenu
       ];
-    },
-
-    classificationMarking(): EnumProperty | undefined {
-      const tup: TupleProperty | undefined = this.application.activeEditor.file.canvas.properties.get("classification");
-      if (!tup) {
-        return undefined;
-      }
-      const result: EnumProperty | undefined = tup?.value.get("marking") as EnumProperty;
-      return result;
-    },
-
-    classificationGroup(): StringProperty | undefined {
-      const tup: TupleProperty | undefined = this.application.activeEditor.file.canvas.properties.get("classification");
-      if (!tup) {
-        return undefined;
-      }
-      const result: StringProperty | undefined = tup?.value.get("group") as StringProperty;
-      return result;
     }
   },
   methods: {
@@ -128,7 +103,7 @@ export default defineComponent({
       }
     }
   },
-  components: { TitleBar }
+  components: { TitleBar, ClassificationMarking }
 });
 </script>
 
@@ -165,9 +140,9 @@ export default defineComponent({
 .wiki-search-input {
   width: 100%;
   height: 22px;
-  color: #cdd6f4;
-  background: #11111b;
-  border: 1px solid #313244;
+  color: var(--af-text-color-primary);
+  background: var(--af-bg-color-secondary);
+  border: 1px solid var(--af-border-color-primary);
   border-radius: 6px;
   padding: 0 8px;
   font-size: 9pt;
@@ -175,46 +150,6 @@ export default defineComponent({
 }
 
 .wiki-search-input:focus {
-  border-color: #89b4fa;
-}
-
-/* Styling similar to classification markings in DiagramImage.ts. Change both together. */
-.classification-marking {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 600;
-  padding: 0 5px 0 5px;
-  color: white;
-}
-
-.classification-marking[data-value="tlp-red"] {
-  background-color: black;
-  color: #FF2B2B;
-}
-
-.classification-marking[data-value="tlp-amber"],
-.classification-marking[data-value="tlp-amber-strict"] {
-  background-color: black;
-  color: #FFC000;
-}
-
-.classification-marking[data-value="tlp-green"] {
-  background-color: black;
-  color: #33FF00;
-}
-
-.classification-marking[data-value="tlp-clear"] {
-  background-color: black;
-  color: #FFFFFF;
-}
-
-.classification-marking[data-value="unclassified"] {
-  background-color: black;
-  color: #33FF00;
+  border-color: var(--af-bg-color-hover-action);
 }
 </style>

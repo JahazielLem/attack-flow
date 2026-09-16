@@ -19,6 +19,14 @@
           >
             ✗
           </button>
+          <button
+            v-if="property.id === 'tags'"
+            class="delete-button"
+            @pointerdown="onSelectTag(key)"
+            tabindex="-1"
+          >
+            ⧉
+          </button>
         </component>
       </template>
       <!-- Primitive Fields -->
@@ -37,12 +45,43 @@
         </button>
       </template>
     </div>
-    <button
-      class="create-button"
-      @pointerdown="onCreate()"
-    >
-      <span><PlusIcon /></span>Add
-    </button>
+    <div class="list-actions">
+      <button
+        class="create-button"
+        @pointerdown="onCreate()"
+      >
+        <span><PlusIcon /></span>Add
+      </button>
+
+      <div
+        v-if="property.id === 'tags' && existingTags.length > 0"
+        class="existing-tags-wrapper"
+      >
+        <button
+          class="create-button secondary"
+          @click="showDropdown = !showDropdown"
+        >
+          Add Existing Tag...
+        </button>
+
+        <ul
+          v-if="showDropdown"
+          class="custom-dropdown-list"
+        >
+          <li
+            v-for="(tag, index) in existingTags"
+            :key="index"
+            @click="onSelectExisting(tag)"
+          >
+            <span
+              class="tag-color-circle"
+              :style="{ backgroundColor: tag.color }"
+            />
+            {{ tag.text }}
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -50,11 +89,11 @@
 // Dependencies
 import * as EditorCommands from "@OpenChart/DiagramEditor"
 import { defineAsyncComponent, defineComponent, type PropType } from "vue";
-import { 
-  DateProperty, DictionaryProperty, EnumProperty, 
+import {
+  DateProperty, DictionaryProperty, EnumProperty,
   FloatProperty, IntProperty, ListProperty, StringProperty
 } from "@OpenChart/DiagramModel";
-import type { Property } from "@OpenChart/DiagramModel";
+import type { ColorProperty, Property } from "@OpenChart/DiagramModel";
 import type { SynchronousEditorCommand } from "@OpenChart/DiagramEditor";
 // Components
 import PlusIcon from "@/components/Icons/PlusIcon.vue";
@@ -65,12 +104,69 @@ import DateTimeField from "./DateTimeField.vue";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DictionaryField = defineAsyncComponent(() => import("./DictionaryField.vue")) as any;
 
+import { useApplicationStore } from "@/stores/ApplicationStore";
+import { useTagStore } from "@/stores/TagStore";
+
 export default defineComponent({
   name: "ListField",
   props: {
     property: {
       type: Object as PropType<ListProperty>,
       required: true
+    }
+  },
+  data() {
+    return {
+        showDropdown: false
+    }
+  },
+  computed: {
+
+    /**
+     * A list of existing tags on the canvas that this object does NOT currently have.
+     */
+    existingTags(): { text: string; color: string }[] {
+        const app = useApplicationStore();
+        const editor = app.activeEditor;
+        if (!editor || !editor.file?.canvas) return [];
+
+        // 1. Create a Set of keys for tags already present in THIS property
+        const currentTagKeys = new Set<string>();
+        if (this.property.value instanceof Map) {
+            for (const tagEntry of this.property.value.values()) {
+                const tagDict = tagEntry as DictionaryProperty;
+                const name = tagDict.value.get("name")?.toString() || "";
+                const color = tagDict.value.get("color")?.toString() || "";
+                if (name) {
+                    currentTagKeys.add(`${name.toLowerCase()}-${color}`);
+                }
+            }
+        }
+
+        const registry = new Map<string, { text: string; color: string }>();
+
+        // 2. Iterate through all objects to find all unique tags
+        for (const obj of editor.file.canvas.objects) {
+            const tagsProperty = obj.properties?.value?.get("tags") as ListProperty;
+            if (tagsProperty && tagsProperty.value instanceof Map) {
+                for (const tagEntry of tagsProperty.value.values()) {
+                    const tagDict = tagEntry as DictionaryProperty;
+                    const name = tagDict.value.get("name")?.toString() || "";
+                    const color = tagDict.value.get("color")?.toString() || "";
+
+                    if (name) {
+                        const key = `${name.toLowerCase()}-${color}`;
+
+                        // 3. Only add to registry if it's NOT already in our currentTagKeys
+                        if (!currentTagKeys.has(key) && !registry.has(key)) {
+                            registry.set(key, { text: name, color: color });
+                        }
+                    }
+                }
+            }
+        }
+
+        return Array.from(registry.values()).sort((a, b) => a.text.localeCompare(b.text));
     }
   },
   methods: {
@@ -116,7 +212,58 @@ export default defineComponent({
     onDelete(id: string) {
       const cmd = EditorCommands.deleteSubproperty(this.property, id);
       this.$emit("execute", cmd);
-    }
+    },
+
+    /**
+     * Finds the tag value and triggers the selection command.
+     * @param key The key in the property.value map.
+     */
+    onSelectTag(key: string) {
+        const app = useApplicationStore();
+        const editor = app.activeEditor;
+        const subProperty = this.property.value.get(key);
+
+        if (editor && editor.id !== "PhantomEditor" && subProperty) {
+            let tagText = "";
+            let tagColor = "";
+            let tagId = key;
+
+            if (subProperty instanceof DictionaryProperty) {
+                const idProp = subProperty.value.get("id") as StringProperty;
+                if (idProp) {
+                    tagId = idProp.value ?? key;
+                }
+
+                const textProp = (subProperty.value.get("name") || subProperty.value.get("text")) as StringProperty;
+                if (textProp) {
+                    tagText = textProp.value ?? "";
+                }
+
+                const colorProp = subProperty.value.get("color") as ColorProperty;
+                if (colorProp) {
+                    tagColor = colorProp.value ?? "";
+                }
+            } else if (subProperty instanceof StringProperty) {
+                tagText = subProperty.value ?? "";
+            }
+
+            if (tagText && tagText.trim() !== "") {
+                const cmd = EditorCommands.moveCameraToObjectsWithTags(editor, tagId);
+                this.$emit("execute", cmd);
+
+                const tagStore = useTagStore();
+                tagStore.setActiveTag(tagText, tagColor);
+            } else {
+                console.warn(`Tag text is empty for key ${key}. Make sure the 'name' field is filled out.`);
+            }
+        }
+    },
+
+    onSelectExisting(tag: { text: string, color: string }) {
+        const cmd = EditorCommands.addExistingTag(this.property, tag);
+        this.$emit("execute", cmd);
+        this.showDropdown = false; // Close after selection
+    },
 
   },
   emits: {
@@ -149,7 +296,7 @@ export default defineComponent({
   flex: 1;
   min-height: 30px;
   border-radius: 4px;
-  background: #2e2e2e;
+  background: var(--af-bg-color-secondary);
 }
 
 .dictionary-field-control {
@@ -162,10 +309,10 @@ export default defineComponent({
 .delete-button {
   display: flex;
   align-items: center;
-  color: #cccccc;
+  color: var(--af-text-color-primary);
   font-size: 9pt;
   font-family: inherit;
-  border: solid 1px #3d3d3d;
+  border: solid 1px var(--af-border-color-tertiary);
   border-radius: 3px;
   background: none;
 }
@@ -183,11 +330,54 @@ export default defineComponent({
 
 .create-button:hover,
 .delete-button:hover {
-  background: #303030;
+  background: var(--af-border-color-secondary);
 }
 
 .create-button span {
   margin-right: 9px;
 }
 
+.existing-tags-wrapper {
+  position: relative;
+  margin-top: 8px;
+}
+
+.custom-dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--af-border-color-tertiary);
+  border-radius: 4px;
+  background: var(--af-bg-color-secondary);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.custom-dropdown-list li {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 9pt;
+  color: var(--af-text-color-primary);
+}
+
+.custom-dropdown-list li:hover {
+  background: var(--af-border-color-secondary);
+}
+
+.tag-color-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.1); /* Helps circles stand out on dark bgs */
+}
 </style>

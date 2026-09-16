@@ -435,7 +435,7 @@ type AccordionPaneHeight = {
 .accordion-box-container {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  border-top: solid 1px #474747;
+  border-top: solid 1px var(--af-border-color-tertiary);
   box-sizing: border-box;
 }
 
@@ -460,7 +460,7 @@ type AccordionPaneHeight = {
   top: -2px;
   width: 100%;
   height: 4px;
-  background: #726de2;
+  background: var(--af-bg-color-hover-action);
   cursor: n-resize;
   transition: 0.15s opacity;
   opacity: 0;
@@ -473,13 +473,13 @@ type AccordionPaneHeight = {
 .accordion-box-head {
   display: flex;
   align-items: center;
-  color: #cdd6f4;
+  color: var(--af-text-color-tertiary);
   font-size: 9.5pt;
   font-weight: 600;
   user-select: none;
-  border-top: solid 1px #474747;
+  border-top: solid 1px var(--af-border-color-tertiary);
   box-sizing: border-box;
-  background: #11111b;
+  background: var(--af-bg-color-tertiary);
   box-shadow: 0px 2px 2px 0px rgb(0 0 0 / 16%);
 }
 

@@ -3,7 +3,15 @@ import AttackFlowPublisher from "./AttackFlowPublisher/AttackFlowPublisher.ts";
 import AttackFlowFilePreprocessor from "./AttackFlowFilePreprocessor/AttackFlowFilePreprocessor.ts";
 import AttackFlowCommandProcessor from "./AttackFlowCommandProcessor/AttackFlowCommandProcessor.ts";
 import SpartaEnums from "./AttackFlowTemplates/MitreSparta.ts";
+import SpaceShieldEnums from "./AttackFlowTemplates/SpaceShield.ts";
 import { CatppuccinTheme } from "./AttackFlowThemes/CatppuccinTheme.ts";
+import { AttackFlowRecommender } from "./AttackFlowRecommender/AttackFlowRecommender.ts";
+import { TacticTableVisualization } from "./AttackFlowVisualizations/TacticTableVisualization.ts";
+import { TimelineVisualization } from "./AttackFlowVisualizations/TimelineVisualization.ts";
+import { TreemapVisualization } from "./AttackFlowVisualizations/TreemapVisualization.ts";
+import { PresentationVisualization } from "./AttackFlowVisualizations/PresentationVisualization.ts";
+import { MatrixViewVisualization } from "./AttackFlowVisualizations/MatrixViewVisualization.ts";
+import { IOCTableVisualization } from "./AttackFlowVisualizations/IOCTableVisualization.ts";
 import { DarkTheme } from "./AttackFlowThemes/DarkTheme.ts";
 import { BlogTheme } from "./AttackFlowThemes/BlogTheme.ts";
 import { LightTheme } from "./AttackFlowThemes/LightTheme.ts";
@@ -15,14 +23,15 @@ import {
     StixObjects,
     StixObservables
 } from "./AttackFlowTemplates";
-import type { AppConfiguration } from "../scripts/Application";
+import { BasicVisualizationModal } from "../scripts/Application/Visualization";
+import type { AppConfiguration } from "../scripts/Application/Configuration/AppConfiguration";
 
 const configuration: AppConfiguration = {
 
     /**
      * The application's name.
      */
-    application_name: "Attack Flow Builder SPARTA by PWNSAT",
+    application_name: "Attack Flow Builder · Space Frameworks by PWNSAT",
 
     /**
      * The application's icon.
@@ -45,9 +54,20 @@ const configuration: AppConfiguration = {
     splash: {
         organization: CtidLogo,
         sparta: CtidSpartaLogo,
-        sparta_version: SpartaEnums.version
-            ? `SPARTA v${SpartaEnums.version}`
-            : undefined,
+        framework_versions: [
+            {
+                name: "SPARTA",
+                version: SpartaEnums.version,
+                documentation_url: "https://sparta.aerospace.org/resources/user-guide",
+                description: "Space Attack Research and Tactic Analysis"
+            },
+            {
+                name: "SPACE-SHIELD",
+                version: SpaceShieldEnums.version,
+                documentation_url: "https://spaceshield.esa.int/",
+                description: "ESA knowledge base for space systems cybersecurity"
+            }
+        ],
         new_file: {
             title: "New Flow",
             description: "Create a blank flow."
@@ -55,6 +75,10 @@ const configuration: AppConfiguration = {
         open_file: {
             title: "Open Flow",
             description: "Open an existing flow."
+        },
+        generate_flow: {
+            title: "Generate Flow",
+            description: "Generate a flow out of a security incident report."
         },
         import_stix: {
             title: "Import STIX",
@@ -125,6 +149,14 @@ const configuration: AppConfiguration = {
                     url: "https://github.com/JahazielLem/attack-flow"
                 },
                 {
+                    text: "SPARTA Documentation",
+                    url: "https://sparta.aerospace.org/resources/user-guide"
+                },
+                {
+                    text: "SPACE-SHIELD Documentation",
+                    url: "https://spaceshield.esa.int/"
+                },
+                {
                     text: "SPARTA STIX Repository",
                     url: "https://github.com/JahazielLem/attack-stix-data"
                 },
@@ -151,7 +183,24 @@ const configuration: AppConfiguration = {
 
     cmdProcessor: {
         create: () => new AttackFlowCommandProcessor()
-    }
+    },
+
+    recommender: {
+        create: () => new AttackFlowRecommender()
+    },
+
+    visualizationModal: {
+        create: visualizations => new BasicVisualizationModal(visualizations)
+    },
+
+    visualizations: [
+        TacticTableVisualization,
+        PresentationVisualization,
+        MatrixViewVisualization,
+        TimelineVisualization,
+        TreemapVisualization,
+        IOCTableVisualization
+    ]
 
 };
 

@@ -36,6 +36,7 @@ import { defineComponent, type PropType } from "vue";
 import { SetDatePropertyTimezone } from "@OpenChart/DiagramEditor/Commands/index.commands";
 import type { Command } from "@/assets/scripts/Application";
 import type { DictionaryProperty } from "@OpenChart/DiagramModel";
+import { hasVisibleEditorProperties } from "@/assets/configuration/AttackFlowTemplates/editorPropertyUtils";
 // Components
 import ScrollBox from "@/components/Containers/ScrollBox.vue";
 import DictionaryFieldContents from "@/components/Controls/Fields/DictionaryFieldContents.vue";
@@ -61,15 +62,10 @@ export default defineComponent({
      *  True if the property has editable subproperties, false otherwise.
      */
     hasEditableProperties(): boolean {
-      if(!this.property) {
+      if (!this.property) {
         return false;
       }
-      for(const value of this.property.value.values()) {
-        if(value.isEditable) {
-          return true;
-        }
-      }
-      return false;
+      return hasVisibleEditorProperties(this.property);
     }
 
   },

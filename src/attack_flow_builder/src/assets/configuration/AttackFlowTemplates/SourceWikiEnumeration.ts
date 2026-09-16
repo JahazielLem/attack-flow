@@ -3,6 +3,7 @@ import AtlasWikiEnums from "../AttackFlowTemplates/MitreAtlasWiki";
 import DefendWikiEnums from "../AttackFlowTemplates/MitreDefendWiki";
 import F3WikiEnums from "../AttackFlowTemplates/MitreF3Wiki";
 import SpartaWikiEnums from "../AttackFlowTemplates/MitreSpartaWiki";
+import SpaceShieldWikiEnums from "./SpaceShieldWiki";
 
 interface SourceWikiEnums {
     wiki: TtpWikiEntry[];
@@ -45,7 +46,8 @@ const sources: SourceWikiEnums[] = [
     AtlasWikiEnums,
     DefendWikiEnums,
     F3WikiEnums,
-    SpartaWikiEnums
+    SpartaWikiEnums,
+    SpaceShieldWikiEnums
 ];
 
 const enums: SourceWikiEnums = sources.reduce<SourceWikiEnums>((acc, src) => {

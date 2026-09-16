@@ -64,11 +64,11 @@ class AttackAsset:
     [
         ("technique_id", StringProperty()),
         ("name", StringProperty(required=True)),
-        ("technique_ref", ReferenceProperty(valid_types="attack-pattern")),
+        ("technique_ref", ReferenceProperty(valid_types=["attack-pattern"])),
         ("description", StringProperty()),
         (
             "asset_refs",
-            ListProperty(ReferenceProperty(valid_types="attack-asset")),
+            ListProperty(ReferenceProperty(valid_types=["attack-asset"])),
         ),
         (
             "effect_refs",
@@ -125,6 +125,38 @@ class AttackCondition:
     ],
 )
 class AttackOperator:
+    pass
+
+
+@CustomObject(
+    "x-detection",
+    [
+        ("detection_id", StringProperty()),
+        ("name", StringProperty()),
+        ("description", StringProperty()),
+        (
+            "labels",
+            ListProperty(StringProperty(required=True)),
+        ),
+    ],
+)
+class XDetection:
+    pass
+
+
+@CustomObject(
+    "x-mitigation",
+    [
+        ("mitigation_id", StringProperty()),
+        ("name", StringProperty()),
+        ("description", StringProperty()),
+        (
+            "labels",
+            ListProperty(StringProperty(required=True)),
+        ),
+    ],
+)
+class XMitigation:
     pass
 
 

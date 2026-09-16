@@ -1,12 +1,15 @@
 import {
     SetStringProperty,
+    SetColorProperty,
     SetEnumProperty,
     CreateSubproperty,
     DeleteSubproperty,
     SetNumberProperty,
     SetDatePropertyTime,
     SetDatePropertyTimezone,
-    SetTupleSubproperty
+    SetTupleSubproperty,
+    SetMultiSelectProperty,
+    ApplyTagDataCommand
 } from "./index.commands";
 import type { DateTime } from "luxon";
 import type {
@@ -16,7 +19,9 @@ import type {
     IntProperty,
     ListProperty,
     StringProperty,
-    TupleProperty
+    ColorProperty,
+    TupleProperty,
+    MultiSelectProperty
 } from "@OpenChart/DiagramModel";
 import type { SynchronousEditorCommand } from "../SynchronousEditorCommand";
 
@@ -34,6 +39,21 @@ export function setStringProperty(
     property: StringProperty, value: string | null
 ): SetStringProperty {
     return new SetStringProperty(property, value);
+}
+
+/**
+ * Sets the value of a {@link ColorProperty}.
+ * @param property
+ *  The {@link ColorProperty}.
+ * @param value
+ *  The {@link ColorProperty}'s new value.
+ * @returns
+ *  A command that represents the action.
+ */
+export function setColorProperty(
+    property: ColorProperty, value: string | null
+): SetColorProperty {
+    return new SetColorProperty(property, value);
 }
 
 /**
@@ -112,6 +132,21 @@ export function setTupleSubproperty(
 }
 
 /**
+ * Sets the selection of a {@link MultiSelectProperty}.
+ * @param property
+ *  The {@link MultiSelectProperty}.
+ * @param values
+ *  The new selected ids.
+ * @returns
+ *  A command that represents the action.
+ */
+export function setMultiSelectProperty(
+    property: MultiSelectProperty, values: string[]
+): SetMultiSelectProperty {
+    return new SetMultiSelectProperty(property, values);
+}
+
+/**
  * Creates a new subproperty and adds it to a {@link ListProperty}.
  * @param property
  *  The {@link ListProperty}.
@@ -138,3 +173,5 @@ export function deleteSubproperty(
 ): DeleteSubproperty {
     return new DeleteSubproperty(property, id);
 }
+
+export { ApplyTagDataCommand };

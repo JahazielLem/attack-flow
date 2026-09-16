@@ -4,7 +4,7 @@ Builder
 Attack Flow Builder is a free and open source tool for creating, viewing, and editing
 Attack Flows.
 
-This forked builder distribution adds SPARTA matrix support, SPARTA sub-technique
+This forked builder distribution adds SPARTA and ESA Space Shield matrix support, sub-technique
 autocompletion, custom RF capture observables, a countermeasure card, and UI/theme
 adjustments on top of the upstream Attack Flow Builder experience.
 
@@ -135,8 +135,7 @@ Publish Attack Flow
 
    The Attack Flow Builder does not automatically save your work. If you accidentally
    close the tab or navigate forward or backward, you will lose any unsaved work.
-   Remember to save your work frequently. (This issue will be addressed in a future
-   release.)
+   Remember to save your work frequently.
 
 **There are a ton of useful features in the builder!** Way more than we can cover here.
 To fully master this tool, we encourage you to experiment with all of the different
@@ -150,9 +149,9 @@ locally `using Docker <https://www.docker.com/>`__ as shown below.
 
 .. code:: shell
 
-   $ docker pull ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+   $ docker build . -t ghcr.io/jahaziellem/attack-flow:v4.0.0-space-frameworks
    $ docker run --rm --name AttackFlowBuilder -p8000:80 \
-      ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+      ghcr.io/jahaziellem/attack-flow:v4.0.0-space-frameworks
 
 Once the container is running, you can open a brower tab to http://localhost:8000/ to
 view the Builder.
@@ -167,7 +166,7 @@ then run this command to create the Docker image:
 .. code:: shell
 
    $ make docker-build
-   docker build . -t ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+   docker build . -t ghcr.io/jahaziellem/attack-flow:v4.0.0-space-frameworks
    [+] Building 2.9s (13/13) FINISHED
    => [internal] load build definition from Dockerfile                                                                                0.0s
    => => transferring dockerfile: 269B                                                                                                0.0s
@@ -179,7 +178,7 @@ If building the image completes successfully, then use this command to run the i
 .. code:: shell
 
    $ make docker-run
-   docker run --rm -p 8080:80 ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta
+   docker run --rm -p 8080:80 ghcr.io/jahaziellem/attack-flow:v4.0.0-space-frameworks
    /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
    /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
    /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
@@ -195,7 +194,7 @@ Alternatively, you can run the Attack Flow Builder with Docker Compose:
     $ curl https://raw.githubusercontent.com/JahazielLem/attack-flow/main/docker-compose.yml
     $ docker compose up --build
 
-This will launch a container with Attack Flow Builder accessible at `http://localhost:8080 <http://localhost:8080>`_ . The Compose file builds the local fork by default and tags it as ``ghcr.io/jahaziellem/attack-flow:v3.2.1-sparta``. You can customize the provided docker-compose.yml sample file (volumes, ports, ...).
+This will launch a container with Attack Flow Builder accessible at `http://localhost:8080 <http://localhost:8080>`_ . The Compose file builds the local fork by default and tags it as ``ghcr.io/jahaziellem/attack-flow:v4.0.0-space-frameworks``. You can customize the provided docker-compose.yml sample file (volumes, ports, ...).
 
 Developer
 ---------

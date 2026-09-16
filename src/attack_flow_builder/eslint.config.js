@@ -1,11 +1,27 @@
 import parserTs from '@typescript-eslint/parser'
+import tseslint from 'typescript-eslint'
 import stylisticTs from "@stylistic/eslint-plugin-ts"
 import stylisticJs from "@stylistic/eslint-plugin-js"
 import pluginVue from 'eslint-plugin-vue'
 import pluginVitest from '@vitest/eslint-plugin'
-import vueTsEslintConfig from '@vue/eslint-config-typescript'
+import vueParser from 'vue-eslint-parser'
 
 export default [
+  ...pluginVue.configs['flat/strongly-recommended'],
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
+    files: ['**/*.{ts,mts,tsx,vue}']
+  })),
+  {
+    name: 'app/vue-typescript-parser',
+    files: ['**/*.vue'],
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: parserTs
+      }
+    }
+  },
   {
     name: 'app/files-to-lint',
     files: ['**/*.{ts,mts,tsx,vue}'],
@@ -31,6 +47,7 @@ export default [
         '**/dist-cli/**',
         '**/dist-ssr/**',
         '**/coverage/**',
+        '**/tie-inference-web',
         '**/MitreAttack.ts',
         '**/MitreAtlas.ts',
         '**/MitreDefend.ts',
@@ -135,8 +152,6 @@ export default [
       "@stylistic/js/template-curly-spacing": "error",
     }
   },
-  ...pluginVue.configs['flat/strongly-recommended'],
-  ...vueTsEslintConfig(),
   {
     ...pluginVitest.configs.recommended,
     files: ['src/**/*.spec.ts'],

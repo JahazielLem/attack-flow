@@ -56,7 +56,7 @@ dependencies do not conflict with other Python packages you may have installed.
 
     ...
 
-    Installing the current project: attack-flow (3.0.0)
+    Installing the current project: attack-flow (4.0)
 
 Finally, enter the virtualenv. You can check if the installation succeeded by running
 the ``af`` command.
@@ -65,7 +65,7 @@ the ``af`` command.
 
     $ poetry shell
     py[attack-flow] $ af version
-    Attack Flow version 3.0.0
+    Attack Flow version 4.0
 
 .. warning::
 
@@ -312,7 +312,7 @@ To update the Intelligence File for a given source, simply invoke its npm script
 
     $ npm run update-attack
 
-    > attack-flow-builder@3.0.0 update-attack
+    > attack-flow-builder@4.0 update-attack
     > node ./attack/update_mitre_attack.mjs
 
     → Downloading ATT&CK Data...
@@ -385,7 +385,7 @@ Once the script is compiled, run the script using Node.js:
 .. code:: shell
 
     $ node dist-cli/cli.mjs --version
-    3.0.0
+    4.0
 
     $ node dist-cli/cli.mjs --help
     Usage: Attack Flow Builder CLI [options] [command]
@@ -429,6 +429,121 @@ the file to v3 format and saves it back to its original path.
 
 The JSON files are saved back to the same location as the AFB files, using the same filename stem but with the
 file extension changed from ``.afb`` to ``.json``.
+
+Adding Visualizations
+~~~~~~~~~~~~~~~~~~~~~
+
+To add a visualization to Attack Flow Builder, you need to:
+
+1. Create a Vue component in
+   ``src/attack_flow_builder/src/components/Visualizations/``.
+2. Create a ``VisualizationRegistration`` in
+   ``src/attack_flow_builder/src/assets/configuration/AttackFlowVisualizations/``.
+3. Add that registration to ``configuration.visualizations`` in
+   ``src/attack_flow_builder/src/assets/configuration/app.configuration.ts``.
+
+After completing these steps, the visualization will appear in
+:menuselection:`View --> Visualizations`.
+
+Step 1: Create the Vue Component
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create a Vue component file in
+``src/attack_flow_builder/src/components/Visualizations/``, for example
+``MyVisualization.vue``. This component defines the visualization's template,
+styling, and scripting.
+
+If your visualization needs access to the current flow, one option is to use
+the application store. For example:
+
+.. code-block:: ts
+
+   import { useApplicationStore } from '@/stores/ApplicationStore';
+
+   const app = useApplicationStore();
+   const blocks = app.activeEditor.file.canvas.blocks;
+
+When creating the template for the actual visualization content, prefer using
+SVG elements rather than relying solely on HTML. This makes the resulting exported
+image more portable across applications.
+
+Step 2: Create the VisualizationRegistration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create a TypeScript file in
+``src/attack_flow_builder/src/assets/configuration/AttackFlowVisualizations/``,
+for example ``MyVisualization.ts``. This file should export a
+``VisualizationRegistration`` object that defines the visualization's metadata
+and behavior.
+
+Use the following template as a starting point:
+
+.. code-block:: ts
+
+   import { defineAsyncComponent, markRaw } from "vue";
+   import type { VisualizationRegistration } from "@/assets/scripts/Application/Visualization";
+
+   export const MyVisualization: VisualizationRegistration = {
+       id: "my_visualization",
+       title: "My Visualization",
+       component: markRaw(defineAsyncComponent(
+           () => import("@/components/Visualizations/MyVisualization.vue")
+       )),
+       // exportName: "my_visualization"
+       // getExportRoot: (root: HTMLElement) => root.querySelector("#some-element")
+       // exporter: async (context: VisualizationExportContext) => {}
+   };
+
+The following fields may be specified in a ``VisualizationRegistration``
+object:
+
+``id``
+   Required. A unique identifier for the visualization.
+
+``title``
+   Required. The display title shown in the Builder UI.
+
+``component``
+   Required. The Vue component used to render the visualization.
+
+``exportName``
+   Optional. A custom name for the exported file.
+
+``getExportRoot``
+   Optional. A custom root element for exports. If unspecified, the modal body
+   element is used.
+
+``exporter``
+   Optional. A custom exporter for the visualization. If unspecified, the
+   default exporter will search for an `<svg>` element within the export root
+   to save as an SVG image.
+
+Step 3: Register the Visualization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Open
+``src/attack_flow_builder/src/assets/configuration/app.configuration.ts`` and
+import your ``VisualizationRegistration`` object:
+
+.. code-block:: ts
+
+   import { MyVisualization } from "./AttackFlowVisualizations/MyVisualization.ts";
+
+Then find the ``configuration.visualizations`` field and add your visualization
+to the array:
+
+.. code-block:: ts
+
+   visualizations: [
+           TacticTableVisualization,
+           MyVisualization
+       ]
+
+Verify the Result
+^^^^^^^^^^^^^^^^^
+
+Reload the Builder and confirm that your visualization appears in
+:menuselection:`View --> Visualizations`.
 
 Releases
 --------

@@ -87,7 +87,7 @@ export class GraphNode {
      *  The edge.
      */
     public addInEdge(edge: GraphEdge) {
-        this._prev.set(edge.object.id, edge);
+        this._prev.set(edge.object.instance, edge);
         edge.target = this;
     }
 
@@ -97,7 +97,7 @@ export class GraphNode {
      *  The edge.
      */
     public addOutEdge(edge: GraphEdge) {
-        this._next.set(edge.object.id, edge);
+        this._next.set(edge.object.instance, edge);
         edge.source = this;
     }
 
