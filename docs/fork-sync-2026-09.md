@@ -10,7 +10,7 @@ upstream `0bd4a2d45dceacce499d7e94b85f7966e70f5399` (Attack Flow 4.0) on branch
 
 - Keep upstream 4.0's visualizations, AI flow generation, TIE recommendations,
   defensive objects, tagging, classification markings, API and dependency updates.
-- Retain the PWNSAT branding, TTP wiki, Catppuccin theme, blue countermeasure card,
+- Retain the Kevin Leon branding, TTP wiki, Catppuccin theme, blue countermeasure card,
   `x-sigmf-capture` and `x-raw-iq-capture` observables, and separate subtechnique fields.
 - Preserve subtechniques in the ordinary technique selector for existing flows and
   upstream recommendations. The dedicated subtechnique selector still resolves its
@@ -57,7 +57,7 @@ catalogs and wiki files are committed; normal builds do not require framework do
   STIX round trips, RF observables, cloning and home screen documentation links.
 - Type checking, production build and CLI build pass. ESLint has no errors and
   retains seven upstream optional-prop warnings. Vite reports large bundle warnings.
-- All 42 corpus flows export to STIX and pass validation, including PWNSAT; the
+- All 42 corpus flows export to STIX and pass validation, including Kevin Leon; the
   standalone schema example also passes.
 - Python formatting passes. The Python suite reports 518 passed and 21 failed on
   Windows. All 21 failures reproduce against a pristine copy of upstream at the

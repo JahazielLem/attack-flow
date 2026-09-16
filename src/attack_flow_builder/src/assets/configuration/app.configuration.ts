@@ -15,7 +15,7 @@ import { IOCTableVisualization } from "./AttackFlowVisualizations/IOCTableVisual
 import { DarkTheme } from "./AttackFlowThemes/DarkTheme.ts";
 import { BlogTheme } from "./AttackFlowThemes/BlogTheme.ts";
 import { LightTheme } from "./AttackFlowThemes/LightTheme.ts";
-import { CtidLogo, CtidPwnsatLogo, CtidSpartaLogo } from "./Images";
+import { CtidLogo, CtidSpartaLogo, KevinLeonLogo } from "./Images";
 import {
     AttackFlow,
     AttackFlowObjects,
@@ -31,12 +31,12 @@ const configuration: AppConfiguration = {
     /**
      * The application's name.
      */
-    application_name: "Attack Flow Builder · Space Frameworks by PWNSAT",
+    application_name: "Attack Flow Builder · Space Frameworks by Kevin Leon",
 
     /**
      * The application's icon.
      */
-    application_icon: CtidPwnsatLogo,
+    application_icon: KevinLeonLogo,
 
     /**
      * The application file type's name.

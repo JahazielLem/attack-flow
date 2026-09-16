@@ -26,7 +26,7 @@ describing complex, adversarial behavior.
 
 This documentation set is published from a maintained fork that keeps the upstream
 Attack Flow project current while extending the builder with SPARTA and ESA Space Shield support and a small
-set of operational customizations used by PWNSAT workflows.
+set of operational customizations used by Kevin Leon workflows.
 
 Who is Attack Flow For?
 -----------------------

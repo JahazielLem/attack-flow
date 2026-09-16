@@ -358,16 +358,16 @@ List of Examples
 
 ----
 
-**Pwnsat - SPARTA TTPs**
+**Kevin Leon - SPARTA TTPs**
 
 *Author:* Kevin Leon
 
-*Description:* Default vulnerable Pwnsat card. This file contains the identified vulnerabilities and test scenarios that can be used during analysis.
+*Description:* Default vulnerable Kevin Leon card. This file contains the identified vulnerabilities and test scenarios that can be used during analysis.
 
 .. raw:: html
 
-    <p><em>Open:</em> <a href="https://jahaziellem.github.io/attack-flow/ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.afb" target="_blank">Attack Flow Builder</a></p>
-    <p><em>Download:</em> <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.afb" download>Attack Flow</a> | <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.json" download>STIX</a> | <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.dot" download>GraphViz</a> (<a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.dot.png">PNG</a>) | <a href="../corpus/Pwnsat%20-%20SPARTA%20TTPs%20%281%29.mmd" download>Mermaid</a></p>
+    <p><em>Open:</em> <a href="https://jahaziellem.github.io/attack-flow/ui/?src=https%3A//jahaziellem.github.io/attack-flow/corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.afb" target="_blank">Attack Flow Builder</a></p>
+    <p><em>Download:</em> <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.afb" download>Attack Flow</a> | <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.json" download>STIX</a> | <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.dot" download>GraphViz</a> (<a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.dot.png">PNG</a>) | <a href="../corpus/Kevin%20Leon%20-%20SPARTA%20TTPs%20%281%29.mmd" download>Mermaid</a></p>
 
 ----
 

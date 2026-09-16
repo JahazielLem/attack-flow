@@ -1,6 +1,6 @@
 [![build](https://github.com/JahazielLem/attack-flow/actions/workflows/build.yml/badge.svg)](https://github.com/JahazielLem/attack-flow/actions/workflows/build.yml)
 
-# Attack Flow Builder: SPARTA and Space Shield by PWNSAT
+# Attack Flow Builder: SPARTA and Space Shield by Kevin Leon
 
 This repository is a maintained fork of [center-for-threat-informed-defense/attack-flow](https://github.com/center-for-threat-informed-defense/attack-flow) with SPARTA and ESA Space Shield support integrated with upstream Attack Flow 4.0.0.
 

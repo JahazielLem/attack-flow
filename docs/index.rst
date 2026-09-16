@@ -12,7 +12,7 @@ globally. The project is funded by our `research participants
 
 .. note::
 
-   This documentation site also publishes the PWNSAT-maintained fork of Attack Flow.
+   This documentation site also publishes the Kevin Leon-maintained fork of Attack Flow.
    The fork tracks upstream changes while adding SPARTA and ESA Space Shield support,
    sub-technique-aware autocompletion, custom observables for RF capture workflows,
    and UI customizations for the builder experience.
